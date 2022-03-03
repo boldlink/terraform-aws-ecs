@@ -1,5 +1,5 @@
 ## Description
-This Terraform module that creates an ECS-fargate service.
+This Terraform module creates an ECS-fargate service.
 
 ## Documentation
 
