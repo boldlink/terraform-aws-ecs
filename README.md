@@ -52,15 +52,10 @@ No modules.
 | <a name="input_container_name"></a> [container\_name](#input\_container\_name) | Name of your container | `string` | `"randomcontainer"` | no |
 | <a name="input_container_port"></a> [container\_port](#input\_container\_port) | Port of the container | `number` | n/a | yes |
 | <a name="input_cpu"></a> [cpu](#input\_cpu) | Number of cpu units used by the task. If the requires\_compatibilities is FARGATE this field is required. | `number` | `256` | no |
-| <a name="input_create_iam_role"></a> [create\_iam\_role](#input\_create\_iam\_role) | Whether to create an IAM role resource | `bool` | `true` | no |
-| <a name="input_create_load_balancer"></a> [create\_load\_balancer](#input\_create\_load\_balancer) | Whether to create a load balancer for ecs. | `bool` | `true` | no |
-| <a name="input_default_type"></a> [default\_type](#input\_default\_type) | Type for default action | `string` | `"forward"` | no |
-| <a name="input_deploy_service"></a> [deploy\_service](#input\_deploy\_service) | Use this to use or not terraform to deploy a service, boolean value | `bool` | `true` | no |
 | <a name="input_desired_count"></a> [desired\_count](#input\_desired\_count) | The number of instances of a task definition | `number` | `0` | no |
 | <a name="input_drop_invalid_header_fields"></a> [drop\_invalid\_header\_fields](#input\_drop\_invalid\_header\_fields) | Indicates whether HTTP headers with header fields that are not valid are removed by the load balancer (true) or routed to targets (false). The default is false. Elastic Load Balancing requires that message header names contain only alphanumeric characters and hyphens. Only valid for Load Balancers of type application. | `bool` | `false` | no |
 | <a name="input_e_port"></a> [e\_port](#input\_e\_port) | Start to end port range (or ICMP type number if protocol is icmp or icmpv6) | `number` | `0` | no |
 | <a name="input_e_protocol"></a> [e\_protocol](#input\_e\_protocol) | Protocol. If you select a protocol of -1 (semantically equivalent to all, which is not a valid value here), you must specify a from\_port and to\_port equal to 0 | `string` | `"-1"` | no |
-| <a name="input_ecs_create_task_execution_role"></a> [ecs\_create\_task\_execution\_role](#input\_ecs\_create\_task\_execution\_role) | Set to true to create ecs task execution role to ECS Tasks. | `bool` | `true` | no |
 | <a name="input_ecs_subnets"></a> [ecs\_subnets](#input\_ecs\_subnets) | Subnet IDs for the ECS tasks. | `list(string)` | n/a | yes |
 | <a name="input_enable_deletion_protection"></a> [enable\_deletion\_protection](#input\_enable\_deletion\_protection) | If true, deletion of the load balancer will be disabled via the AWS API. This will prevent Terraform from deleting the load balancer. Defaults to false. | `bool` | `false` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment tag, e.g prod, test | `string` | n/a | yes |
