@@ -1,6 +1,8 @@
 ## Description
 This Terraform module creates an ECS-fargate service.
 
+Examples available [here](https://github.com/boldlink/terraform-aws-ecs-fargate/tree/main/examples)
+
 ## Documentation
 
 [AWS ECS Service ](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs_services.html)
