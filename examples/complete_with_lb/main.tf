@@ -39,7 +39,8 @@ resource "aws_ecs_cluster" "main" {
 }
 
 module "ecs_service_lb" {
-  source                     = "./../../"
+  source                     = "boldlink/ecs-fargate/aws"
+  version                    = "1.0.0"
   name                       = "randomecsservice-alb"
   environment                = "beta"
   cloudwatch_name            = "${local.name}-lb"
