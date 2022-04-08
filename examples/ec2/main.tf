@@ -37,7 +37,7 @@ module "ecs_service_ec2" {
   cpu                        = 512
   memory                     = 512
   cloudwatch_name            = local.name
-  cluster                    = data.aws_ecs_cluster.ecs_ec2.id #aws_ecs_cluster.this.id
+  cluster                    = data.aws_ecs_cluster.ecs_ec2.id
   task_role                  = data.aws_iam_policy_document.ecs_assume_role_policy.json
   task_execution_role        = data.aws_iam_policy_document.ecs_assume_role_policy.json
   task_execution_role_policy = data.aws_iam_policy_document.task_execution_role_policy_doc.json

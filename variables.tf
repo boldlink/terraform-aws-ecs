@@ -131,7 +131,7 @@ variable "container_port" {
 variable "container_name" {
   description = "Name of your container"
   type        = string
-  default     = "randomcontainer"
+  default     = ""
 }
 
 variable "container_definitions" {

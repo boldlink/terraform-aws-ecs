@@ -1,7 +1,7 @@
 ## Description
 This Terraform module creates an ECS service using either `FARGATE` or `EC2` compatibilities.
 
-Examples available [here](https://github.com/boldlink/terraform-aws-ecs-fargate/tree/main/examples)
+Examples available [here](https://github.com/boldlink/terraform-aws-ecs-service/tree/main/examples)
 
 ## Documentation
 
@@ -54,7 +54,7 @@ No modules.
 | <a name="input_cloudwatch_name"></a> [cloudwatch\_name](#input\_cloudwatch\_name) | Cloudwatch log group name. | `string` | n/a | yes |
 | <a name="input_cluster"></a> [cluster](#input\_cluster) | Amazon Resource Name (ARN) of cluster which the service runs on | `string` | n/a | yes |
 | <a name="input_container_definitions"></a> [container\_definitions](#input\_container\_definitions) | Container definitions provided as valid JSON document. Default uses golang:alpine running a simple hello world. | `string` | `null` | no |
-| <a name="input_container_name"></a> [container\_name](#input\_container\_name) | Name of your container | `string` | `"randomcontainer"` | no |
+| <a name="input_container_name"></a> [container\_name](#input\_container\_name) | Name of your container | `string` | `""` | no |
 | <a name="input_container_port"></a> [container\_port](#input\_container\_port) | Port of the container | `number` | n/a | yes |
 | <a name="input_cooldown"></a> [cooldown](#input\_cooldown) | (Required) The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. | `number` | `60` | no |
 | <a name="input_cpu"></a> [cpu](#input\_cpu) | Number of cpu units used by the task. If the requires\_compatibilities is FARGATE this field is required. | `number` | `256` | no |
