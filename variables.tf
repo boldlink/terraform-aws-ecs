@@ -110,7 +110,6 @@ variable "cpu" {
   default     = 256
 }
 
-
 variable "memory" {
   default     = 1024
   description = "Amount (in MiB) of memory used by the task. If the requires_compatibilities is FARGATE this field is required."
