@@ -6,6 +6,7 @@ Examples available [here](https://github.com/boldlink/terraform-aws-ecs-service/
 ## Documentation
 
 [AWS ECS Service ](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs_services.html)
+
 [Terraform ECS Documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_service)
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
