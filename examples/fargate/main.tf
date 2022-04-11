@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 locals {
-  name      = "/aws/ecs/cloudwatch"
+  name      = "/aws/ecs-service/cloudwatch"
   cluster   = "randomcluster"
   partition = data.aws_partition.current.partition
   default_container_definitions = jsonencode(
@@ -39,7 +39,7 @@ resource "aws_ecs_cluster" "main" {
 }
 module "ecs_service" {
   source                   = "./../../"
-  name                     = "randomecsservice"
+  name                     = "randomecsservice-fargate"
   environment              = "beta"
   requires_compatibilities = ["FARGATE"]
   cloudwatch_name          = local.name
@@ -55,7 +55,6 @@ module "ecs_service" {
   task_execution_role_policy = data.aws_iam_policy_document.task_execution_role_policy_doc.json
   container_definitions      = local.default_container_definitions
   path                       = "/healthz"
-  container_port             = 5000
   retention_in_days          = 1
   enable_autoscaling         = true
   scalable_dimension         = "ecs:service:DesiredCount"

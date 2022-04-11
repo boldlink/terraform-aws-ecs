@@ -122,15 +122,10 @@ variable "volume_name" {
   type        = string
 }
 
-variable "container_port" {
-  description = "Port of the container"
-  type        = number
-}
-
-variable "container_name" {
-  description = "Name of your container"
-  type        = string
-  default     = ""
+variable "load_balancer" {
+  description = "(Optional) Configuration block for load balancers"
+  type = any
+  default = []
 }
 
 variable "container_definitions" {

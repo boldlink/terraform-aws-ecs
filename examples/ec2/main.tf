@@ -7,7 +7,7 @@ data "aws_ecs_cluster" "ecs_ec2" {
 }
 
 locals {
-  name      = "/aws/ecs/cloudwatch"
+  name      = "/aws/ecs-service/cloudwatch"
   partition = data.aws_partition.current.partition
   default_container_definitions = jsonencode(
     [
@@ -30,7 +30,7 @@ locals {
 
 module "ecs_service_ec2" {
   source                     = "./../../"
-  name                       = "randomecsservice"
+  name                       = "randomecsservice-ec2"
   requires_compatibilities   = ["EC2"]
   launch_type                = "EC2"
   environment                = "beta"
@@ -42,7 +42,6 @@ module "ecs_service_ec2" {
   task_execution_role        = data.aws_iam_policy_document.ecs_assume_role_policy.json
   task_execution_role_policy = data.aws_iam_policy_document.task_execution_role_policy_doc.json
   container_definitions      = local.default_container_definitions
-  container_port             = 5000
   desired_count              = 1
   create_load_balancer       = false
   retention_in_days          = 1

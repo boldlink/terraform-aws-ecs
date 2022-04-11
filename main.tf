@@ -20,11 +20,11 @@ resource "aws_ecs_service" "service" {
   }
 
   dynamic "load_balancer" {
-    for_each = aws_lb.main
+    for_each = var.load_balancer == [] ? [] : [var.load_balancer]
     content {
-      container_name   = var.container_name
-      container_port   = var.container_port
-      target_group_arn = aws_lb_target_group.main_tg[0].arn
+      container_name   = lookup(load_balancer.value, "container_name")
+      container_port   = lookup(load_balancer.value, "container_port")
+      target_group_arn = lookup(load_balancer.value, "target_group_arn", try(aws_lb_target_group.main_tg[0].arn, null))
     }
   }
   depends_on = [

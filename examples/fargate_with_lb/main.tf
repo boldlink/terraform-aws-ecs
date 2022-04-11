@@ -56,7 +56,10 @@ module "ecs_service_lb" {
   task_execution_role_policy = data.aws_iam_policy_document.task_execution_role_policy_doc.json
   container_definitions      = local.default_container_definitions
   path                       = "/healthz"
-  container_port             = 5000
+  load_balancer = {
+    container_name = "randomcontainer"
+    container_port = 5000
+  }
   retention_in_days          = 1
   drop_invalid_header_fields = true
   create_load_balancer       = true
