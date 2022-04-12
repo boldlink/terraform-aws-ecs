@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 locals {
-  name      = "/aws/ecs/cloudwatch"
+  name      = "/aws/ecs-service/cloudwatch"
   cluster   = "randomcluster"
   partition = data.aws_partition.current.partition
   default_container_definitions = jsonencode(
@@ -38,12 +38,16 @@ resource "aws_ecs_cluster" "main" {
   }
 }
 module "ecs_service" {
-  source                     = "boldlink/ecs-fargate/aws"
-  version                    = "1.0.0"
-  name                       = "randomecsservice"
-  environment                = "beta"
-  cloudwatch_name            = local.name
-  ecs_subnets                = data.aws_subnets.ecs_subnets.ids
+  source                   = "./../../"
+  name                     = "randomecsservice-fargate"
+  environment              = "beta"
+  requires_compatibilities = ["FARGATE"]
+  cloudwatch_name          = local.name
+  network_configuration = {
+    subnets          = data.aws_subnets.ecs_subnets.ids
+    assign_public_ip = true
+  }
+
   cluster                    = aws_ecs_cluster.main.id
   vpc_id                     = data.aws_vpc.vpc.id
   task_role                  = data.aws_iam_policy_document.ecs_assume_role_policy.json
@@ -51,9 +55,8 @@ module "ecs_service" {
   task_execution_role_policy = data.aws_iam_policy_document.task_execution_role_policy_doc.json
   container_definitions      = local.default_container_definitions
   path                       = "/healthz"
-  container_port             = 5000
-  desired_count              = 2
-  create_load_balancer       = "false"
-  assign_public_ip           = "true"
   retention_in_days          = 1
+  enable_autoscaling         = true
+  scalable_dimension         = "ecs:service:DesiredCount"
+  service_namespace          = "ecs"
 }

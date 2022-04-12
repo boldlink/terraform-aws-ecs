@@ -1,4 +1,53 @@
 
+# ECS Service
+resource "aws_ecs_service" "service" {
+  count                              = var.deploy_service ? 1 : 0
+  name                               = "${var.name}_service"
+  cluster                            = var.cluster
+  task_definition                    = aws_ecs_task_definition.this[0].id
+  desired_count                      = var.desired_count
+  deployment_minimum_healthy_percent = var.tasks_minimum_healthy_percent
+  deployment_maximum_percent         = var.tasks_maximum_percent
+  launch_type                        = var.launch_type
+
+  dynamic "network_configuration" {
+    for_each = var.network_mode == "awsvpc" ? [var.network_configuration] : []
+    content {
+      subnets          = lookup(network_configuration.value, "subnets", null)
+      assign_public_ip = lookup(network_configuration.value, "assign_public_ip", null)
+      security_groups  = lookup(network_configuration.value, "security_groups", [join("", aws_security_group.service.*.id)])
+    }
+  }
+
+  dynamic "load_balancer" {
+    for_each = var.load_balancer == [] ? [] : [var.load_balancer]
+    content {
+      container_name   = lookup(load_balancer.value, "container_name")
+      container_port   = lookup(load_balancer.value, "container_port")
+      target_group_arn = lookup(load_balancer.value, "target_group_arn", try(aws_lb_target_group.main_tg[0].arn, null))
+    }
+  }
+  depends_on = [
+    aws_security_group.service
+  ]
+}
+
+# ECS Task Defenition
+resource "aws_ecs_task_definition" "this" {
+  count                    = var.deploy_service ? 1 : 0
+  family                   = "${var.name}_task_new"
+  task_role_arn            = join("", aws_iam_role.task_role.*.arn)
+  execution_role_arn       = join("", aws_iam_role.task_execution_role.*.arn)
+  network_mode             = var.network_mode
+  requires_compatibilities = var.requires_compatibilities
+  cpu                      = var.cpu
+  memory                   = var.memory
+  volume {
+    name = var.volume_name
+  }
+  container_definitions = var.container_definitions
+}
+
 # IAM Role
 resource "aws_iam_role" "task_role" {
   count              = var.create_iam_role ? 1 : 0
@@ -33,7 +82,6 @@ resource "aws_cloudwatch_log_group" "main" {
 }
 
 ## Load Balancer
-# load balancer resource
 resource "aws_lb" "main" {
   count                      = var.create_load_balancer ? 1 : 0
   name                       = "${var.name}-main-alb"
@@ -104,7 +152,7 @@ resource "aws_security_group" "alb" {
   }
 }
 
-#service sg
+#service security group
 resource "aws_security_group" "service" {
   count       = var.create_load_balancer ? 1 : 0
   name        = "${var.name}-service"
@@ -133,47 +181,41 @@ resource "aws_security_group" "service" {
   )
 }
 
-# ECS Service
-resource "aws_ecs_service" "service" {
-  count                              = var.deploy_service ? 1 : 0
-  name                               = "${var.name}_service"
-  cluster                            = var.cluster
-  task_definition                    = aws_ecs_task_definition.main[0].id
-  desired_count                      = var.desired_count
-  deployment_minimum_healthy_percent = var.tasks_minimum_healthy_percent
-  deployment_maximum_percent         = var.tasks_maximum_percent
-  launch_type                        = var.launch_type
-  network_configuration {
-    subnets          = var.ecs_subnets
-    assign_public_ip = var.assign_public_ip
-    security_groups  = [join("", aws_security_group.service.*.id)]
-  }
-  dynamic "load_balancer" {
-    for_each = aws_lb.main
-    content {
-      container_name   = var.container_name
-      container_port   = var.container_port
-      target_group_arn = aws_lb_target_group.main_tg[0].arn
-    }
-  }
+# Application AutoScaling Resources
+resource "aws_appautoscaling_target" "this" {
+  count              = var.enable_autoscaling ? 1 : 0
+  max_capacity       = var.max_capacity
+  min_capacity       = var.min_capacity
+  resource_id        = "service/${var.cluster}/${aws_ecs_service.service[0].name}"
+  role_arn           = var.autoscale_role_arn
+  scalable_dimension = var.scalable_dimension
+  service_namespace  = var.service_namespace
   depends_on = [
-    aws_security_group.service
+    aws_ecs_service.service
   ]
 }
 
-# ECS Task Defenition
-resource "aws_ecs_task_definition" "main" {
-  count                    = var.deploy_service == true ? 1 : 0
-  family                   = "${var.name}_task"
-  task_role_arn            = join("", aws_iam_role.task_role.*.arn)
-  execution_role_arn       = join("", aws_iam_role.task_execution_role.*.arn)
-  network_mode             = var.network_mode
-  requires_compatibilities = var.requires_compatibilities
-  cpu                      = var.cpu
-  memory                   = var.memory
-  volume {
-    name = var.volume_name
+resource "aws_appautoscaling_policy" "scale_up" {
+  count              = var.enable_autoscaling ? 1 : 0
+  policy_type        = var.policy_type
+  name               = "${var.name}-ScaleUp"
+  service_namespace  = var.service_namespace
+  resource_id        = aws_appautoscaling_target.this[0].resource_id
+  scalable_dimension = aws_appautoscaling_target.this[0].scalable_dimension
+
+
+  step_scaling_policy_configuration {
+    adjustment_type         = var.adjustment_type
+    cooldown                = var.cooldown
+    metric_aggregation_type = var.metric_aggregation_type
+
+    step_adjustment {
+      metric_interval_lower_bound = var.metric_interval_lower_bound
+      scaling_adjustment          = var.scaling_adjustment
+    }
   }
-  container_definitions = var.container_definitions
+
+  depends_on = [
+    aws_appautoscaling_target.this
+  ]
 }
- 

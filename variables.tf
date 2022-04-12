@@ -41,20 +41,22 @@ variable "retention_in_days" {
 
 }
 
-variable "ecs_subnets" {
-  description = "Subnet IDs for the ECS tasks."
-  type        = list(string)
+variable "network_configuration" {
+  description = "(Optional) Network configuration for the service. This parameter is required for task definitions that use the awsvpc network mode to receive their own Elastic Network Interface, and it is not supported for other network modes."
+  type        = any
+  default     = []
 }
 
 variable "alb_subnets" {
   description = "Subnet IDs for the application load balancer."
   type        = list(string)
-  default     = [""]
+  default     = []
 }
 
 variable "vpc_id" {
   description = "VPC ID to be used by ECS."
   type        = string
+  default     = null
 }
 
 variable "environment" {
@@ -80,7 +82,6 @@ variable "network_mode" {
 }
 
 variable "requires_compatibilities" {
-  default     = ["FARGATE"]
   description = " Set of launch types required by the task. The valid values are EC2 and FARGATE."
   type        = list(string)
 }
@@ -89,12 +90,6 @@ variable "launch_type" {
   default     = "FARGATE"
   description = "Launch type on which to run your service. The valid values are EC2, FARGATE, and EXTERNAL. Defaults to EC2."
   type        = string
-}
-
-variable "assign_public_ip" {
-  default     = false
-  description = "Assign a public IP address to the ENI (Fargate launch type only). Valid values are true or false. Default false."
-  type        = bool
 }
 
 variable "deploy_service" {
@@ -127,15 +122,10 @@ variable "volume_name" {
   type        = string
 }
 
-variable "container_port" {
-  description = "Port of the container"
-  type        = number
-}
-
-variable "container_name" {
-  description = "Name of your container"
-  type        = string
-  default     = "randomcontainer"
+variable "load_balancer" {
+  description = "(Optional) Configuration block for load balancers"
+  type = any
+  default = []
 }
 
 variable "container_definitions" {
@@ -146,13 +136,13 @@ variable "container_definitions" {
 
 variable "tasks_minimum_healthy_percent" {
   description = "Lower limit on the number of running tasks."
-  default     = 50
+  default     = 100
   type        = number
 }
 
 variable "tasks_maximum_percent" {
   description = "Upper limit on the number of running tasks."
-  default     = 100
+  default     = 200
   type        = number
 }
 
@@ -272,7 +262,7 @@ variable "e_protocol" {
 # create load balancer
 variable "create_load_balancer" {
   description = "Whether to create a load balancer for ecs."
-  default     = true
+  default     = false
   type        = bool
 }
 
@@ -281,4 +271,77 @@ variable "create_iam_role" {
   description = "Whether to create an IAM role resource"
   default     = true
   type        = bool
+}
+
+# Application AutoScaling
+variable "enable_autoscaling" {
+  description = "Whether to enable autoscaling or not for ecs"
+  type        = bool
+  default     = false
+}
+
+variable "max_capacity" {
+  description = "(Required) The max capacity of the scalable target."
+  type        = number
+  default     = 2
+}
+
+variable "min_capacity" {
+  description = "(Required) The min capacity of the scalable target."
+  type        = number
+  default     = 1
+}
+
+variable "autoscale_role_arn" {
+  description = " (Optional) The ARN of the IAM role that allows Application AutoScaling to modify your scalable target on your behalf. "
+  type        = string
+  default     = null
+}
+
+variable "scalable_dimension" {
+  description = "(Required) The scalable dimension of the scalable target."
+  type        = string
+  default     = ""
+}
+
+variable "service_namespace" {
+  description = "(Required) The AWS service namespace of the scalable target."
+  type        = string
+  default     = ""
+}
+
+variable "policy_type" {
+  description = " (Optional) The policy type. Valid values are StepScaling and TargetTrackingScaling. Defaults to StepScaling."
+  type        = string
+  default     = "StepScaling"
+}
+
+variable "adjustment_type" {
+  description = "Required) Specifies whether the adjustment is an absolute number or a percentage of the current capacity. Valid values are ChangeInCapacity, ExactCapacity, and PercentChangeInCapacity."
+  type        = string
+  default     = "ChangeInCapacity"
+}
+
+variable "cooldown" {
+  description = "(Required) The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start."
+  type        = number
+  default     = 60
+}
+
+variable "metric_aggregation_type" {
+  description = "(Optional) The aggregation type for the policy's metrics. Valid values are `Minimum`, `Maximum`, and `Average`. Without a value, AWS will treat the aggregation type as `Average`."
+  type        = string
+  default     = "Maximum"
+}
+
+variable "metric_interval_lower_bound" {
+  description = "(Optional) The lower bound for the difference between the alarm threshold and the CloudWatch metric. Without a value, AWS will treat this bound as negative infinity."
+  type        = number
+  default     = 0
+}
+
+variable "scaling_adjustment" {
+  description = "(Required) The number of members by which to scale, when the adjustment bounds are breached. A positive value scales up. A negative value scales down."
+  type        = number
+  default     = 2
 }

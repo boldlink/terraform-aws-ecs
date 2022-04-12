@@ -39,12 +39,15 @@ resource "aws_ecs_cluster" "main" {
 }
 
 module "ecs_service_lb" {
-  source                     = "boldlink/ecs-fargate/aws"
-  version                    = "1.0.0"
-  name                       = "randomecsservice-alb"
-  environment                = "beta"
-  cloudwatch_name            = "${local.name}-lb"
-  ecs_subnets                = data.aws_subnets.ecs_subnets.ids
+  source                   = "./../../"
+  requires_compatibilities = ["FARGATE"]
+  name                     = "randomecsservice-alb"
+  environment              = "beta"
+  cloudwatch_name          = "${local.name}-lb"
+  network_configuration = {
+    subnets          = data.aws_subnets.ecs_subnets.ids
+    assign_public_ip = true
+  }
   alb_subnets                = data.aws_subnets.alb_subnets.ids
   cluster                    = aws_ecs_cluster.main.id
   vpc_id                     = data.aws_vpc.vpc.id
@@ -53,10 +56,14 @@ module "ecs_service_lb" {
   task_execution_role_policy = data.aws_iam_policy_document.task_execution_role_policy_doc.json
   container_definitions      = local.default_container_definitions
   path                       = "/healthz"
-  container_port             = 5000
-  desired_count              = 2
-  assign_public_ip           = "true"
+  load_balancer = {
+    container_name = "randomcontainer"
+    container_port = 5000
+  }
   retention_in_days          = 1
-  drop_invalid_header_fields = "true"
-  enable_deletion_protection = "true"
+  drop_invalid_header_fields = true
+  create_load_balancer       = true
+  enable_autoscaling         = true
+  scalable_dimension         = "ecs:service:DesiredCount"
+  service_namespace          = "ecs"
 }
