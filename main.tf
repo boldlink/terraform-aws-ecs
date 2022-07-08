@@ -1,21 +1,25 @@
-
-# ECS Service
+############################
+### ECS Service
+############################
 resource "aws_ecs_service" "service" {
-  count                              = var.deploy_service ? 1 : 0
   name                               = "${var.name}_service"
   cluster                            = var.cluster
-  task_definition                    = aws_ecs_task_definition.this[0].id
+  task_definition                    = join("", aws_ecs_task_definition.this.*.id)
   desired_count                      = var.desired_count
   deployment_minimum_healthy_percent = var.tasks_minimum_healthy_percent
   deployment_maximum_percent         = var.tasks_maximum_percent
   launch_type                        = var.launch_type
 
+  deployment_controller {
+    type = var.deployment_controller_type
+  }
+
   dynamic "network_configuration" {
     for_each = var.network_mode == "awsvpc" ? [var.network_configuration] : []
     content {
-      subnets          = lookup(network_configuration.value, "subnets", null)
-      assign_public_ip = lookup(network_configuration.value, "assign_public_ip", null)
-      security_groups  = lookup(network_configuration.value, "security_groups", [join("", aws_security_group.service.*.id)])
+      subnets          = network_configuration.value.subnets
+      assign_public_ip = try(network_configuration.value.assign_public_ip, null)
+      security_groups  = try([network_configuration.value.security_groups], [join("", aws_security_group.service.*.id)])
     }
   }
 
@@ -27,12 +31,16 @@ resource "aws_ecs_service" "service" {
       target_group_arn = lookup(load_balancer.value, "target_group_arn", try(aws_lb_target_group.main_tg[0].arn, null))
     }
   }
+
+  tags = var.tags
   depends_on = [
     aws_security_group.service
   ]
 }
 
+############################
 # ECS Task Defenition
+############################
 resource "aws_ecs_task_definition" "this" {
   count                    = var.deploy_service ? 1 : 0
   family                   = "${var.name}_task_new"
@@ -48,10 +56,12 @@ resource "aws_ecs_task_definition" "this" {
   container_definitions = var.container_definitions
 }
 
+############################
 # IAM Role
+############################
 resource "aws_iam_role" "task_role" {
   count              = var.create_iam_role ? 1 : 0
-  name               = "ecs-task-role-${var.name}-${var.environment}"
+  name               = "ecs-task-role-${var.name}"
   assume_role_policy = var.task_role
 }
 
@@ -69,19 +79,19 @@ resource "aws_iam_role_policy" "task_execution_role_policy" {
   policy = var.task_execution_role_policy
 }
 
+############################
+### Cloudwatch Log Group
+############################
 resource "aws_cloudwatch_log_group" "main" {
-  name              = var.cloudwatch_name
+  name              = "/aws/ecs-service/${var.name}"
   retention_in_days = var.retention_in_days
-  tags = merge(
-    {
-      "Name"        = "${var.name}_tag"
-      "Environment" = var.environment
-    },
-    var.other_tags,
-  )
+  kms_key_id        = var.kms_key_id
+  tags              = var.tags
 }
 
+############################
 ## Load Balancer
+############################
 resource "aws_lb" "main" {
   count                      = var.create_load_balancer ? 1 : 0
   name                       = "${var.name}-main-alb"
@@ -91,12 +101,12 @@ resource "aws_lb" "main" {
   security_groups            = [aws_security_group.alb[0].id]
   drop_invalid_header_fields = var.drop_invalid_header_fields
   enable_deletion_protection = var.enable_deletion_protection
-  tags = {
-    Name = "${var.name}_alb_tag"
-  }
+  tags                       = var.tags
 }
 
+############################
 # lb target group
+############################
 resource "aws_lb_target_group" "main_tg" {
   count       = var.create_load_balancer ? 1 : 0
   name        = "${var.name}-main-tg"
@@ -147,9 +157,7 @@ resource "aws_security_group" "alb" {
     cidr_blocks = [var.cidr_blocks]
   }
 
-  tags = {
-    "Name" = "${var.name}-alb-sg-tag"
-  }
+  tags = var.tags
 }
 
 #service security group
@@ -172,13 +180,8 @@ resource "aws_security_group" "service" {
     protocol    = var.e_protocol
     cidr_blocks = [var.cidr_blocks]
   }
-  tags = merge(
-    {
-      "Name"        = var.name
-      "Environment" = var.environment
-    },
-    var.other_tags,
-  )
+
+  tags = var.tags
 }
 
 # Application AutoScaling Resources
@@ -186,7 +189,7 @@ resource "aws_appautoscaling_target" "this" {
   count              = var.enable_autoscaling ? 1 : 0
   max_capacity       = var.max_capacity
   min_capacity       = var.min_capacity
-  resource_id        = "service/${var.cluster}/${aws_ecs_service.service[0].name}"
+  resource_id        = "service/${var.cluster}/${aws_ecs_service.service.name}"
   role_arn           = var.autoscale_role_arn
   scalable_dimension = var.scalable_dimension
   service_namespace  = var.service_namespace

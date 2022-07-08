@@ -2,7 +2,6 @@ data "aws_partition" "current" {}
 
 data "aws_iam_policy_document" "ecs_assume_role_policy" {
   statement {
-    effect  = "Allow"
     actions = ["sts:AssumeRole"]
 
     principals {
@@ -24,6 +23,7 @@ data "aws_iam_policy_document" "task_execution_role_policy_doc" {
   }
 
   statement {
+    effect = "Allow"
     actions = [
       "ecr:GetAuthorizationToken",
       "ecr:BatchCheckLayerAvailability",
@@ -37,17 +37,9 @@ data "aws_iam_policy_document" "task_execution_role_policy_doc" {
   }
 }
 
-data "aws_vpc" "vpc" {
-  filter {
-
-    name   = "tag:Name"
-    values = ["default"]
-  }
+data "aws_availability_zones" "available" {
+  state = "available"
 }
+data "aws_caller_identity" "current" {}
 
-data "aws_subnets" "ecs_subnets" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.vpc.id]
-  }
-}
+data "aws_region" "current" {}
