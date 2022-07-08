@@ -17,7 +17,7 @@ module "vpc" {
 
 module "kms_key" {
   source                  = "boldlink/kms/aws"
-  description             = "A test kms key for RDS cluster"
+  description             = "A test kms key for ecs cluster"
   create_kms_alias        = true
   alias_name              = "alias/${local.name}"
   enable_key_rotation     = true
