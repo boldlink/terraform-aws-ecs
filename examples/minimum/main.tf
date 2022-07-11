@@ -14,7 +14,8 @@ module "cluster" {
 }
 
 resource "aws_cloudwatch_log_group" "cluster" {
-  name              = "${local.name}-log-group"
+  name = "${local.name}-log-group"
+  #checkov:skip=CKV_AWS_111:Ensure IAM policies does not allow write access without constraints"
   retention_in_days = 0
   tags = {
     Name               = local.name
@@ -24,7 +25,8 @@ resource "aws_cloudwatch_log_group" "cluster" {
 }
 
 module "ecs_service" {
-  source                     = "../../"
+  source = "../../"
+  #checkov:skip=CKV_AWS_158:Ensure that CloudWatch Log Group is encrypted by KMS"
   name                       = local.name
   cluster                    = module.cluster.id
   deployment_controller_type = "EXTERNAL"

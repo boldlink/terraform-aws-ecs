@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- fix: CKV2_AWS_20 Ensure that ALB redirects HTTP requests into HTTPS ones
+- fix: CKV2_AWS_28 Ensure public facing ALB are protected by WAF
+- feat: Add more features to the root module lb
 - feat: Module restructure
 - feat: Add missing features/upgrade
 - feat: Use load-balancer module in example

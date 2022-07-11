@@ -13,7 +13,8 @@ module "kms_key" {
 }
 
 resource "aws_cloudwatch_log_group" "cluster" {
-  name              = "${local.cluster_name}-log-group"
+  name = "${local.cluster_name}-log-group"
+  #checkov:skip=CKV_AWS_158:Ensure that CloudWatch Log Group is encrypted by KMS"
   retention_in_days = 0
   tags = {
     Name               = local.cluster_name
@@ -40,7 +41,8 @@ module "cluster" {
 }
 
 module "ecs_service_ec2" {
-  source                     = "../../"
+  source = "../../"
+  #checkov:skip=CKV_AWS_111:Ensure IAM policies does not allow write access without constraints"
   name                       = local.cluster_name
   requires_compatibilities   = ["EC2"]
   launch_type                = "EC2"
