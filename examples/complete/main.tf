@@ -30,8 +30,8 @@ module "kms_key" {
 }
 
 resource "aws_cloudwatch_log_group" "cluster" {
-  name = "${local.name}-log-group"
   #checkov:skip=CKV_AWS_158:Ensure that CloudWatch Log Group is encrypted by KMS"
+  name              = "${local.name}-log-group"
   retention_in_days = 0
   tags = {
     Name               = local.name
@@ -56,19 +56,22 @@ module "cluster" {
   }
 }
 
-module "ecs_service" {
+module "ecs_service_lb" {
   source = "../../"
   #checkov:skip=CKV_AWS_111:Ensure IAM policies does not allow write access without constraints"
+  #checkov:skip=CKV_AWS_150:Ensure that Load Balancer has deletion protection enabled"
+  #checkov:skip=CKV_AWS_91:Ensure the ELBv2 (Application/Network) has access logging enabled"
+  #checkov:skip=CKV_AWS_2:Ensure ALB protocol is HTTPS"
+  #checkov:skip=CKV_AWS_103:Ensure that load balancer is using TLS 1.2"
   requires_compatibilities = ["FARGATE"]
   deploy_service           = true
   network_mode             = "awsvpc"
   name                     = "${local.name}-service"
-
   network_configuration = {
     subnets          = flatten(module.vpc.public_subnet_id)
     assign_public_ip = true
   }
-
+  alb_subnets                = flatten(module.vpc.public_subnet_id)
   cluster                    = module.cluster.id
   vpc_id                     = module.vpc.id
   task_role                  = data.aws_iam_policy_document.ecs_assume_role_policy.json
@@ -76,7 +79,13 @@ module "ecs_service" {
   task_execution_role_policy = data.aws_iam_policy_document.task_execution_role_policy_doc.json
   container_definitions      = local.default_container_definitions
   path                       = "/healthz"
+  load_balancer = {
+    container_name = local.name
+    container_port = 5000
+  }
   retention_in_days          = 1
+  drop_invalid_header_fields = true
+  create_load_balancer       = true
   enable_autoscaling         = true
   scalable_dimension         = "ecs:service:DesiredCount"
   service_namespace          = "ecs"

@@ -2,7 +2,7 @@
 
 [<img src="https://avatars.githubusercontent.com/u/25388280?s=200&v=4" width="96"/>](https://boldlink.io)
 
-# Terraform module example with ec2 configuration
+# Terraform module example with the least configuration
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -23,17 +23,13 @@
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_cluster"></a> [cluster](#module\_cluster) | git::https://github.com/boldlink/terraform-aws-ecs-cluster.git | 1.0.1 |
-| <a name="module_ecs_service_ec2"></a> [ecs\_service\_ec2](#module\_ecs\_service\_ec2) | ../../ | n/a |
-| <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | boldlink/kms/aws | n/a |
+| <a name="module_ecs_service"></a> [ecs\_service](#module\_ecs\_service) | ../../ | n/a |
 
 ## Resources
 
 | Name | Type |
 |------|------|
 | [aws_cloudwatch_log_group.cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
-| [aws_iam_policy_document.ecs_assume_role_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_iam_policy_document.task_execution_role_policy_doc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_partition.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/partition) | data source |
 
 ## Inputs
 

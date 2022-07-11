@@ -1,43 +1,55 @@
-provider "aws" {
-  region = "eu-west-1"
+###
+module "kms_key" {
+  source                  = "boldlink/kms/aws"
+  description             = "A test kms key for ecs"
+  create_kms_alias        = true
+  alias_name              = "alias/${local.cluster_name}"
+  enable_key_rotation     = true
+  deletion_window_in_days = 7
+  tags = {
+    Name        = local.cluster_name
+    Environment = "examples"
+  }
 }
 
-data "aws_ecs_cluster" "ecs_ec2" {
-  cluster_name = "samplecluster"
+resource "aws_cloudwatch_log_group" "cluster" {
+  name = "${local.cluster_name}-log-group"
+  #checkov:skip=CKV_AWS_158:Ensure that CloudWatch Log Group is encrypted by KMS"
+  retention_in_days = 0
+  tags = {
+    Name               = local.cluster_name
+    Environment        = "examples"
+    "user::CostCenter" = "terraform-registry"
+  }
+  depends_on = [module.kms_key]
 }
 
-locals {
-  name      = "/aws/ecs-service/cloudwatch"
-  partition = data.aws_partition.current.partition
-  default_container_definitions = jsonencode(
-    [
-      {
-        name      = "randomcontainer2"
-        image     = "boldlink/flaskapp"
-        cpu       = 128
-        memory    = 256
-        essential = true
-        portMappings = [
-          {
-            containerPort = 5000
-            hostPort      = 5000
-          }
-        ]
+module "cluster" {
+  source = "git::https://github.com/boldlink/terraform-aws-ecs-cluster.git?ref=1.0.1"
+  name   = local.cluster_name
+  configuration = {
+    execute_command_configuration = {
+      kms_key_id = module.kms_key.arn
+      log_configuration = {
+        cloud_watch_encryption_enabled = true
+        cloud_watch_log_group_name     = aws_cloudwatch_log_group.cluster.name
+        s3_bucket_encryption_enabled   = false
       }
-    ]
-  )
+      logging = "OVERRIDE"
+    }
+  }
 }
 
 module "ecs_service_ec2" {
-  source                     = "./../../"
-  name                       = "randomecsservice-ec2"
+  source = "../../"
+  #checkov:skip=CKV_AWS_111:Ensure IAM policies does not allow write access without constraints"
+  name                       = local.cluster_name
   requires_compatibilities   = ["EC2"]
   launch_type                = "EC2"
-  environment                = "beta"
+  deploy_service             = true
   cpu                        = 512
   memory                     = 512
-  cloudwatch_name            = local.name
-  cluster                    = data.aws_ecs_cluster.ecs_ec2.id
+  cluster                    = module.cluster.id
   task_role                  = data.aws_iam_policy_document.ecs_assume_role_policy.json
   task_execution_role        = data.aws_iam_policy_document.ecs_assume_role_policy.json
   task_execution_role_policy = data.aws_iam_policy_document.task_execution_role_policy_doc.json
@@ -49,4 +61,9 @@ module "ecs_service_ec2" {
   enable_autoscaling         = true
   scalable_dimension         = "ecs:service:DesiredCount"
   service_namespace          = "ecs"
+  tags = {
+    Name               = local.cluster_name
+    Environment        = "examples"
+    "user::CostCenter" = "terraform-registry"
+  }
 }

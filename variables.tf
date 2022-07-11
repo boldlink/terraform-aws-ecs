@@ -21,30 +21,37 @@ variable "task_execution_role_policy" {
 variable "cluster" {
   description = "Amazon Resource Name (ARN) of cluster which the service runs on"
   type        = string
+  default     = null
 }
 
 variable "ecs_create_task_execution_role" {
   description = "Set to true to create ecs task execution role to ECS Tasks."
   type        = bool
-  default     = true
-}
-
-variable "cloudwatch_name" {
-  description = "Cloudwatch log group name."
-  type        = string
+  default     = false
 }
 
 variable "retention_in_days" {
   description = "Specifies the number of days you want to retain log events in the specified log group. Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653, and 0. If you select 0, the events in the log group are always retained and never expire."
   type        = number
   default     = 0
+}
 
+variable "kms_key_id" {
+  type        = string
+  description = "The KMS ARN for cloudwatch log group"
+  default     = null
+}
+
+variable "tags" {
+  type        = map(string)
+  description = "Key Value tags to apply to the resources"
+  default     = {}
 }
 
 variable "network_configuration" {
   description = "(Optional) Network configuration for the service. This parameter is required for task definitions that use the awsvpc network mode to receive their own Elastic Network Interface, and it is not supported for other network modes."
   type        = any
-  default     = []
+  default     = {}
 }
 
 variable "alb_subnets" {
@@ -53,15 +60,16 @@ variable "alb_subnets" {
   default     = []
 }
 
+variable "deployment_controller_type" {
+  type        = string
+  description = "(Optional) Type of deployment controller"
+  default     = "ECS"
+}
+
 variable "vpc_id" {
   description = "VPC ID to be used by ECS."
   type        = string
   default     = null
-}
-
-variable "environment" {
-  description = "Environment tag, e.g prod, test"
-  type        = string
 }
 
 variable "name" {
@@ -76,7 +84,7 @@ variable "desired_count" {
 }
 
 variable "network_mode" {
-  default     = "awsvpc"
+  default     = "none"
   description = "Docker networking mode to use for the containers in the task. Valid values are none, bridge, awsvpc, and host."
   type        = string
 }
@@ -84,6 +92,7 @@ variable "network_mode" {
 variable "requires_compatibilities" {
   description = " Set of launch types required by the task. The valid values are EC2 and FARGATE."
   type        = list(string)
+  default     = []
 }
 
 variable "launch_type" {
@@ -94,14 +103,8 @@ variable "launch_type" {
 
 variable "deploy_service" {
   description = "Use this to use or not terraform to deploy a service, boolean value"
-  default     = true
+  default     = false
   type        = bool
-}
-
-variable "other_tags" {
-  description = "For adding an additional values for tags"
-  type        = map(string)
-  default     = {}
 }
 
 variable "cpu" {
@@ -124,8 +127,8 @@ variable "volume_name" {
 
 variable "load_balancer" {
   description = "(Optional) Configuration block for load balancers"
-  type = any
-  default = []
+  type        = any
+  default     = []
 }
 
 variable "container_definitions" {
@@ -269,7 +272,7 @@ variable "create_load_balancer" {
 # create IAM role
 variable "create_iam_role" {
   description = "Whether to create an IAM role resource"
-  default     = true
+  default     = false
   type        = bool
 }
 

@@ -37,24 +37,9 @@ data "aws_iam_policy_document" "task_execution_role_policy_doc" {
   }
 }
 
-data "aws_vpc" "vpc" {
-  filter {
-
-    name   = "tag:Name"
-    values = ["default"]
-  }
+data "aws_availability_zones" "available" {
+  state = "available"
 }
+data "aws_caller_identity" "current" {}
 
-data "aws_subnets" "ecs_subnets" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.vpc.id]
-  }
-}
-
-data "aws_subnets" "alb_subnets" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.vpc.id]
-  }
-}
+data "aws_region" "current" {}
