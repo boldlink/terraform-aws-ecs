@@ -14,8 +14,7 @@ module "cluster" {
 }
 
 resource "aws_cloudwatch_log_group" "cluster" {
-  name = "${local.name}-log-group"
-  #checkov:skip=CKV_AWS_111:Ensure IAM policies does not allow write access without constraints"
+  name              = "${local.name}-log-group"
   retention_in_days = 0
   tags = {
     Name               = local.name
