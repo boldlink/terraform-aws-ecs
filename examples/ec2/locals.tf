@@ -1,6 +1,6 @@
 locals {
   name         = "/aws/ecs-service/cloudwatch"
-  cluster_name = "samplecluster"
+  cluster_name = "ecs-ec2-example"
   partition    = data.aws_partition.current.partition
   default_container_definitions = jsonencode(
     [
