@@ -140,22 +140,56 @@ resource "aws_lb_listener" "main" {
   }
 }
 
-resource "aws_lb_listener_rule" "main" {
-  count        = var.create_load_balancer ? 1 : 0
-  listener_arn = aws_lb_listener.main[0].arn
+###############################################################################################################################################
+### NOTE: Self-signed certificates are usually used only in development environments or applications deployed internally to an organization.
+### Please use ACM generated certificate in production. Specify the value of `acm_certificate_arn` to provide this
+###############################################################################################################################################
+resource "tls_private_key" "default" {
+  count     = var.create_load_balancer && var.acm_certificate_arn == null ? 1 : 0
+  algorithm = "RSA"
+}
 
-  action {
+resource "tls_self_signed_cert" "default" {
+  count           = var.create_load_balancer && var.acm_certificate_arn == null ? 1 : 0
+  private_key_pem = tls_private_key.default[0].private_key_pem
+
+  subject {
+    common_name  = var.self_signed_cert_common_name
+    organization = var.self_signed_cert_organization
+  }
+
+  validity_period_hours = 72
+
+  allowed_uses = [
+    "key_encipherment",
+    "digital_signature",
+    "server_auth",
+  ]
+}
+
+resource "aws_acm_certificate" "main" {
+  count            = var.create_load_balancer && var.acm_certificate_arn == null ? 1 : 0
+  private_key      = tls_private_key.default[0].private_key_pem
+  certificate_body = tls_self_signed_cert.default[0].cert_pem
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+## Forward redirected traffic to target group
+resource "aws_lb_listener" "https" {
+  count             = var.create_load_balancer ? 1 : 0
+  load_balancer_arn = aws_lb.main[0].id
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = var.ssl_policy
+  certificate_arn   = var.acm_certificate_arn != null ? var.acm_certificate_arn : aws_acm_certificate.main[0].arn
+
+  default_action {
     type             = var.default_type
     target_group_arn = aws_lb_target_group.main_tg[0].arn
   }
-
-  condition {
-    path_pattern {
-      values = ["*"]
-    }
-  }
-
-  tags = var.tags
 }
 
 # Security Groups
