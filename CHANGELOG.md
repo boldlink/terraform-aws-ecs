@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: Add missing features/upgrade
 - feat: Use load-balancer module in example
 - feat: Add more options for module cloudwatch log group
+- feat: Exclusively use acm certificate (not self_signed_cert) for complete example
 
 ## [1.1.1] - 2022-07-14
 ### Changes
