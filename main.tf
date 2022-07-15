@@ -125,7 +125,7 @@ resource "aws_lb_target_group" "main_tg" {
 #load balancer listener
 resource "aws_lb_listener" "main" {
   count             = var.create_load_balancer ? 1 : 0
-  load_balancer_arn = aws_lb.main[0].arn
+  load_balancer_arn = aws_lb.main[0].id
   port              = var.listener_port
   protocol          = var.listener_protocol
 
@@ -137,9 +137,9 @@ resource "aws_lb_listener" "main" {
 
 resource "aws_lb_listener" "https_redirect" {
   count             = var.create_load_balancer ? 1 : 0
-  load_balancer_arn = aws_lb.main[0].arn
-  port              = "80"
-  protocol          = "HTTP"
+  load_balancer_arn = aws_lb.main[0].id
+  port              = var.listener_port
+  protocol          = var.listener_protocol
 
   default_action {
     type = "redirect"
