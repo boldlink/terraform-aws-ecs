@@ -129,13 +129,6 @@ resource "aws_lb_listener" "main" {
   port              = var.listener_port
   protocol          = var.listener_protocol
 
-  /*
-  default_action {
-    target_group_arn = aws_lb_target_group.main_tg[0].arn
-    type             = var.default_type
-  }
-*/
-
   default_action {
     type = "redirect"
 
@@ -145,6 +138,24 @@ resource "aws_lb_listener" "main" {
       status_code = "HTTP_301"
     }
   }
+}
+
+resource "aws_lb_listener_rule" "main" {
+  count        = var.create_load_balancer ? 1 : 0
+  listener_arn = aws_lb_listener.main[0].arn
+
+  action {
+    type             = var.default_type
+    target_group_arn = aws_lb_target_group.main_tg[0].arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["*"]
+    }
+  }
+
+  tags = var.tags
 }
 
 # Security Groups
