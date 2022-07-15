@@ -152,6 +152,20 @@ resource "aws_lb_listener" "https_redirect" {
   }
 }
 
+resource "aws_lb_listener_rule" "redirect_http_to_https" {
+  listener_arn = aws_lb_listener.main[0].arn
+
+  action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
 # Security Groups
 # Alb security group
 resource "aws_security_group" "alb" {
