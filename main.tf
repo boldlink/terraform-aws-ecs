@@ -129,33 +129,14 @@ resource "aws_lb_listener" "main" {
   port              = var.listener_port
   protocol          = var.listener_protocol
 
+  /*
   default_action {
     target_group_arn = aws_lb_target_group.main_tg[0].arn
     type             = var.default_type
   }
-}
-
-resource "aws_lb_listener" "https_redirect" {
-  count             = var.create_load_balancer ? 1 : 0
-  load_balancer_arn = aws_lb.main[0].id
-  port              = var.listener_port
-  protocol          = var.listener_protocol
+*/
 
   default_action {
-    type = "redirect"
-
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-}
-
-resource "aws_lb_listener_rule" "redirect_http_to_https" {
-  listener_arn = aws_lb_listener.main[0].arn
-
-  action {
     type = "redirect"
 
     redirect {
