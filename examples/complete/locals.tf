@@ -9,14 +9,14 @@ locals {
     [
       {
         name      = local.name
-        image     = "boldlink/flaskapp"
+        image     = "httpd"
         cpu       = 10
         memory    = 512
         essential = true
         portMappings = [
           {
-            containerPort = 5000
-            hostPort      = 5000
+            containerPort = 80
+            hostPort      = 80
           }
         ]
       }

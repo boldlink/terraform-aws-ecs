@@ -78,10 +78,10 @@ module "ecs_service_lb" {
   task_execution_role        = data.aws_iam_policy_document.ecs_assume_role_policy.json
   task_execution_role_policy = data.aws_iam_policy_document.task_execution_role_policy_doc.json
   container_definitions      = local.default_container_definitions
-  path                       = "/healthz"
+  path                       = "/"
   load_balancer = {
     container_name = local.name
-    container_port = 5000
+    container_port = 80
   }
   retention_in_days          = 1
   drop_invalid_header_fields = true
