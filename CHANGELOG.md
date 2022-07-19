@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: Incomplete example for EC2 since it was done before the ecs-cluster module hence used a hard-coded value used for a cluster that had ec2 instances
 - fix: CKV2_AWS_28 Ensure public facing ALB are protected by WAF
 - fix: Update in-place when `tfplan` or `tfapply` is done
+- feat: Add EC2 usage example
 - feat: Add more features to the root module lb
 - feat: Module restructure
 - feat: Add missing features/upgrade

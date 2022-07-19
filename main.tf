@@ -2,7 +2,7 @@
 ### ECS Service
 ############################
 resource "aws_ecs_service" "service" {
-  name                               = "${var.name}_service"
+  name                               = var.name
   cluster                            = var.cluster
   task_definition                    = join("", aws_ecs_task_definition.this.*.id)
   desired_count                      = var.desired_count
@@ -94,7 +94,7 @@ resource "aws_cloudwatch_log_group" "main" {
 ############################
 resource "aws_lb" "main" {
   count                      = var.create_load_balancer ? 1 : 0
-  name                       = "${var.name}-main-alb"
+  name                       = var.name
   internal                   = var.internal
   load_balancer_type         = var.load_balancer_type
   subnets                    = var.alb_subnets
@@ -109,7 +109,7 @@ resource "aws_lb" "main" {
 ############################
 resource "aws_lb_target_group" "main_tg" {
   count       = var.create_load_balancer ? 1 : 0
-  name        = "${var.name}-main-tg"
+  name        = var.name
   port        = var.tg_port
   protocol    = var.tg_protocol
   target_type = var.target_type
@@ -196,7 +196,7 @@ resource "aws_lb_listener" "https" {
 # Alb security group
 resource "aws_security_group" "alb" {
   count       = var.create_load_balancer ? 1 : 0
-  name        = "${var.name}_alb_sg"
+  name        = "${var.name}-lb-security-group"
   description = "load balancer security group"
   vpc_id      = var.vpc_id
   ingress {
@@ -220,7 +220,7 @@ resource "aws_security_group" "alb" {
 #service security group
 resource "aws_security_group" "service" {
   count       = var.create_load_balancer ? 1 : 0
-  name        = "${var.name}-service"
+  name        = "${var.name}-service-sg"
   description = "Allow ssh inbound & all outbound traffic"
   vpc_id      = var.vpc_id
   ingress {

@@ -1,3 +1,3 @@
 locals {
-  name = "minimum-example-ecs-service"
+  name = "minimum-example"
 }
