@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: CKV2_AWS_28 Ensure public facing ALB are protected by WAF
 - fix: Update in-place when `tfplan` or `tfapply` is done
 - fix: stopped (scaling activity initiated by (deployment ecs-svc/<number>))
+- feat: Add HTTPS rule to load balancer SG in complete example
 - feat: Add EC2 usage example
 - feat: Add more features to the root module lb
 - feat: Module restructure
