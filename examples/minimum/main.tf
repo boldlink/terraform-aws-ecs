@@ -28,6 +28,7 @@ module "ecs_service" {
   #checkov:skip=CKV_AWS_158:Ensure that CloudWatch Log Group is encrypted by KMS"
   name                       = local.name
   cluster                    = module.cluster.id
+  launch_type                = "EC2"
   deployment_controller_type = "EXTERNAL"
 
   tags = {

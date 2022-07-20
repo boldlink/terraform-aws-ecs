@@ -4,6 +4,8 @@
 
 # Terraform module usage example for fargate with load balancer
 
+### Usage Note for this Example
+- Add HTTPS inbound rule to load balancer security group for HTTPS to work
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements

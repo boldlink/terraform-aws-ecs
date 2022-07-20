@@ -3,7 +3,7 @@ locals {
   tag_env        = "Dev"
   public_subnets = cidrsubnets(local.cidr_block, 8, 8, 8)
   azs            = flatten(data.aws_availability_zones.available.names)
-  name           = "fargate-w-lb"
+  name           = "complete-example"
   partition      = data.aws_partition.current.partition
   default_container_definitions = jsonencode(
     [

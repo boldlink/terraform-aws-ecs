@@ -193,6 +193,31 @@ variable "default_type" {
   default     = "forward"
 }
 
+variable "self_signed_cert_common_name" {
+  type        = string
+  description = "Distinguished name"
+  default     = "devboldlink.wpengine.com"
+}
+
+variable "self_signed_cert_organization" {
+  type        = string
+  description = "The organization owning this self signed certificate"
+  default     = "Boldlink-SIG"
+}
+
+variable "acm_certificate_arn" {
+  type        = string
+  description = "ARN of ACM generated/third party certificate"
+  default     = null
+}
+
+variable "ssl_policy" {
+  type        = string
+  description = "(Optional) Name of the SSL Policy for the listener. Required if protocol is `HTTPS` or `TLS`"
+  default     = "ELBSecurityPolicy-2016-08"
+}
+
+
 # target-group
 variable "tg_port" {
   description = "Port on which targets receive traffic, unless overridden when registering a specific target. Required when target_type is instance or ip. Does not apply when target_type is lambda."

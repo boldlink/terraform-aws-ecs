@@ -85,6 +85,7 @@ module "ecs_service_lb" {
   }
   retention_in_days          = 1
   drop_invalid_header_fields = true
+  tg_port                    = 5000
   create_load_balancer       = true
   enable_autoscaling         = true
   scalable_dimension         = "ecs:service:DesiredCount"
