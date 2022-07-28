@@ -61,7 +61,6 @@ module "ecs_service_lb" {
   #checkov:skip=CKV_AWS_111:Ensure IAM policies does not allow write access without constraints"
   #checkov:skip=CKV_AWS_150:Ensure that Load Balancer has deletion protection enabled"
   #checkov:skip=CKV_AWS_91:Ensure the ELBv2 (Application/Network) has access logging enabled"
-  #checkov:skip=CKV_AWS_2:Ensure ALB protocol is HTTPS"
   #checkov:skip=CKV_AWS_103:Ensure that load balancer is using TLS 1.2"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"

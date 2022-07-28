@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - fix: CKV2_AWS_28 Ensure public facing ALB are protected by WAF
+- fix: CKV_AWS_91: "Ensure the ELBv2 (Application/Network) has access logging enabled"
+- fix: CKV_AWS_150: "Ensure that Load Balancer has deletion protection enabled"
+- fix: CKV_AWS_103: "Ensure that load balancer is using TLS 1.2"
+- fix: - CKV_AWS_111 #Ensure IAM policies does not allow write access without constraints
+- fix: CKV_AWS_158 #Ensure that CloudWatch Log Group is encrypted by KMS
 - feat: Add EC2 usage example
 - feat: Possibly use lb module for load-balancer resource
 - feat: Review ecs-service arguments, add and test those missing.
