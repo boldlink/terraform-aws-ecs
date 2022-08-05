@@ -17,9 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: Use load-balancer module in example
 - feat: Add more options for module cloudwatch log group
 - feat: Exclusively use acm certificate (not self_signed_cert) for complete example
-- `feat: use updated vpc source in examples'
-- 'feat: add supporting resources for testing`
-- use updated ecs cluster source for ecs cluster
+- feat: use updated vpc source in examples
+- feat: add supporting resources for testing
+- feat: use updated ecs cluster source for ecs cluster
 - feat: consolidate ecs cluster module and ecs service module into one
 
 ## [1.1.2] - 2022-07-28
