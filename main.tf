@@ -83,10 +83,17 @@ resource "aws_iam_role_policy" "task_execution_role_policy" {
 ############################
 ### Cloudwatch Log Group
 ############################
+resource "aws_kms_key" "cloudwatch_log_group" {
+  description             = "KMS key for encrypting/decrypting ecs service cloudwatch log group"
+  enable_key_rotation     = var.enable_key_rotation
+  policy                  = local.kms_policy
+  deletion_window_in_days = var.key_deletion_window_in_days
+}
+
 resource "aws_cloudwatch_log_group" "main" {
   name              = "/aws/ecs-service/${var.name}"
   retention_in_days = var.retention_in_days
-  kms_key_id        = var.kms_key_id
+  kms_key_id        = var.kms_key_id == null ? aws_kms_key.cloudwatch_log_group.arn : var.kms_key_id
   tags              = var.tags
 }
 
@@ -102,7 +109,18 @@ resource "aws_lb" "main" {
   security_groups            = [aws_security_group.lb[0].id]
   drop_invalid_header_fields = var.drop_invalid_header_fields
   enable_deletion_protection = var.enable_deletion_protection
-  tags                       = var.tags
+
+  dynamic "access_logs" {
+    for_each = (var.load_balancer_type == "Application" || var.load_balancer_type == "Network") && length(keys(var.access_logs)) == 0 ? [] : [var.access_logs]
+
+    content {
+      bucket  = access_logs.value.bucket
+      enabled = try(access_logs.value.enabled, null)
+      prefix  = try(access_logs.value.prefix, null)
+    }
+  }
+
+  tags = var.tags
 }
 
 ############################

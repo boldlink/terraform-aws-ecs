@@ -12,6 +12,7 @@ data "aws_iam_policy_document" "ecs_assume_role_policy" {
 }
 
 data "aws_iam_policy_document" "task_execution_role_policy_doc" {
+  #checkov:skip=CKV_AWS_111:Ensure IAM policies does not allow write access without constraints"
   statement {
     effect = "Allow"
     actions = [
