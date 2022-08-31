@@ -25,22 +25,12 @@ module "kms_key" {
   tags                    = local.tags
 }
 
-module "access_logs" {
-  source              = "boldlink/kms/aws"
-  version             = "1.1.0"
-  description         = "kms key for ${local.tags.Environment} environment"
-  create_kms_alias    = true
-  enable_key_rotation = true
-  alias_name          = "alias/${local.name}-access-logs"
-  tags                = local.tags
-}
-
 module "access_logs_bucket" {
-  source                 = "boldlink/s3/aws"
-  version                = "2.2.0"
-  bucket                 = local.bucket
-  bucket_policy          = data.aws_iam_policy_document.access_logs_bucket.json
-  tags                   = local.tags
+  source        = "boldlink/s3/aws"
+  version       = "2.2.0"
+  bucket        = local.bucket
+  bucket_policy = data.aws_iam_policy_document.access_logs_bucket.json
+  tags          = local.tags
 }
 
 resource "aws_cloudwatch_log_group" "cluster" {
@@ -87,6 +77,7 @@ module "ecs_service_lb" {
   task_execution_role_policy = data.aws_iam_policy_document.task_execution_role_policy_doc.json
   container_definitions      = local.default_container_definitions
   path                       = "/healthz"
+  #enable_deletion_protection = false  ## uncomment this line to enable deletion via terraform
   load_balancer = {
     container_name = local.name
     container_port = 5000
