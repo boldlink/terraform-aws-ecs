@@ -4,8 +4,9 @@
 
 # Terraform module usage example for fargate with load balancer
 
-### Usage Note for this Example
+### Points to Note
 - Add HTTPS inbound rule to load balancer security group for HTTPS to work
+- For this example `deletion_protection` is enabled for the load balancer. Change the argument `  enable_deletion_protection = true` to `  enable_deletion_protection = false` to disable this feature. Terraform will not be able to delete the resource if this feature is not enabled.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements

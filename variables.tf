@@ -164,7 +164,7 @@ variable "load_balancer_type" {
 
 variable "enable_deletion_protection" {
   description = "If true, deletion of the load balancer will be disabled via the AWS API. This will prevent Terraform from deleting the load balancer. Defaults to false."
-  default     = true
+  default     = false
   type        = bool
 }
 
