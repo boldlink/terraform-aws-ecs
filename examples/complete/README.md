@@ -26,6 +26,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
+| <a name="module_access_logs_bucket"></a> [access\_logs\_bucket](#module\_access\_logs\_bucket) | boldlink/s3/aws | 2.2.0 |
 | <a name="module_cluster"></a> [cluster](#module\_cluster) | git::https://github.com/boldlink/terraform-aws-ecs-cluster.git | 1.0.1 |
 | <a name="module_ecs_service_lb"></a> [ecs\_service\_lb](#module\_ecs\_service\_lb) | ../../ | n/a |
 | <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | boldlink/kms/aws | n/a |
@@ -38,6 +39,8 @@
 | [aws_cloudwatch_log_group.cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_elb_service_account.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/elb_service_account) | data source |
+| [aws_iam_policy_document.access_logs_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.ecs_assume_role_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.task_execution_role_policy_doc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_partition.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/partition) | data source |
