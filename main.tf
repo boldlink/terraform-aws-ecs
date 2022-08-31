@@ -139,6 +139,8 @@ resource "aws_lb_target_group" "main_tg" {
     protocol          = var.tg_protocol
     healthy_threshold = var.healthy_threshold
   }
+
+  depends_on = [aws_lb.main]
 }
 
 #http redirect listener

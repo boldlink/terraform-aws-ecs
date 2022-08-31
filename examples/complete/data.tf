@@ -44,3 +44,47 @@ data "aws_availability_zones" "available" {
 data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}
+
+data "aws_elb_service_account" "main" {}
+
+### Access Logs Bucket Policy
+data "aws_iam_policy_document" "access_logs_bucket" {
+  policy_id = "s3_bucket_lb_logs"
+
+  statement {
+    actions = [
+      "s3:PutObject",
+    ]
+    effect    = "Allow"
+    resources = ["arn:${local.partition}:s3:::${local.bucket}/*"]
+
+    principals {
+      identifiers = [local.service_account]
+      type        = "AWS"
+    }
+  }
+
+  statement {
+    actions = [
+      "s3:PutObject"
+    ]
+    effect    = "Allow"
+    resources = ["arn:${local.partition}:s3:::${local.bucket}/*"]
+    principals {
+      identifiers = ["delivery.logs.amazonaws.com"]
+      type        = "Service"
+    }
+  }
+
+  statement {
+    actions = [
+      "s3:GetBucketAcl"
+    ]
+    effect    = "Allow"
+    resources = ["arn:${local.partition}:s3:::${local.bucket}"]
+    principals {
+      identifiers = ["delivery.logs.amazonaws.com"]
+      type        = "Service"
+    }
+  }
+}

@@ -22,22 +22,32 @@ module "kms_key" {
   alias_name              = "alias/${local.name}"
   enable_key_rotation     = true
   deletion_window_in_days = 7
-  tags = {
-    Name               = local.name
-    Environment        = "examples"
-    "user::CostCenter" = "terraform-registry"
-  }
+  tags                    = local.tags
+}
+
+module "access_logs" {
+  source              = "boldlink/kms/aws"
+  version             = "1.1.0"
+  description         = "kms key for ${local.tags.Environment} environment"
+  create_kms_alias    = true
+  enable_key_rotation = true
+  alias_name          = "alias/${local.name}-access-logs"
+  tags                = local.tags
+}
+
+module "access_logs_bucket" {
+  source                 = "boldlink/s3/aws"
+  version                = "2.2.0"
+  bucket                 = local.bucket
+  bucket_policy          = data.aws_iam_policy_document.access_logs_bucket.json
+  tags                   = local.tags
 }
 
 resource "aws_cloudwatch_log_group" "cluster" {
   #checkov:skip=CKV_AWS_158:Ensure that CloudWatch Log Group is encrypted by KMS"
   name              = "${local.name}-log-group"
   retention_in_days = 0
-  tags = {
-    Name               = local.name
-    Environment        = "examples"
-    "user::CostCenter" = "terraform-registry"
-  }
+  tags              = local.tags
 }
 
 module "cluster" {
@@ -81,6 +91,12 @@ module "ecs_service_lb" {
     container_name = local.name
     container_port = 5000
   }
+
+  access_logs = {
+    bucket  = module.access_logs_bucket.id
+    enabled = true
+  }
+
   retention_in_days          = 1
   drop_invalid_header_fields = true
   tg_port                    = 5000
@@ -121,8 +137,5 @@ module "ecs_service_lb" {
       cidr_blocks = ["0.0.0.0/0"]
     }
   }
-  tags = {
-    Environment        = "examples"
-    "user::CostCenter" = "terraform-registry"
-  }
+  tags = local.tags
 }
