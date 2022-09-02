@@ -80,23 +80,15 @@ module "ecs_service" {
   enable_autoscaling         = true
   scalable_dimension         = "ecs:service:DesiredCount"
   service_namespace          = "ecs"
-  svc_ingress_rules = {
-    example_svc = {
+  service_security_group_ingress = [
+    {
       from_port   = 80
       to_port     = 80
-      protocol    = "-1"
+      protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
     }
-  }
+  ]
 
-  svc_egress_rules = {
-    example_svc = {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-  }
   tags = {
     Environment        = "examples"
     "user::CostCenter" = "terraform-registry"
