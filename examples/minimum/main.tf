@@ -14,6 +14,7 @@ module "cluster" {
 }
 
 resource "aws_cloudwatch_log_group" "cluster" {
+  #checkov:skip=CKV_AWS_158:Ensure that CloudWatch Log Group is encrypted by KMS"
   name              = "${local.name}-log-group"
   retention_in_days = 0
   tags = {
@@ -24,8 +25,7 @@ resource "aws_cloudwatch_log_group" "cluster" {
 }
 
 module "ecs_service" {
-  source = "../../"
-  #checkov:skip=CKV_AWS_158:Ensure that CloudWatch Log Group is encrypted by KMS"
+  source                     = "../../"
   name                       = local.name
   cluster                    = module.cluster.id
   launch_type                = "EC2"

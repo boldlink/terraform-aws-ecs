@@ -27,7 +27,7 @@ variable "cluster" {
 variable "retention_in_days" {
   description = "Specifies the number of days you want to retain log events in the specified log group. Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653, and 0. If you select 0, the events in the log group are always retained and never expire."
   type        = number
-  default     = 7
+  default     = 3653
 }
 
 variable "kms_key_id" {
@@ -166,6 +166,24 @@ variable "enable_deletion_protection" {
   description = "If true, deletion of the load balancer will be disabled via the AWS API. This will prevent Terraform from deleting the load balancer. Defaults to false."
   default     = false
   type        = bool
+}
+
+variable "access_logs" {
+  type        = map(string)
+  description = "(Optional) Define an Access Logs block"
+  default     = {}
+}
+
+variable "enable_key_rotation" {
+  type        = bool
+  description = "Choose whether to enable key rotation"
+  default     = true
+}
+
+variable "key_deletion_window_in_days" {
+  type        = number
+  description = "The number of days before the key is deleted"
+  default     = 7
 }
 
 variable "drop_invalid_header_fields" {
@@ -335,28 +353,14 @@ variable "scaling_adjustment" {
   default     = 2
 }
 
-
-# Security groups
-variable "lb_ingress_rules" {
-  description = "(Optional) Ingress rules to add to the security group"
+variable "lb_security_group_ingress" {
+  description = "(Optional) Ingress rules to add to the lb security group"
   type        = any
-  default     = {}
+  default     = []
 }
 
-variable "lb_egress_rules" {
-  description = "(Optional) Egress rules to add to the security group"
+variable "service_security_group_ingress" {
+  description = "(Optional) Ingress rules to add to the service security group"
   type        = any
-  default     = {}
-}
-
-variable "svc_ingress_rules" {
-  description = "(Optional) Ingress rules to add to the security group"
-  type        = any
-  default     = {}
-}
-
-variable "svc_egress_rules" {
-  description = "(Optional) Egress rules to add to the security group"
-  type        = any
-  default     = {}
+  default     = []
 }

@@ -22,22 +22,23 @@ module "kms_key" {
   alias_name              = "alias/${local.name}"
   enable_key_rotation     = true
   deletion_window_in_days = 7
-  tags = {
-    Name               = local.name
-    Environment        = "examples"
-    "user::CostCenter" = "terraform-registry"
-  }
+  tags                    = local.tags
+}
+
+module "access_logs_bucket" {
+  source        = "boldlink/s3/aws"
+  version       = "2.2.0"
+  bucket        = local.bucket
+  force_destroy = true
+  bucket_policy = data.aws_iam_policy_document.access_logs_bucket.json
+  tags          = local.tags
 }
 
 resource "aws_cloudwatch_log_group" "cluster" {
   #checkov:skip=CKV_AWS_158:Ensure that CloudWatch Log Group is encrypted by KMS"
   name              = "${local.name}-log-group"
   retention_in_days = 0
-  tags = {
-    Name               = local.name
-    Environment        = "examples"
-    "user::CostCenter" = "terraform-registry"
-  }
+  tags              = local.tags
 }
 
 module "cluster" {
@@ -59,9 +60,8 @@ module "cluster" {
 module "ecs_service_lb" {
   source = "../../"
   #checkov:skip=CKV_AWS_111:Ensure IAM policies does not allow write access without constraints"
-  #checkov:skip=CKV_AWS_150:Ensure that Load Balancer has deletion protection enabled"
-  #checkov:skip=CKV_AWS_91:Ensure the ELBv2 (Application/Network) has access logging enabled"
-  #checkov:skip=CKV_AWS_103:Ensure that load balancer is using TLS 1.2"
+  #checkov:skip=CKV_AWS_91:Ensure IAM policies does not allow write access without constraints"
+  #checkov:skip=CKV_AWS_103:Ensure IAM policies does not allow write access without constraints"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   name                     = "${local.name}-service"
@@ -78,10 +78,17 @@ module "ecs_service_lb" {
   task_execution_role_policy = data.aws_iam_policy_document.task_execution_role_policy_doc.json
   container_definitions      = local.default_container_definitions
   path                       = "/healthz"
+  enable_deletion_protection = true
   load_balancer = {
     container_name = local.name
     container_port = 5000
   }
+
+  access_logs = {
+    bucket  = module.access_logs_bucket.id
+    enabled = true
+  }
+
   retention_in_days          = 1
   drop_invalid_header_fields = true
   tg_port                    = 5000
@@ -89,41 +96,29 @@ module "ecs_service_lb" {
   enable_autoscaling         = true
   scalable_dimension         = "ecs:service:DesiredCount"
   service_namespace          = "ecs"
-  lb_ingress_rules = {
-    example_lb = {
+  lb_security_group_ingress = [
+    {
       from_port   = 443
       to_port     = 443
-      protocol    = "-1"
+      protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
-    }
-  }
-  lb_egress_rules = {
-    example_lb = {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-  }
-  svc_ingress_rules = {
-    example_svc = {
+    },
+    {
       from_port   = 80
       to_port     = 80
-      protocol    = "-1"
-      cidr_blocks = [local.cidr_block]
-    }
-  }
-
-  svc_egress_rules = {
-    example_svc = {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
+      protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
     }
-  }
-  tags = {
-    Environment        = "examples"
-    "user::CostCenter" = "terraform-registry"
-  }
+  ]
+
+  service_security_group_ingress = [
+    {
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      cidr_blocks = [local.cidr_block]
+    }
+  ]
+
+  tags = local.tags
 }

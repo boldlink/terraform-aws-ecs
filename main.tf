@@ -83,10 +83,17 @@ resource "aws_iam_role_policy" "task_execution_role_policy" {
 ############################
 ### Cloudwatch Log Group
 ############################
+resource "aws_kms_key" "cloudwatch_log_group" {
+  description             = "KMS key for encrypting/decrypting ecs service cloudwatch log group"
+  enable_key_rotation     = var.enable_key_rotation
+  policy                  = local.kms_policy
+  deletion_window_in_days = var.key_deletion_window_in_days
+}
+
 resource "aws_cloudwatch_log_group" "main" {
   name              = "/aws/ecs-service/${var.name}"
   retention_in_days = var.retention_in_days
-  kms_key_id        = var.kms_key_id
+  kms_key_id        = var.kms_key_id == null ? aws_kms_key.cloudwatch_log_group.arn : var.kms_key_id
   tags              = var.tags
 }
 
@@ -102,7 +109,18 @@ resource "aws_lb" "main" {
   security_groups            = [aws_security_group.lb[0].id]
   drop_invalid_header_fields = var.drop_invalid_header_fields
   enable_deletion_protection = var.enable_deletion_protection
-  tags                       = var.tags
+
+  dynamic "access_logs" {
+    for_each = local.legible_lb_type && length(keys(var.access_logs)) != 0 ? [var.access_logs] : []
+
+    content {
+      bucket  = access_logs.value.bucket
+      enabled = try(access_logs.value.enabled, null)
+      prefix  = try(access_logs.value.prefix, null)
+    }
+  }
+
+  tags = var.tags
 }
 
 ############################
@@ -121,6 +139,8 @@ resource "aws_lb_target_group" "main_tg" {
     protocol          = var.tg_protocol
     healthy_threshold = var.healthy_threshold
   }
+
+  depends_on = [aws_lb.main]
 }
 
 #http redirect listener
@@ -199,40 +219,29 @@ resource "aws_security_group" "lb" {
   name        = "${var.name}-lb-security-group"
   vpc_id      = var.vpc_id
   description = "Load balancer security group"
-  tags = merge(
-    {
-      "Name" = var.name
-    },
-    var.tags,
-  )
-}
 
-resource "aws_security_group_rule" "lb_ingress" {
-  for_each          = var.lb_ingress_rules
-  type              = "ingress"
-  description       = "Allow custom inbound traffic from specific ports."
-  from_port         = lookup(each.value, "from_port")
-  to_port           = lookup(each.value, "to_port")
-  protocol          = lookup(each.value, "protocol")
-  cidr_blocks       = lookup(each.value, "cidr_blocks", [])
-  security_group_id = aws_security_group.lb[0].id
-  lifecycle {
-    create_before_destroy = true
+  dynamic "ingress" {
+    for_each = var.lb_security_group_ingress
+    content {
+      description      = "Rule to allow port ${try(ingress.value.from_port, "")} inbound traffic"
+      from_port        = try(ingress.value.from_port, null)
+      to_port          = try(ingress.value.to_port, null)
+      protocol         = try(ingress.value.protocol, null)
+      cidr_blocks      = try(ingress.value.cidr_blocks, [])
+      ipv6_cidr_blocks = try(ingress.value.ipv6_cidr_blocks, [])
+    }
   }
-}
 
-resource "aws_security_group_rule" "lb_egress" {
-  for_each          = var.lb_egress_rules
-  type              = "egress"
-  description       = "Allow custom egress traffic"
-  from_port         = lookup(each.value, "from_port", 0)
-  to_port           = lookup(each.value, "to_port", 0)
-  protocol          = "-1"
-  cidr_blocks       = lookup(each.value, "cidr_blocks", ["0.0.0.0/0"])
-  security_group_id = aws_security_group.lb[0].id
-  lifecycle {
-    create_before_destroy = true
+  egress {
+    description      = "Rule to allow all outbound traffic"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
+
+  tags = var.tags
 }
 
 # Service Security group
@@ -241,40 +250,29 @@ resource "aws_security_group" "service" {
   name        = "${var.name}-security-group"
   vpc_id      = var.vpc_id
   description = "Service security group"
-  tags = merge(
-    {
-      "Name" = var.name
-    },
-    var.tags,
-  )
-}
 
-resource "aws_security_group_rule" "svc_ingress" {
-  for_each          = var.svc_ingress_rules
-  type              = "ingress"
-  description       = "Allow custom inbound traffic from specific ports."
-  from_port         = lookup(each.value, "from_port")
-  to_port           = lookup(each.value, "to_port")
-  protocol          = lookup(each.value, "protocol")
-  cidr_blocks       = lookup(each.value, "cidr_blocks", [])
-  security_group_id = aws_security_group.service[0].id
-  lifecycle {
-    create_before_destroy = true
+  dynamic "ingress" {
+    for_each = var.service_security_group_ingress
+    content {
+      description      = "Rule to allow port ${try(ingress.value.from_port, "")} inbound traffic"
+      from_port        = try(ingress.value.from_port, null)
+      to_port          = try(ingress.value.to_port, null)
+      protocol         = try(ingress.value.protocol, null)
+      cidr_blocks      = try(ingress.value.cidr_blocks, [])
+      ipv6_cidr_blocks = try(ingress.value.ipv6_cidr_blocks, [])
+    }
   }
-}
 
-resource "aws_security_group_rule" "svc_egress" {
-  for_each          = var.svc_egress_rules
-  type              = "egress"
-  description       = "Allow custom egress traffic"
-  from_port         = lookup(each.value, "from_port", 0)
-  to_port           = lookup(each.value, "to_port", 0)
-  protocol          = "-1"
-  cidr_blocks       = lookup(each.value, "cidr_blocks", ["0.0.0.0/0"])
-  security_group_id = aws_security_group.service[0].id
-  lifecycle {
-    create_before_destroy = true
+  egress {
+    description      = "Rule to allow all outbound traffic"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
+
+  tags = var.tags
 }
 
 # Application AutoScaling Resources
