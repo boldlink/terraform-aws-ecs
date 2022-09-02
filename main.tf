@@ -219,40 +219,29 @@ resource "aws_security_group" "lb" {
   name        = "${var.name}-lb-security-group"
   vpc_id      = var.vpc_id
   description = "Load balancer security group"
-  tags = merge(
-    {
-      "Name" = var.name
-    },
-    var.tags,
-  )
-}
 
-resource "aws_security_group_rule" "lb_ingress" {
-  for_each          = var.lb_ingress_rules
-  type              = "ingress"
-  description       = "Allow custom inbound traffic from specific ports."
-  from_port         = lookup(each.value, "from_port")
-  to_port           = lookup(each.value, "to_port")
-  protocol          = lookup(each.value, "protocol")
-  cidr_blocks       = lookup(each.value, "cidr_blocks", [])
-  security_group_id = aws_security_group.lb[0].id
-  lifecycle {
-    create_before_destroy = true
+  dynamic "ingress" {
+    for_each = var.lb_security_group_ingress
+    content {
+      description      = "Rule to allow port ${try(ingress.value.from_port, "")} inbound traffic"
+      from_port        = try(ingress.value.from_port, null)
+      to_port          = try(ingress.value.to_port, null)
+      protocol         = try(ingress.value.protocol, null)
+      cidr_blocks      = try(ingress.value.cidr_blocks, [])
+      ipv6_cidr_blocks = try(ingress.value.ipv6_cidr_blocks, [])
+    }
   }
-}
 
-resource "aws_security_group_rule" "lb_egress" {
-  for_each          = var.lb_egress_rules
-  type              = "egress"
-  description       = "Allow custom egress traffic"
-  from_port         = lookup(each.value, "from_port", 0)
-  to_port           = lookup(each.value, "to_port", 0)
-  protocol          = "-1"
-  cidr_blocks       = lookup(each.value, "cidr_blocks", ["0.0.0.0/0"])
-  security_group_id = aws_security_group.lb[0].id
-  lifecycle {
-    create_before_destroy = true
+  egress {
+    description      = "Rule to allow all outbound traffic"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
+
+  tags = var.tags
 }
 
 # Service Security group
@@ -261,40 +250,29 @@ resource "aws_security_group" "service" {
   name        = "${var.name}-security-group"
   vpc_id      = var.vpc_id
   description = "Service security group"
-  tags = merge(
-    {
-      "Name" = var.name
-    },
-    var.tags,
-  )
-}
 
-resource "aws_security_group_rule" "svc_ingress" {
-  for_each          = var.svc_ingress_rules
-  type              = "ingress"
-  description       = "Allow custom inbound traffic from specific ports."
-  from_port         = lookup(each.value, "from_port")
-  to_port           = lookup(each.value, "to_port")
-  protocol          = lookup(each.value, "protocol")
-  cidr_blocks       = lookup(each.value, "cidr_blocks", [])
-  security_group_id = aws_security_group.service[0].id
-  lifecycle {
-    create_before_destroy = true
+  dynamic "ingress" {
+    for_each = var.service_security_group_ingress
+    content {
+      description      = "Rule to allow port ${try(ingress.value.from_port, "")} inbound traffic"
+      from_port        = try(ingress.value.from_port, null)
+      to_port          = try(ingress.value.to_port, null)
+      protocol         = try(ingress.value.protocol, null)
+      cidr_blocks      = try(ingress.value.cidr_blocks, [])
+      ipv6_cidr_blocks = try(ingress.value.ipv6_cidr_blocks, [])
+    }
   }
-}
 
-resource "aws_security_group_rule" "svc_egress" {
-  for_each          = var.svc_egress_rules
-  type              = "egress"
-  description       = "Allow custom egress traffic"
-  from_port         = lookup(each.value, "from_port", 0)
-  to_port           = lookup(each.value, "to_port", 0)
-  protocol          = "-1"
-  cidr_blocks       = lookup(each.value, "cidr_blocks", ["0.0.0.0/0"])
-  security_group_id = aws_security_group.service[0].id
-  lifecycle {
-    create_before_destroy = true
+  egress {
+    description      = "Rule to allow all outbound traffic"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
+
+  tags = var.tags
 }
 
 # Application AutoScaling Resources

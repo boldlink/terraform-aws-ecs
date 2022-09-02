@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 - fix: CKV_AWS_91: "Ensure the ELBv2 (Application/Network) has access logging enabled"
 - fix: CKV_AWS_150: "Ensure that Load Balancer has deletion protection enabled"
+- feat: update workflow jobs
+- feat: restructure ingress and egress conf blocks
 
 ## [1.1.2] - 2022-07-28
 ### Changes

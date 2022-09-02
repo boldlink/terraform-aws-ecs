@@ -353,28 +353,14 @@ variable "scaling_adjustment" {
   default     = 2
 }
 
-
-# Security groups
-variable "lb_ingress_rules" {
-  description = "(Optional) Ingress rules to add to the security group"
+variable "lb_security_group_ingress" {
+  description = "(Optional) Ingress rules to add to the lb security group"
   type        = any
-  default     = {}
+  default     = []
 }
 
-variable "lb_egress_rules" {
-  description = "(Optional) Egress rules to add to the security group"
+variable "service_security_group_ingress" {
+  description = "(Optional) Ingress rules to add to the service security group"
   type        = any
-  default     = {}
-}
-
-variable "svc_ingress_rules" {
-  description = "(Optional) Ingress rules to add to the security group"
-  type        = any
-  default     = {}
-}
-
-variable "svc_egress_rules" {
-  description = "(Optional) Egress rules to add to the security group"
-  type        = any
-  default     = {}
+  default     = []
 }

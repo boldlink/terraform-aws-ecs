@@ -29,6 +29,7 @@ module "access_logs_bucket" {
   source        = "boldlink/s3/aws"
   version       = "2.2.0"
   bucket        = local.bucket
+  force_destroy = true
   bucket_policy = data.aws_iam_policy_document.access_logs_bucket.json
   tags          = local.tags
 }
@@ -77,7 +78,7 @@ module "ecs_service_lb" {
   task_execution_role_policy = data.aws_iam_policy_document.task_execution_role_policy_doc.json
   container_definitions      = local.default_container_definitions
   path                       = "/healthz"
-  enable_deletion_protection = true
+  enable_deletion_protection = false
   load_balancer = {
     container_name = local.name
     container_port = 5000
@@ -95,38 +96,29 @@ module "ecs_service_lb" {
   enable_autoscaling         = true
   scalable_dimension         = "ecs:service:DesiredCount"
   service_namespace          = "ecs"
-  lb_ingress_rules = {
-    example_lb = {
+  lb_security_group_ingress = [
+    {
       from_port   = 443
       to_port     = 443
-      protocol    = "-1"
+      protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
-    }
-  }
-  lb_egress_rules = {
-    example_lb = {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-  }
-  svc_ingress_rules = {
-    example_svc = {
+    },
+    {
       from_port   = 80
       to_port     = 80
-      protocol    = "-1"
-      cidr_blocks = [local.cidr_block]
-    }
-  }
-
-  svc_egress_rules = {
-    example_svc = {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
+      protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
     }
-  }
+  ]
+
+  service_security_group_ingress = [
+    {
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      cidr_blocks = [local.cidr_block]
+    }
+  ]
+
   tags = local.tags
 }
