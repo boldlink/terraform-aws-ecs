@@ -6,7 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - fix: CKV2_AWS_28 Ensure public facing ALB are protected by WAF
-- fix: CKV_AWS_103: "Ensure that load balancer is using TLS 1.2"
 - fix: CKV_AWS_111 #Ensure IAM policies does not allow write access without constraints
 - fix: CKV_AWS_158 "Ensure that CloudWatch Log Group is encrypted by KMS"
 - feat: Add EC2 usage example
@@ -19,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add supporting resources for testing
 - feat: use updated ecs cluster source for ecs cluster
 - feat: consolidate ecs cluster module and ecs service module into one
+
+## [1.1.4] - 2022-09-29
+### Changes
+- fix: CKV_AWS_103: "Ensure that load balancer is using TLS 1.2"
+- feat: update files
+- feat: update github workflows
 
 ## [1.1.3] - 2022-08-29
 ### Changes
@@ -59,7 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: feature update.
 - feat: initial code commit
 
-[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.1.3...HEAD
+[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.1.4...HEAD
+[1.1.4]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.4
 [1.1.3]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.3
 [1.1.2]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.2
 [1.1.1]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.1

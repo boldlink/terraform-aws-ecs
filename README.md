@@ -1,4 +1,5 @@
-[![Build Status](https://github.com/boldlink/terraform-aws-ecs-service/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/boldlink/terraform-aws-ecs-service/actions)
+[![Build Status](https://github.com/boldlink/terraform-aws-ecs-service/actions/workflows/pre-commit.yaml/badge.svg)](https://github.com/boldlink/terraform-aws-ecs-service/actions)
+[![Build Status](https://github.com/boldlink/terraform-aws-ecs-service/actions/workflows/checkov.yaml/badge.svg)](https://github.com/boldlink/terraform-aws-ecs-service/actions)
 
 [<img src="https://avatars.githubusercontent.com/u/25388280?s=200&v=4" width="96"/>](https://boldlink.io)
 
@@ -62,15 +63,15 @@ module "ecs_service" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.14.11 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.15.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.25.0 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | >= 3.0.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.28.0 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.32.0 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.3 |
 
 ## Modules
 
@@ -154,7 +155,7 @@ No modules.
 | <a name="input_self_signed_cert_organization"></a> [self\_signed\_cert\_organization](#input\_self\_signed\_cert\_organization) | The organization owning this self signed certificate | `string` | `"Boldlink-SIG"` | no |
 | <a name="input_service_namespace"></a> [service\_namespace](#input\_service\_namespace) | (Required) The AWS service namespace of the scalable target. | `string` | `""` | no |
 | <a name="input_service_security_group_ingress"></a> [service\_security\_group\_ingress](#input\_service\_security\_group\_ingress) | (Optional) Ingress rules to add to the service security group | `any` | `[]` | no |
-| <a name="input_ssl_policy"></a> [ssl\_policy](#input\_ssl\_policy) | (Optional) Name of the SSL Policy for the listener. Required if protocol is `HTTPS` or `TLS` | `string` | `"ELBSecurityPolicy-2016-08"` | no |
+| <a name="input_ssl_policy"></a> [ssl\_policy](#input\_ssl\_policy) | (Optional) Name of the SSL Policy for the listener. Required if protocol is `HTTPS` or `TLS` | `string` | `"ELBSecurityPolicy-TLS-1-2-2017-01"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Key Value tags to apply to the resources | `map(string)` | `{}` | no |
 | <a name="input_target_type"></a> [target\_type](#input\_target\_type) | Type of target that you must specify when registering targets with this target group. See doc for supported values. The default is instance. | `string` | `"ip"` | no |
 | <a name="input_task_execution_role"></a> [task\_execution\_role](#input\_task\_execution\_role) | Specify the IAM role for task definition task execution | `string` | `null` | no |
@@ -192,11 +193,35 @@ This repository uses third party software:
   * Install with `brew install tflint`
   * Manually use via pre-commit
 
+### Supporting resources:
+
+The example stacks are used by BOLDLink developers to validate the modules by building an actual stack on AWS.
+
+Some of the modules have dependencies on other modules (ex. Ec2 instance depends on the VPC module) so we create them
+first and use data sources on the examples to use the stacks.
+
+Any supporting resources will be available on the `tests/supportingResources` and the lifecycle is managed by the `Makefile` targets.
+
+Resources on the `tests/supportingResources` folder are not intended for demo or actual implementation purposes, and can be used for reference.
+
 ### Makefile
 The makefile contained in this repo is optimized for linux paths and the main purpose is to execute testing for now.
-* Create all tests:
-`$ make tests`
-* Clean all tests:
-`$ make clean`
+* Create all tests stacks including any supporting resources:
+```console
+make tests
+```
+* Clean all tests *except* existing supporting resources:
+```console
+make clean
+```
+* Clean supporting resources - this is done separately so you can test your module build/modify/destroy independently.
+```console
+make cleansupporting
+```
+* !!!DANGER!!! Clean the state files from examples and test/supportingResources - use with CAUTION!!!
+```console
+make cleanstatefiles
+```
+
 
 #### BOLDLink-SIG 2022

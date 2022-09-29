@@ -5,7 +5,7 @@ locals {
   azs             = flatten(data.aws_availability_zones.available.names)
   name            = "complete-example"
   partition       = data.aws_partition.current.partition
-  bucket          = "${local.name}-access-logs-bucket0"
+  bucket          = "${local.name}-access-logs-bucket"
   service_account = data.aws_elb_service_account.main.arn
   tags = {
     Name               = local.name

@@ -232,7 +232,7 @@ variable "acm_certificate_arn" {
 variable "ssl_policy" {
   type        = string
   description = "(Optional) Name of the SSL Policy for the listener. Required if protocol is `HTTPS` or `TLS`"
-  default     = "ELBSecurityPolicy-2016-08"
+  default     = "ELBSecurityPolicy-TLS-1-2-2017-01"
 }
 
 
