@@ -7,7 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - fix: CKV2_AWS_28 Ensure public facing ALB are protected by WAF
 - fix: CKV_AWS_111 #Ensure IAM policies does not allow write access without constraints
-- fix: CKV_AWS_158 "Ensure that CloudWatch Log Group is encrypted by KMS"
 - feat: Add EC2 usage example
 - feat: Possibly use lb module for load-balancer resource
 - feat: Review ecs-service arguments, add and test those missing.
@@ -19,11 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: use updated ecs cluster source for ecs cluster
 - feat: consolidate ecs cluster module and ecs service module into one
 
-## [1.1.4] - 2022-09-29
+## [1.1.4] - 2022-10-10
 ### Changes
 - fix: CKV_AWS_103: "Ensure that load balancer is using TLS 1.2"
 - feat: update files
 - feat: update github workflows
+- feat: Add supporting resources (vpc and ecs cluster)
+- feat: Make creation of KMS Key optional (i.e external KMS key can be used)
 
 ## [1.1.3] - 2022-08-29
 ### Changes

@@ -1,10 +1,14 @@
 locals {
-  cidr_block     = "172.16.0.0/16"
-  tag_env        = "Dev"
-  public_subnets = cidrsubnets(local.cidr_block, 8, 8, 8)
-  azs            = flatten(data.aws_availability_zones.available.names)
-  name           = "fargate-example"
-  partition      = data.aws_partition.current.partition
+  subnet_id = [
+    for i in data.aws_subnet.public : i.id
+  ]
+
+  name                      = "fargate-ecs-service-example"
+  public_subnets            = local.subnet_id
+  supporting_resources_name = "terraform-aws-ecs-service"
+  vpc_id                    = data.aws_vpc.supporting.id
+  cluster                   = data.aws_ecs_cluster.ecs.arn
+  partition                 = data.aws_partition.current.partition
   default_container_definitions = jsonencode(
     [
       {

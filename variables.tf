@@ -359,8 +359,26 @@ variable "lb_security_group_ingress" {
   default     = []
 }
 
+variable "lb_security_group_egress" {
+  description = "(Optional) Egress rules to add to the lb security group"
+  type        = any
+  default     = []
+}
+
+variable "default_egress_cidrs" {
+  type        = list(string)
+  description = "(Optional) The default cidr blocks for sg egress rules"
+  default     = ["0.0.0.0/0"]
+}
+
 variable "service_security_group_ingress" {
   description = "(Optional) Ingress rules to add to the service security group"
   type        = any
+  default     = []
+}
+
+variable "service_security_group_egress" {
+  type        = any
+  description = "(Optional) Egress rules to add to the service security group"
   default     = []
 }
