@@ -15,7 +15,43 @@ This stack builds:
 * VPC with public and Private subnets
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+## Requirements
 
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.14.11 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >=4.15.1 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.34.0 |
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_cluster"></a> [cluster](#module\_cluster) | git::https://github.com/boldlink/terraform-aws-ecs-cluster.git | 1.0.1 |
+| <a name="module_ecs_vpc"></a> [ecs\_vpc](#module\_ecs\_vpc) | boldlink/vpc/aws | 2.0.3 |
+| <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | boldlink/kms/aws | n/a |
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [aws_cloudwatch_log_group.cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
+| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
+
+## Inputs
+
+No inputs.
+
+## Outputs
+
+No outputs.
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Third party software
