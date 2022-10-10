@@ -20,6 +20,8 @@ env:
   TF_DOCS_VER: "v0.16.0"
   TFLINT_VER: "v0.35.0"
   BIN_PATH: "/home/runner/.local/bin"
+  REPO_NAME: ${{ github.event.repository.name }}
+  REPO_OWNER: ${{ github.repository_owner }}
 
 jobs:
   pre-commit:
@@ -57,6 +59,30 @@ jobs:
 
     - name: Install latest pre-commit
       run: pip install --upgrade pre-commit
+      
+    - name: Check for Workflow Badges in each folder with README
+      shell: bash
+      run: |
+        parent_dir=$(pwd)
+        directories=$(find . -not -path '*/.*' -type d -exec test -e '{}'/README.md \; -print)
+        files=$(ls .github/workflows | grep "yaml")
+        cmd="cat README.md | grep -i 'Build Status' | grep -o "
+        for folder in ${directories} ; do
+                echo "============================================"
+                echo "*******| changing dir to ${folder} |******"
+                cd ${parent_dir}
+                cd "${folder}"
+                for x in ${files}; do
+                        echo running command: $cmd"${x}"
+                        eval ${cmd}"${x}" > /dev/null 2>&1 || echo $? > /dev/null 2>&1
+                        if [[ $_ == "${x}" ]]; then
+                                echo "${x}" Badge Exists!!
+                        else
+                                echo "${x}" Badge NOT FOUND, Adding!
+                                sed -i "1i \[!\[Build Status](https://github.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/actions/workflows/"${x}"/badge.svg)](https://github.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/actions)" README.md
+                        fi
+                done
+        done
 
     - name: Get current date
       id: date
@@ -68,7 +94,7 @@ jobs:
     - name: Push changes automatically!
       uses: EndBug/add-and-commit@v9
       with:
-        message: '[Boldlinksig]: Pre-commit auto updated files on ${{ steps.date.outputs.date }}.'
+        message: '[Boldlinksig]: Pre-commit/badge auto updated files on ${{ steps.date.outputs.date }}.'
         author_name: boldlinksig
         author_email: boldlinksig@boldlink.io
         committer_name: boldlinksig
