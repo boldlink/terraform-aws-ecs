@@ -2,6 +2,8 @@ name: auto-badge
 
 on:
   push:
+    
+    workflows: ["pre-commit"]
 
     branches:
       - 'fix/*'
