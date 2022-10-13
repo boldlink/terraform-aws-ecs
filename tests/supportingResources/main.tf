@@ -9,9 +9,10 @@ module "ecs_vpc" {
   create_nat_gateway      = true
   nat_single_az           = true
   public_subnets          = local.public_subnets
+  private_subnets         = local.private_subnets
   availability_zones      = local.azs
   map_public_ip_on_launch = true
-  tags                    = local.tags
+  other_tags              = local.tags
 }
 
 module "kms_key" {

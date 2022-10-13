@@ -242,6 +242,11 @@ resource "aws_security_group" "lb" {
   }
 
   tags = var.tags
+
+  lifecycle {
+    # Necessary if changing 'name' or 'name_prefix' properties.
+    create_before_destroy = true
+  }
 }
 
 # Service Security group
@@ -258,6 +263,7 @@ resource "aws_security_group" "service" {
       from_port        = try(ingress.value.from_port, null)
       to_port          = try(ingress.value.to_port, null)
       protocol         = try(ingress.value.protocol, null)
+      security_groups  = try(ingress.value.security_groups, [aws_security_group.lb[0].id], [])
       cidr_blocks      = try(ingress.value.cidr_blocks, [])
       ipv6_cidr_blocks = try(ingress.value.ipv6_cidr_blocks, [])
     }
@@ -276,6 +282,11 @@ resource "aws_security_group" "service" {
   }
 
   tags = var.tags
+
+  lifecycle {
+    # Necessary if changing 'name' or 'name_prefix' properties.
+    create_before_destroy = true
+  }
 }
 
 # Application AutoScaling Resources

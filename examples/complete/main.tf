@@ -15,10 +15,11 @@ module "ecs_service_lb" {
   network_mode             = "awsvpc"
   name                     = "${local.name}-service"
   family                   = "${local.name}-task-definition"
+
   network_configuration = {
-    subnets          = local.public_subnets
-    assign_public_ip = true
+    subnets = local.private_subnets
   }
+
   alb_subnets                = local.public_subnets
   cluster                    = local.cluster
   vpc_id                     = local.vpc_id
@@ -45,6 +46,7 @@ module "ecs_service_lb" {
   enable_autoscaling         = true
   scalable_dimension         = "ecs:service:DesiredCount"
   service_namespace          = "ecs"
+
   lb_security_group_ingress = [
     {
       from_port   = 443
@@ -60,12 +62,29 @@ module "ecs_service_lb" {
     }
   ]
 
+  lb_security_group_egress = [
+    {
+      from_port = 0
+      to_port   = 0
+      protocol  = "-1"
+    }
+  ]
+
   service_security_group_ingress = [
     {
-      from_port   = 80
-      to_port     = 80
-      protocol    = "tcp"
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
       cidr_blocks = [local.vpc_cidr]
+    }
+  ]
+
+  service_security_group_egress = [
+    {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_blocks = ["0.0.0.0/0"]
     }
   ]
 

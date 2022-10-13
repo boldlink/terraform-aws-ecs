@@ -7,8 +7,7 @@ module "ecs_service" {
   family                   = "${local.name}-task-definition"
 
   network_configuration = {
-    subnets          = local.public_subnets
-    assign_public_ip = true
+    subnets = local.private_subnets
   }
 
   cluster                    = local.cluster
@@ -31,8 +30,5 @@ module "ecs_service" {
     }
   ]
 
-  tags = {
-    Environment        = "examples"
-    "user::CostCenter" = "terraform-registry"
-  }
+  tags = local.tags
 }
