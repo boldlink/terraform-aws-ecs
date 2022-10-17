@@ -1,4 +1,8 @@
-[![Build Status](https://github.com/boldlink/terraform-aws-ecs-service/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/boldlink/terraform-aws-ecs-service/actions)
+[![Build Status](https://github.com/boldlink/terraform-aws-ecs-service/actions/workflows/release.yaml/badge.svg)](https://github.com/boldlink/terraform-aws-ecs-service/actions)
+[![Build Status](https://github.com/boldlink/terraform-aws-ecs-service/actions/workflows/pr-labeler.yaml/badge.svg)](https://github.com/boldlink/terraform-aws-ecs-service/actions)
+[![Build Status](https://github.com/boldlink/terraform-aws-ecs-service/actions/workflows/auto-badge.yaml/badge.svg)](https://github.com/boldlink/terraform-aws-ecs-service/actions)
+[![Build Status](https://github.com/boldlink/terraform-aws-ecs-service/actions/workflows/pre-commit.yaml/badge.svg)](https://github.com/boldlink/terraform-aws-ecs-service/actions)
+[![Build Status](https://github.com/boldlink/terraform-aws-ecs-service/actions/workflows/checkov.yaml/badge.svg)](https://github.com/boldlink/terraform-aws-ecs-service/actions)
 
 [<img src="https://avatars.githubusercontent.com/u/25388280?s=200&v=4" width="96"/>](https://boldlink.io)
 
@@ -62,15 +66,15 @@ module "ecs_service" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.14.11 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.15.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.25.0 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | >= 3.0.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.28.0 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.34.0 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.3 |
 
 ## Modules
 
@@ -117,6 +121,7 @@ No modules.
 | <a name="input_cpu"></a> [cpu](#input\_cpu) | Number of cpu units used by the task. If the requires\_compatibilities is FARGATE this field is required. | `number` | `256` | no |
 | <a name="input_create_load_balancer"></a> [create\_load\_balancer](#input\_create\_load\_balancer) | Whether to create a load balancer for ecs. | `bool` | `false` | no |
 | <a name="input_create_task_definition"></a> [create\_task\_definition](#input\_create\_task\_definition) | Whether to create the task definition or not | `bool` | `true` | no |
+| <a name="input_default_egress_cidrs"></a> [default\_egress\_cidrs](#input\_default\_egress\_cidrs) | (Optional) The default cidr blocks for sg egress rules | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
 | <a name="input_default_type"></a> [default\_type](#input\_default\_type) | Type for default action | `string` | `"forward"` | no |
 | <a name="input_deployment_controller_type"></a> [deployment\_controller\_type](#input\_deployment\_controller\_type) | (Optional) Type of deployment controller | `string` | `"ECS"` | no |
 | <a name="input_desired_count"></a> [desired\_count](#input\_desired\_count) | The number of instances of a task definition | `number` | `2` | no |
@@ -130,6 +135,7 @@ No modules.
 | <a name="input_key_deletion_window_in_days"></a> [key\_deletion\_window\_in\_days](#input\_key\_deletion\_window\_in\_days) | The number of days before the key is deleted | `number` | `7` | no |
 | <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | The KMS ARN for cloudwatch log group | `string` | `null` | no |
 | <a name="input_launch_type"></a> [launch\_type](#input\_launch\_type) | Launch type on which to run your service. The valid values are EC2, FARGATE, and EXTERNAL. Defaults to EC2. | `string` | `"FARGATE"` | no |
+| <a name="input_lb_security_group_egress"></a> [lb\_security\_group\_egress](#input\_lb\_security\_group\_egress) | (Optional) Egress rules to add to the lb security group | `any` | `[]` | no |
 | <a name="input_lb_security_group_ingress"></a> [lb\_security\_group\_ingress](#input\_lb\_security\_group\_ingress) | (Optional) Ingress rules to add to the lb security group | `any` | `[]` | no |
 | <a name="input_listener_port"></a> [listener\_port](#input\_listener\_port) | (Required) The port to listen on for the load balancer | `number` | `80` | no |
 | <a name="input_listener_protocol"></a> [listener\_protocol](#input\_listener\_protocol) | (Required) The protocol to listen on. Valid values are HTTP, HTTPS, TCP, or SSL | `string` | `"HTTP"` | no |
@@ -153,8 +159,9 @@ No modules.
 | <a name="input_self_signed_cert_common_name"></a> [self\_signed\_cert\_common\_name](#input\_self\_signed\_cert\_common\_name) | Distinguished name | `string` | `"devboldlink.wpengine.com"` | no |
 | <a name="input_self_signed_cert_organization"></a> [self\_signed\_cert\_organization](#input\_self\_signed\_cert\_organization) | The organization owning this self signed certificate | `string` | `"Boldlink-SIG"` | no |
 | <a name="input_service_namespace"></a> [service\_namespace](#input\_service\_namespace) | (Required) The AWS service namespace of the scalable target. | `string` | `""` | no |
+| <a name="input_service_security_group_egress"></a> [service\_security\_group\_egress](#input\_service\_security\_group\_egress) | (Optional) Egress rules to add to the service security group | `any` | `[]` | no |
 | <a name="input_service_security_group_ingress"></a> [service\_security\_group\_ingress](#input\_service\_security\_group\_ingress) | (Optional) Ingress rules to add to the service security group | `any` | `[]` | no |
-| <a name="input_ssl_policy"></a> [ssl\_policy](#input\_ssl\_policy) | (Optional) Name of the SSL Policy for the listener. Required if protocol is `HTTPS` or `TLS` | `string` | `"ELBSecurityPolicy-2016-08"` | no |
+| <a name="input_ssl_policy"></a> [ssl\_policy](#input\_ssl\_policy) | (Optional) Name of the SSL Policy for the listener. Required if protocol is `HTTPS` or `TLS` | `string` | `"ELBSecurityPolicy-TLS-1-2-2017-01"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Key Value tags to apply to the resources | `map(string)` | `{}` | no |
 | <a name="input_target_type"></a> [target\_type](#input\_target\_type) | Type of target that you must specify when registering targets with this target group. See doc for supported values. The default is instance. | `string` | `"ip"` | no |
 | <a name="input_task_execution_role"></a> [task\_execution\_role](#input\_task\_execution\_role) | Specify the IAM role for task definition task execution | `string` | `null` | no |
@@ -192,11 +199,35 @@ This repository uses third party software:
   * Install with `brew install tflint`
   * Manually use via pre-commit
 
+### Supporting resources:
+
+The example stacks are used by BOLDLink developers to validate the modules by building an actual stack on AWS.
+
+Some of the modules have dependencies on other modules (ex. Ec2 instance depends on the VPC module) so we create them
+first and use data sources on the examples to use the stacks.
+
+Any supporting resources will be available on the `tests/supportingResources` and the lifecycle is managed by the `Makefile` targets.
+
+Resources on the `tests/supportingResources` folder are not intended for demo or actual implementation purposes, and can be used for reference.
+
 ### Makefile
 The makefile contained in this repo is optimized for linux paths and the main purpose is to execute testing for now.
-* Create all tests:
-`$ make tests`
-* Clean all tests:
-`$ make clean`
+* Create all tests stacks including any supporting resources:
+```console
+make tests
+```
+* Clean all tests *except* existing supporting resources:
+```console
+make clean
+```
+* Clean supporting resources - this is done separately so you can test your module build/modify/destroy independently.
+```console
+make cleansupporting
+```
+* !!!DANGER!!! Clean the state files from examples and test/supportingResources - use with CAUTION!!!
+```console
+make cleanstatefiles
+```
+
 
 #### BOLDLink-SIG 2022

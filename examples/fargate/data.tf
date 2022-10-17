@@ -38,9 +38,25 @@ data "aws_iam_policy_document" "task_execution_role_policy_doc" {
   }
 }
 
-data "aws_availability_zones" "available" {
-  state = "available"
+data "aws_vpc" "supporting" {
+  filter {
+    name   = "tag:Name"
+    values = [local.supporting_resources_name]
+  }
 }
-data "aws_caller_identity" "current" {}
 
-data "aws_region" "current" {}
+data "aws_subnets" "private" {
+  filter {
+    name   = "tag:Name"
+    values = ["${local.supporting_resources_name}*.pri.*"]
+  }
+}
+
+data "aws_subnet" "private" {
+  for_each = toset(data.aws_subnets.private.ids)
+  id       = each.value
+}
+
+data "aws_ecs_cluster" "ecs" {
+  cluster_name = local.supporting_resources_name
+}

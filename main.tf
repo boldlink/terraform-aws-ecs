@@ -31,12 +31,8 @@ resource "aws_ecs_service" "service" {
       target_group_arn = lookup(load_balancer.value, "target_group_arn", try(aws_lb_target_group.main_tg[0].arn, null))
     }
   }
-  tags = merge(
-    {
-      "Name" = var.name
-    },
-    var.tags,
-  )
+
+  tags = var.tags
 }
 
 ############################
@@ -84,6 +80,7 @@ resource "aws_iam_role_policy" "task_execution_role_policy" {
 ### Cloudwatch Log Group
 ############################
 resource "aws_kms_key" "cloudwatch_log_group" {
+  count                   = var.kms_key_id == null ? 1 : 0
   description             = "KMS key for encrypting/decrypting ecs service cloudwatch log group"
   enable_key_rotation     = var.enable_key_rotation
   policy                  = local.kms_policy
@@ -93,7 +90,7 @@ resource "aws_kms_key" "cloudwatch_log_group" {
 resource "aws_cloudwatch_log_group" "main" {
   name              = "/aws/ecs-service/${var.name}"
   retention_in_days = var.retention_in_days
-  kms_key_id        = var.kms_key_id == null ? aws_kms_key.cloudwatch_log_group.arn : var.kms_key_id
+  kms_key_id        = var.kms_key_id == null ? aws_kms_key.cloudwatch_log_group[0].arn : var.kms_key_id
   tags              = var.tags
 }
 
@@ -232,16 +229,24 @@ resource "aws_security_group" "lb" {
     }
   }
 
-  egress {
-    description      = "Rule to allow all outbound traffic"
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+  dynamic "egress" {
+    for_each = var.lb_security_group_egress
+    content {
+      description      = "Rule to allow outbound traffic"
+      from_port        = try(egress.value.from_port, null)
+      to_port          = try(egress.value.to_port, null)
+      protocol         = try(egress.value.protocol, null)
+      cidr_blocks      = try(egress.value.cidr_blocks, var.default_egress_cidrs)
+      ipv6_cidr_blocks = try(egress.value.ipv6_cidr_blocks, [])
+    }
   }
 
   tags = var.tags
+
+  lifecycle {
+    # Necessary if changing 'name' or 'name_prefix' properties.
+    create_before_destroy = true
+  }
 }
 
 # Service Security group
@@ -258,21 +263,30 @@ resource "aws_security_group" "service" {
       from_port        = try(ingress.value.from_port, null)
       to_port          = try(ingress.value.to_port, null)
       protocol         = try(ingress.value.protocol, null)
+      security_groups  = try(ingress.value.security_groups, [aws_security_group.lb[0].id], [])
       cidr_blocks      = try(ingress.value.cidr_blocks, [])
       ipv6_cidr_blocks = try(ingress.value.ipv6_cidr_blocks, [])
     }
   }
 
-  egress {
-    description      = "Rule to allow all outbound traffic"
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+  dynamic "egress" {
+    for_each = var.service_security_group_egress
+    content {
+      description      = "Rule to allow outbound traffic"
+      from_port        = try(egress.value.from_port, null)
+      to_port          = try(egress.value.to_port, null)
+      protocol         = try(egress.value.protocol, null)
+      cidr_blocks      = try(egress.value.cidr_blocks, var.default_egress_cidrs)
+      ipv6_cidr_blocks = try(egress.value.ipv6_cidr_blocks, [])
+    }
   }
 
   tags = var.tags
+
+  lifecycle {
+    # Necessary if changing 'name' or 'name_prefix' properties.
+    create_before_destroy = true
+  }
 }
 
 # Application AutoScaling Resources
