@@ -9,8 +9,7 @@ module "access_logs_bucket" {
 
 module "ecs_service_lb" {
   source = "../../"
-  #checkov:skip=CKV_AWS_111:Ensure IAM policies does not allow write access without constraints"
-  #checkov:skip=CKV_AWS_91:Ensure IAM policies does not allow write access without constraints"
+  #checkov:skip=CKV_AWS_91:"Ensure the ELBv2 (Application/Network) has access logging enabled"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   name                     = "${local.name}-service"
@@ -25,8 +24,9 @@ module "ecs_service_lb" {
   vpc_id                     = local.vpc_id
   task_role_policy           = data.aws_iam_policy_document.ecs_assume_role_policy.json
   task_execution_role        = data.aws_iam_policy_document.ecs_assume_role_policy.json
-  task_execution_role_policy = data.aws_iam_policy_document.task_execution_role_policy_doc.json
+  task_execution_role_policy = local.task_execution_role_policy_doc
   container_definitions      = local.default_container_definitions
+  kms_key_id                 = data.aws_kms_alias.supporting_kms.target_key_arn
   path                       = "/healthz"
   enable_deletion_protection = true
   load_balancer = {
