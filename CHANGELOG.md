@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: use updated ecs cluster source for ecs cluster
 - feat: consolidate ecs cluster module and ecs service module into one
 
-## [1.1.4] - 2022-10-20
+## [1.1.5] - 2022-10-20
 ### Changes
 - fix: CKV_AWS_111 #Ensure IAM policies does not allow write access without constraints
 - fix: CKV_AWS_158 #Ensure that CloudWatch Log Group is encrypted by KMS
@@ -68,7 +68,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: feature update.
 - feat: initial code commit
 
-[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.1.4...HEAD
+[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.1.5...HEAD
+[1.1.4]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.5
 [1.1.4]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.4
 [1.1.3]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.3
 [1.1.2]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.2
