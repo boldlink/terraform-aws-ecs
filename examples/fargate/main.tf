@@ -15,7 +15,6 @@ module "ecs_service" {
   task_execution_role        = data.aws_iam_policy_document.ecs_assume_role_policy.json
   task_execution_role_policy = local.task_execution_role_policy_doc
   container_definitions      = local.default_container_definitions
-  path                       = "/healthz"
   retention_in_days          = 1
   enable_autoscaling         = true
   scalable_dimension         = "ecs:service:DesiredCount"

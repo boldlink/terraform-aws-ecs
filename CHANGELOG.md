@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - fix: CKV2_AWS_28 Ensure public facing ALB are protected by WAF
+- feat: more than one security group for ecs service 
 - feat: Add EC2 usage example
 - feat: Possibly use lb module for load-balancer resource
 - feat: Review ecs-service arguments, add and test those missing.
@@ -13,7 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: Add more options for module cloudwatch log group
 - feat: Exclusively use acm certificate (not self_signed_cert) for complete example
 - feat: use updated vpc source in examples
-- feat: add supporting resources for testing
 - feat: use updated ecs cluster source for ecs cluster
 - feat: consolidate ecs cluster module and ecs service module into one
 
