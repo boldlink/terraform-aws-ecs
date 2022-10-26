@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 - fix: CKV_AWS_111 #Ensure IAM policies does not allow write access without constraints
 - fix: CKV_AWS_158 #Ensure that CloudWatch Log Group is encrypted by KMS
+
 ## [1.1.4] - 2022-10-10
 ### Changes
 - fix: CKV_AWS_103: "Ensure that load balancer is using TLS 1.2"
@@ -69,7 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: initial code commit
 
 [Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.1.5...HEAD
-[1.1.4]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.5
+[1.1.5]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.5
 [1.1.4]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.4
 [1.1.3]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.3
 [1.1.2]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.2
