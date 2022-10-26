@@ -28,6 +28,14 @@ module "ecs_service" {
       cidr_blocks = ["0.0.0.0/0"]
     }
   ]
+  service_security_group_egress = [
+    {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  ]
 
   tags = local.tags
 }

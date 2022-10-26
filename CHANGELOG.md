@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 - fix: CKV_AWS_111 #Ensure IAM policies does not allow write access without constraints
 - fix: CKV_AWS_158 #Ensure that CloudWatch Log Group is encrypted by KMS
+- hotfix: deployment controller in minimum example
+- fix: egress rules for fargate example
 
 ## [1.1.4] - 2022-10-10
 ### Changes
