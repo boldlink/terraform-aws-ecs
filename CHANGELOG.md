@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - fix: CKV2_AWS_28 Ensure public facing ALB are protected by WAF
-- feat: more than one security group for ecs service 
+- feat: more than one security group for ecs service
 - feat: Add EC2 usage example
 - feat: Possibly use lb module for load-balancer resource
 - feat: Review ecs-service arguments, add and test those missing.
