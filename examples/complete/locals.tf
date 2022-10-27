@@ -36,6 +36,33 @@ locals {
     ]
   )
 
+  task_execution_role_policy_doc = jsonencode(
+    {
+      Version = "2012-10-17",
+      Statement = [{
+        Effect = "Allow",
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+        ]
+        Resource = ["arn:${local.partition}:logs:::log-group:${local.name}"]
+        },
+        {
+          Effect = "Allow"
+          Action = [
+            "ecr:GetAuthorizationToken",
+            "ecr:BatchCheckLayerAvailability",
+            "ecr:GetDownloadUrlForLayer",
+            "ecr:BatchGetImage",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents"
+          ]
+
+          Resource = ["*"]
+        }
+    ] }
+  )
+
   tags = {
     Name               = local.name
     Environment        = "examples"

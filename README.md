@@ -15,36 +15,137 @@ Examples available [here](https://github.com/boldlink/terraform-aws-ecs-service/
 *NOTE*: These examples use the latest version of this module
 
 ```console
-module "cluster" {
-  source = "git::https://github.com/boldlink/terraform-aws-ecs-cluster.git?ref=1.0.1"
-  name   = local.name
-  configuration = {
-    execute_command_configuration = {
-      log_configuration = {
-        cloud_watch_encryption_enabled = true
-        cloud_watch_log_group_name     = aws_cloudwatch_log_group.cluster.name
-        s3_bucket_encryption_enabled   = false
-      }
-      logging = "OVERRIDE"
+data "aws_partition" "current" {}
+
+data "aws_ecs_cluster" "ecs" {
+  cluster_name = local.supporting_resources_name
+}
+
+data "aws_kms_alias" "supporting_kms" {
+  name = "alias/${local.supporting_resources_name}"
+}
+
+data "aws_vpc" "supporting" {
+  filter {
+    name   = "tag:Name"
+    values = [local.supporting_resources_name]
+  }
+}
+
+data "aws_subnets" "private" {
+  filter {
+    name   = "tag:Name"
+    values = ["${local.supporting_resources_name}*.pri.*"]
+  }
+}
+
+data "aws_subnet" "private" {
+  for_each = toset(data.aws_subnets.private.ids)
+  id       = each.value
+}
+
+data "aws_iam_policy_document" "ecs_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
     }
   }
 }
+```
 
-resource "aws_cloudwatch_log_group" "cluster" {
-  name              = "${local.name}-log-group"
-  retention_in_days = 0
-  tags = {
-    Name               = local.name
-    Environment        = "examples"
-    "user::CostCenter" = "terraform-registry"
-  }
+console```
+locals {
+  private_subnet_id = [
+    for i in data.aws_subnet.private : i.id
+  ]
+  name                      = "minimum-example"
+  cluster                   = data.aws_ecs_cluster.ecs.arn
+  supporting_resources_name = "terraform-aws-ecs-service"
+  vpc_id                    = data.aws_vpc.supporting.id
+  private_subnets           = local.private_subnet_id
+  partition                 = data.aws_partition.current.partition
+  default_container_definitions = jsonencode(
+    [
+      {
+        name      = local.name
+        image     = "boldlink/flaskapp"
+        cpu       = 10
+        memory    = 512
+        essential = true
+        portMappings = [
+          {
+            containerPort = 5000
+            hostPort      = 5000
+          }
+        ]
+      }
+    ]
+  )  
+  task_execution_role_policy_doc = jsonencode(
+    {
+      Version = "2012-10-17",
+      Statement = [{
+        Effect = "Allow",
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+        ]
+        Resource = ["arn:${local.partition}:logs:::log-group:${local.name}"]
+        },
+        {
+          Effect = "Allow"
+          Action = [
+            "ecr:GetAuthorizationToken",
+            "ecr:BatchCheckLayerAvailability",
+            "ecr:GetDownloadUrlForLayer",
+            "ecr:BatchGetImage",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents"
+          ]
+
+          Resource = ["*"]
+        }
+    ] }
+  )
 }
+```
 
+console```
 module "ecs_service" {
   source                     = "../../"
   name                       = local.name
-  cluster                    = module.cluster.id
-  deployment_controller_type = "EXTERNAL"
+  family                     = "${local.name}-task-definition"
+  network_mode               = "awsvpc"
+  cluster                    = local.cluster
+  vpc_id                     = local.vpc_id
+  task_role_policy           = data.aws_iam_policy_document.ecs_assume_role_policy.json
+  task_execution_role        = data.aws_iam_policy_document.ecs_assume_role_policy.json
+  task_execution_role_policy = local.task_execution_role_policy_doc
+  container_definitions      = local.default_container_definitions
+  kms_key_id                 = data.aws_kms_alias.supporting_kms.target_key_arn
+  network_configuration = {
+    subnets = local.private_subnets
+  }
+  service_security_group_ingress = [
+    {
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  ]
+
+  service_security_group_egress = [
+    {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  ]
 
   tags = {
     Name               = local.name
@@ -73,7 +174,7 @@ module "ecs_service" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.34.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.36.1 |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.3 |
 
 ## Modules
