@@ -108,11 +108,11 @@ resource "aws_lb" "main" {
   enable_deletion_protection = var.enable_deletion_protection
 
   dynamic "access_logs" {
-    for_each = local.legible_lb_type && length(keys(var.access_logs)) != 0 ? [var.access_logs] : []
+    for_each = [var.access_logs]
 
     content {
       bucket  = access_logs.value.bucket
-      enabled = try(access_logs.value.enabled, null)
+      enabled = access_logs.value.enabled
       prefix  = try(access_logs.value.prefix, null)
     }
   }

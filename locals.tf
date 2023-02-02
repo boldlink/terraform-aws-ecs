@@ -1,7 +1,6 @@
 locals {
   create_task_definition = var.deployment_controller_type != "EXTERNAL" && var.create_task_definition ? true : false
   create_lb_sg           = var.create_load_balancer && length(var.lb_security_group_ingress) > 0 ? true : false
-  legible_lb_type        = title(var.load_balancer_type) == "Application" || title(var.load_balancer_type) == "Network" ? true : false
   create_svc_sg          = length(var.service_security_group_ingress) > 0 ? true : false
   region                 = data.aws_region.current.name
   partition              = data.aws_partition.current.partition
