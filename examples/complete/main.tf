@@ -8,8 +8,7 @@ module "access_logs_bucket" {
 }
 
 module "ecs_service_lb" {
-  source = "../../"
-  #checkov:skip=CKV_AWS_91:"Ensure the ELBv2 (Application/Network) has access logging enabled"
+  source                   = "../../"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   name                     = "${local.name}-service"
