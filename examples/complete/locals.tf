@@ -64,8 +64,13 @@ locals {
   )
 
   tags = {
+    Environment        = "example"
     Name               = local.name
-    Environment        = "examples"
-    "user::CostCenter" = "terraform-registry"
+    "user::CostCenter" = "terraform"
+    department         = "DevOps"
+    Project            = "Examples"
+    Owner              = "Boldlink"
+    LayerName          = "cExample"
+    LayerId            = "cExample"
   }
 }
