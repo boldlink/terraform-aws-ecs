@@ -75,10 +75,12 @@ This repository uses third party software:
 
 The example stacks are used by BOLDLink developers to validate the modules by building an actual stack on AWS.
 
-Some of the modules have dependencies on other modules (ex. Ec2 instance depends on the VPC) so we create them
+Some of the modules have dependencies on other modules (ex. Ec2 instance depends on the VPC module) so we create them
 first and use data sources on the examples to use the stacks.
 
 Any supporting resources will be available on the `tests/supportingResources` and the lifecycle is managed by the `Makefile` targets.
+
+Resources on the `tests/supportingResources` folder are not intended for demo or actual implementation purposes, and can be used for reference.
 
 ### Makefile
 The makefile contained in this repo is optimized for linux paths and the main purpose is to execute testing for now.
@@ -90,9 +92,14 @@ make tests
 ```console
 make clean
 ```
-* Clean supporting resources - this is done seperately so you can test your module build/modify/destroy independently.
+* Clean supporting resources - this is done separately so you can test your module build/modify/destroy independently.
 ```console
 make cleansupporting
 ```
+* !!!DANGER!!! Clean the state files from examples and test/supportingResources - use with CAUTION!!!
+```console
+make cleanstatefiles
+```
 
-#### BOLDLink-SIG 2022
+
+#### BOLDLink-SIG 2023
