@@ -41,7 +41,7 @@ locals {
       }
     ]
   })
-  tags ={
+  tags = {
     Environment        = "example"
     Name               = local.name
     "user::CostCenter" = "terraform"
