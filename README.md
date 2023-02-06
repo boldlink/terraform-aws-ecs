@@ -59,7 +59,7 @@ data "aws_iam_policy_document" "ecs_assume_role_policy" {
 }
 ```
 
-console```
+```console
 locals {
   private_subnet_id = [
     for i in data.aws_subnet.private : i.id
@@ -116,7 +116,7 @@ locals {
 }
 ```
 
-console```
+```console
 module "ecs_service" {
   source                     = "../../"
   name                       = local.name
