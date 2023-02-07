@@ -10,7 +10,12 @@
 [<img src="https://avatars.githubusercontent.com/u/25388280?s=200&v=4" width="96"/>](https://boldlink.io)
 
 ## Description
-This Terraform module creates an ECS service using either `FARGATE` or `EC2` compatibilities.
+This Terraform module creates an ECS service using  `FARGATE` compatibilities.
+
+### Why choose this module
+- The module follows aws security best practices and uses checkov to ensure compliance.
+- Contains elaborate examples that you can use to setup your ecs-service within a very short time.
+- 
 
 Examples available [here](https://github.com/boldlink/terraform-aws-ecs-service/tree/main/examples)
 
@@ -118,7 +123,7 @@ locals {
 
 ```console
 module "ecs_service" {
-  source                     = "../../"
+  source                     = "boldlink/ecs-service/aws"
   name                       = local.name
   family                     = "${local.name}-task-definition"
   network_mode               = "awsvpc"
