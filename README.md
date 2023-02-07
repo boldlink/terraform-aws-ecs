@@ -15,7 +15,7 @@ This Terraform module creates an ECS service using  `FARGATE` compatibilities.
 ### Why choose this module
 - The module follows aws security best practices and uses checkov to ensure compliance.
 - Contains elaborate examples that you can use to setup your ecs-service within a very short time.
-- 
+-
 
 Examples available [here](https://github.com/boldlink/terraform-aws-ecs-service/tree/main/examples)
 
