@@ -8,6 +8,16 @@ locals {
   vpc_id                    = data.aws_vpc.supporting.id
   private_subnets           = local.private_subnet_id
   partition                 = data.aws_partition.current.partition
+  tags = {
+    Environment        = "example"
+    Name               = local.name
+    "user::CostCenter" = "terraform"
+    department         = "DevOps"
+    Project            = "Examples"
+    Owner              = "Boldlink"
+    LayerName          = "cExample"
+    LayerId            = "cExample"
+  }
   default_container_definitions = jsonencode(
     [
       {

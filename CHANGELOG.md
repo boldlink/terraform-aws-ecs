@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: use updated vpc source in examples
 - feat: use updated ecs cluster source for ecs cluster
 - feat: consolidate ecs cluster module and ecs service module into one
+- feat: create only one kms key for encryption.
+
+## [1.1.6] - 2023-02-03
+### Changes
+- fix : CKV_AWS_91: "Ensure the ELBv2 (Application/Network) has access logging enabled"
+- added new github workflow files
 
 ## [1.1.5] - 2022-10-20
 ### Changes
@@ -72,6 +78,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: initial code commit
 
 [Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.1.5...HEAD
+[1.1.6]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.6
 [1.1.5]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.5
 [1.1.4]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.4
 [1.1.3]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.3

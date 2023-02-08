@@ -31,9 +31,5 @@ module "ecs_service" {
     }
   ]
 
-  tags = {
-    Name               = local.name
-    Environment        = "examples"
-    "user::CostCenter" = "terraform-registry"
-  }
+  tags = local.tags
 }

@@ -42,7 +42,14 @@ locals {
     ]
   })
   tags = {
-    Environment        = "examples"
-    "user::CostCenter" = "terraform-registry"
+    Environment        = "example"
+    Name               = local.name
+    "user::CostCenter" = "terraform"
+    department         = "DevOps"
+    Project            = "Examples"
+    Owner              = "Boldlink"
+    InstanceScheduler  = true
+    LayerName          = "cExample"
+    LayerId            = "cExample"
   }
 }
