@@ -382,3 +382,15 @@ variable "service_security_group_egress" {
   description = "(Optional) Egress rules to add to the service security group"
   default     = []
 }
+
+variable "associate_with_waf" {
+  type        = bool
+  description = "Whether to associate created ALB with AWS WAFv2 ACL"
+  default     = false
+}
+
+variable "web_acl_arn" {
+  type        = string
+  description = "The ARN of WAF web acl to associate load balancer with"
+  default     = null
+}

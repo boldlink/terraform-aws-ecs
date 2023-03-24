@@ -7,29 +7,28 @@ locals {
     for i in data.aws_subnet.private : i.id
   ]
 
-  name                      = "complete-ecs-example"
-  public_subnets            = local.public_subnet_id
-  private_subnets           = local.private_subnet_id
-  supporting_resources_name = "terraform-aws-ecs-service"
-  vpc_id                    = data.aws_vpc.supporting.id
-  vpc_cidr                  = data.aws_vpc.supporting.cidr_block
-  cluster                   = data.aws_ecs_cluster.ecs.arn
-  partition                 = data.aws_partition.current.partition
-  bucket                    = "${local.name}-access-logs-bucket"
-  service_account           = data.aws_elb_service_account.main.arn
+  public_subnets  = local.public_subnet_id
+  private_subnets = local.private_subnet_id
+  vpc_id          = data.aws_vpc.supporting.id
+  vpc_cidr        = data.aws_vpc.supporting.cidr_block
+  cluster         = data.aws_ecs_cluster.ecs.arn
+  partition       = data.aws_partition.current.partition
+  bucket          = "${var.name}-access-logs-bucket"
+  service_account = data.aws_elb_service_account.main.arn
+  tags            = merge({ "Name" = var.name }, var.tags)
 
   default_container_definitions = jsonencode(
     [
       {
-        name      = local.name
-        image     = "boldlink/flaskapp"
-        cpu       = 10
-        memory    = 512
-        essential = true
+        name      = var.name
+        image     = var.image
+        cpu       = var.cpu
+        memory    = var.memory
+        essential = var.essential
         portMappings = [
           {
-            containerPort = 5000
-            hostPort      = 5000
+            containerPort = var.containerport
+            hostPort      = var.hostport
           }
         ]
       }
@@ -45,7 +44,7 @@ locals {
           "logs:CreateLogStream",
           "logs:PutLogEvents",
         ]
-        Resource = ["arn:${local.partition}:logs:::log-group:${local.name}"]
+        Resource = ["arn:${local.partition}:logs:::log-group:${var.name}"]
         },
         {
           Effect = "Allow"
@@ -62,15 +61,4 @@ locals {
         }
     ] }
   )
-
-  tags = {
-    Environment        = "example"
-    Name               = local.name
-    "user::CostCenter" = "terraform"
-    department         = "DevOps"
-    Project            = "Examples"
-    Owner              = "Boldlink"
-    LayerName          = "cExample"
-    LayerId            = "cExample"
-  }
 }

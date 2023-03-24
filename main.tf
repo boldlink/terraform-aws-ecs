@@ -120,6 +120,13 @@ resource "aws_lb" "main" {
   tags = var.tags
 }
 
+## WAF Association
+resource "aws_wafv2_web_acl_association" "main" {
+  count        = var.associate_with_waf && var.create_load_balancer ? 1 : 0
+  resource_arn = aws_lb.main[0].arn
+  web_acl_arn  = var.web_acl_arn
+}
+
 ############################
 # lb target group
 ############################
