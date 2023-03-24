@@ -61,12 +61,6 @@ variable "hostport" {
   default     = 5000
 }
 
-variable "requires_compatibilities" {
-  type        = list(string)
-  description = "Set of launch types required by the task. The valid values are EC2 and FARGATE."
-  default     = ["FARGATE"]
-}
-
 variable "network_mode" {
   type        = string
   description = "Docker networking mode to use for the containers in the task. Valid values are none, bridge, awsvpc, and host."

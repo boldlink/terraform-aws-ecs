@@ -5,7 +5,6 @@ locals {
   dns_suffix      = data.aws_partition.current.dns_suffix
   account_id      = data.aws_caller_identity.current.id
   partition       = data.aws_partition.current.partition
-  azs             = flatten(data.aws_availability_zones.available.names)
   tags            = merge({ "Name" = var.name }, var.tags)
 
   kms_policy = jsonencode({
