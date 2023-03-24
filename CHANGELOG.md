@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- fix: CKV2_AWS_28 Ensure public facing ALB are protected by WAF
+- feat: showcase load balancer protection using WAF
 - feat: more than one security group for ecs service
 - feat: Add EC2 usage example
 - feat: Possibly use lb module for load-balancer resource
@@ -16,7 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: use updated vpc source in examples
 - feat: use updated ecs cluster source for ecs cluster
 - feat: consolidate ecs cluster module and ecs service module into one
-- feat: create only one kms key for encryption.
+
+## [1.1.7] - 2023-03-24
+### Changes
+- fix: CKV2_AWS_28 Ensure public facing ALB are protected by WAF
+- feat: seperate static values into variables
 
 ## [1.1.6] - 2023-02-03
 ### Changes
@@ -77,7 +81,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: feature update.
 - feat: initial code commit
 
-[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.1.5...HEAD
+[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.1.7...HEAD
+
+[1.1.7]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.7
 [1.1.6]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.6
 [1.1.5]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.5
 [1.1.4]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.4

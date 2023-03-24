@@ -5,5 +5,4 @@ evaluate-variables: true
 external-modules-download-path: .external_modules
 framework: all
 skip-check:
-- CKV2_AWS_28 #Ensure public facing ALB are protected by WAF
 - CKV_AWS_260 #Ensure no security groups allow ingress from 0.0.0.0:0 to port 80

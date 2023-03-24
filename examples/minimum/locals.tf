@@ -2,39 +2,30 @@ locals {
   private_subnet_id = [
     for i in data.aws_subnet.private : i.id
   ]
-  name                      = "minimum-example"
-  cluster                   = data.aws_ecs_cluster.ecs.arn
-  supporting_resources_name = "terraform-aws-ecs-service"
-  vpc_id                    = data.aws_vpc.supporting.id
-  private_subnets           = local.private_subnet_id
-  partition                 = data.aws_partition.current.partition
-  tags = {
-    Environment        = "example"
-    Name               = local.name
-    "user::CostCenter" = "terraform"
-    department         = "DevOps"
-    Project            = "Examples"
-    Owner              = "Boldlink"
-    LayerName          = "cExample"
-    LayerId            = "cExample"
-  }
+  cluster         = data.aws_ecs_cluster.ecs.arn
+  vpc_id          = data.aws_vpc.supporting.id
+  private_subnets = local.private_subnet_id
+  partition       = data.aws_partition.current.partition
+  tags            = merge({ "Name" = var.name }, var.tags)
+
   default_container_definitions = jsonencode(
     [
       {
-        name      = local.name
-        image     = "boldlink/flaskapp"
-        cpu       = 10
-        memory    = 512
-        essential = true
+        name      = var.name
+        image     = var.image
+        cpu       = var.cpu
+        memory    = var.memory
+        essential = var.essential
         portMappings = [
           {
-            containerPort = 5000
-            hostPort      = 5000
+            containerPort = var.containerport
+            hostPort      = var.hostport
           }
         ]
       }
     ]
   )
+
   task_execution_role_policy_doc = jsonencode(
     {
       Version = "2012-10-17",
@@ -44,7 +35,7 @@ locals {
           "logs:CreateLogStream",
           "logs:PutLogEvents",
         ]
-        Resource = ["arn:${local.partition}:logs:::log-group:${local.name}"]
+        Resource = ["arn:${local.partition}:logs:::log-group:${var.name}"]
         },
         {
           Effect = "Allow"
