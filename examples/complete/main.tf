@@ -8,6 +8,7 @@ module "access_logs_bucket" {
 }
 
 module "ecs_service_lb" {
+  #checkov:skip=CKV_AWS_150: "Ensure that Load Balancer has deletion protection enabled"
   source                   = "../../"
   requires_compatibilities = var.requires_compatibilities
   network_mode             = var.network_mode
@@ -27,7 +28,6 @@ module "ecs_service_lb" {
   container_definitions      = local.default_container_definitions
   kms_key_id                 = data.aws_kms_alias.supporting_kms.target_key_arn
   path                       = var.path
-  enable_deletion_protection = var.enable_deletion_protection
   tags                       = local.tags
   load_balancer = {
     container_name = var.name

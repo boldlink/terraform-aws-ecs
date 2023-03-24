@@ -85,12 +85,6 @@ variable "path" {
   default     = "/healthz"
 }
 
-variable "enable_deletion_protection" {
-  type        = bool
-  description = "Whether to prevent terraform from deleting the lb"
-  default     = true
-}
-
 variable "access_logs_enabled" {
   type        = bool
   description = "Whether to enable access logs for the lb"

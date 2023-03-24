@@ -16,7 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: use updated vpc source in examples
 - feat: use updated ecs cluster source for ecs cluster
 - feat: consolidate ecs cluster module and ecs service module into one
-- feat: create only one kms key for encryption.
 
 ## [1.1.7] - 2023-03-24
 ### Changes
