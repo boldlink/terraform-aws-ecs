@@ -16,6 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: use updated vpc source in examples
 - feat: use updated ecs cluster source for ecs cluster
 - feat: consolidate ecs cluster module and ecs service module into one
+- CKV_AWS_260 Ensure no security groups allow ingress from 0.0.0.0:0 to port 80
+- CKV_AWS_336 Ensure ECS containers are limited to read-only access to root filesystems
+- CKV_AWS_338 Ensure CloudWatch log groups retains logs for at least 1 year
+- CKV2_AWS_5 Ensure that Security Groups are attached to another
+- CKV_AWS_150 Ensure that Load Balancer has deletion protection enabled
+
+## [1.1.8] - 2023-05-17
+### Changes
+- Add the dns_name attribute to the load balancer output
 
 ## [1.1.7] - 2023-03-24
 ### Changes

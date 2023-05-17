@@ -29,3 +29,9 @@ output "cloudwatch_log_group_arn" {
   value       = aws_cloudwatch_log_group.main.arn
   description = "ARN of cloudwatch log group"
 }
+
+output "lb_dns_name" {
+  # count       = var.create_load_balancer ? 1 : 0
+  value       = local.lb_dns_name
+  description = "DNS name of load balancer"
+}
