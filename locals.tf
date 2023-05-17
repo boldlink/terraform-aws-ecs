@@ -6,7 +6,7 @@ locals {
   partition              = data.aws_partition.current.partition
   account_id             = data.aws_caller_identity.current.account_id
   dns_suffix             = data.aws_partition.current.dns_suffix
-
+  lb_dns_name            = var.create_load_balancer == false ? "empty" : aws_lb.main[0].dns_name
   kms_policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
