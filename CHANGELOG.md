@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CKV_AWS_260 Ensure no security groups allow ingress from 0.0.0.0:0 to port 80
 - CKV_AWS_336 Ensure ECS containers are limited to read-only access to root filesystems
 - CKV_AWS_338 Ensure CloudWatch log groups retains logs for at least 1 year
-- CKV2_AWS_5 Ensure that Security Groups are attached to another 
+- CKV2_AWS_5 Ensure that Security Groups are attached to another
 - CKV_AWS_150 Ensure that Load Balancer has deletion protection enabled
 
 ## [1.1.8] - 2023-05-17
