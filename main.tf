@@ -270,7 +270,7 @@ resource "aws_security_group" "service" {
       from_port        = try(ingress.value.from_port, null)
       to_port          = try(ingress.value.to_port, null)
       protocol         = try(ingress.value.protocol, null)
-      security_groups  = try(ingress.value.security_groups, [aws_security_group.lb[0].id], [])
+      security_groups  = try(ingress.value.security_groups, [])
       cidr_blocks      = try(ingress.value.cidr_blocks, [])
       ipv6_cidr_blocks = try(ingress.value.ipv6_cidr_blocks, [])
     }
