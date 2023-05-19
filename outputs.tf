@@ -35,3 +35,9 @@ output "lb_dns_name" {
   value       = local.lb_dns_name
   description = "DNS name of load balancer"
 }
+
+output "lb_dns_zone_id" {
+  # count       = var.create_load_balancer ? 1 : 0
+  value       = local.lb_dns_zone_id
+  description = "DNS zone id of load balancer"
+}
