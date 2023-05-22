@@ -22,6 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CKV2_AWS_5 Ensure that Security Groups are attached to another
 - CKV_AWS_150 Ensure that Load Balancer has deletion protection enabled
 
+
+## [1.4.0] - 2023-05-17
+### Changes
+- force_new_deployment attribute added to ecs service resource with default value `false`
+
 ## [1.3.0] - 2023-05-17
 ### Changes
 - enable_execute_command attribute added to the ecs service resource with default value `false`
@@ -94,8 +99,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: feature update.
 - feat: initial code commit
 
-[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.1.7...HEAD
+[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.4.0...HEAD
 
+[1.4.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.4.0
+[1.3.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.3.0
+[1.2.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.2.0
 [1.1.7]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.7
 [1.1.6]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.6
 [1.1.5]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.1.5
