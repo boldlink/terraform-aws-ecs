@@ -22,7 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CKV2_AWS_5 Ensure that Security Groups are attached to another
 - CKV_AWS_150 Ensure that Load Balancer has deletion protection enabled
 
-## [1.1.8] - 2023-05-17
+## [1.3.0] - 2023-05-17
+### Changes
+- enable_execute_command attribute added to the ecs service resource with default value `false`
+
+## [1.2.0] - 2023-05-17
 ### Changes
 - Add the dns_name attribute to the load balancer output
 
