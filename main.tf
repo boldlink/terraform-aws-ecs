@@ -9,6 +9,7 @@ resource "aws_ecs_service" "service" {
   deployment_minimum_healthy_percent = var.tasks_minimum_healthy_percent
   deployment_maximum_percent         = var.tasks_maximum_percent
   launch_type                        = var.launch_type
+  enable_execute_command             = var.enable_execute_command
 
   deployment_controller {
     type = var.deployment_controller_type

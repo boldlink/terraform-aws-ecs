@@ -14,7 +14,7 @@ module "ecs_service_lb" {
   network_mode             = var.network_mode
   name                     = "${var.name}-service"
   family                   = "${var.name}-task-definition"
-
+  enable_execute_command   = true
   network_configuration = {
     subnets = local.private_subnets
   }

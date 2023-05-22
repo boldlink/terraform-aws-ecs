@@ -394,3 +394,9 @@ variable "web_acl_arn" {
   description = "The ARN of WAF web acl to associate load balancer with"
   default     = null
 }
+
+variable "enable_execute_command" {
+  description = "value to enable execute command at the ecs service, default = false"
+  type        = bool
+  default     = false
+}
