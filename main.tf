@@ -10,6 +10,7 @@ resource "aws_ecs_service" "service" {
   deployment_maximum_percent         = var.tasks_maximum_percent
   launch_type                        = var.launch_type
   enable_execute_command             = var.enable_execute_command
+  force_new_deployment               = var.force_new_deployment
 
   deployment_controller {
     type = var.deployment_controller_type
