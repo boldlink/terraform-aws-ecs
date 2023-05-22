@@ -397,6 +397,6 @@ variable "web_acl_arn" {
 
 variable "enable_execute_command" {
   description = "value to enable execute command at the ecs service, default = false"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
