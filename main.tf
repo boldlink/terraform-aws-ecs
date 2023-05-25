@@ -144,6 +144,7 @@ resource "aws_lb_target_group" "main_tg" {
     path              = var.path
     protocol          = var.tg_protocol
     healthy_threshold = var.healthy_threshold
+    interval          = var.interval
   }
 
   depends_on = [aws_lb.main]

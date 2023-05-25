@@ -406,3 +406,9 @@ variable "force_new_deployment" {
   type        = bool
   default     = false
 }
+
+variable "interval" {
+  description = "(Optional) Approximate amount of time, in seconds, between health checks of an individual target. The range is 5-300. For lambda target groups, it needs to be greater than the timeout of the underlying lambda. Defaults to 30."
+  type        = number
+  default     = 30
+}
