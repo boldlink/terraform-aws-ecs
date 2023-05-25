@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CKV2_AWS_5 Ensure that Security Groups are attached to another
 - CKV_AWS_150 Ensure that Load Balancer has deletion protection enabled
 
+## [1.5.0] - 2023-05-25
+### Changes
+- `interval` attribute added to ecs service target group health check with default value `30`
 
 ## [1.4.0] - 2023-05-17
 ### Changes
