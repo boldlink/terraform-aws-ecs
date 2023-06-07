@@ -13,7 +13,7 @@ variable "supporting_resources_name" {
 variable "image" {
   type        = string
   description = "Name of image to pull from dockerhub"
-  default     = "boldlink/flaskapp"
+  default     = "boldlink/flaskapp:latest"
 }
 
 variable "tags" {
@@ -95,4 +95,32 @@ variable "service_namespace" {
   type        = string
   description = "The AWS service namespace of the scalable target."
   default     = "ecs"
+}
+
+variable "lb_ingress_rules" {
+  type        = list(any)
+  description = "Incoming traffic configuration for the load balancer security group"
+  default = [
+    {
+      from_port   = 443
+      to_port     = 443
+      ip_protocol = "tcp"
+      description = "Allow traffic on port 443"
+      cidr_ipv4   = "0.0.0.0/0"
+    },
+    {
+      from_port   = 80
+      to_port     = 80
+      ip_protocol = "tcp"
+      description = "Allow traffic on port 80"
+      cidr_ipv4   = "0.0.0.0/0"
+    },
+    {
+      from_port   = 5000
+      to_port     = 5000
+      ip_protocol = "tcp"
+      description = "Allow traffic on port 5000"
+      cidr_ipv4   = "0.0.0.0/0"
+    }
+  ]
 }

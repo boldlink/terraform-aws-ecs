@@ -14,7 +14,15 @@
 
 ### Points to Note
 - Add HTTPS inbound rule to load balancer security group for HTTPS to work
-- For this example `deletion_protection` is enabled for the load balancer. Change the argument `  enable_deletion_protection = true` to `  enable_deletion_protection = false` or delete it to disable this feature. Terraform will not be able to delete the resource if this feature is not enabled.
+- For this example `deletion_protection` is enabled for the load balancer. Change the argument ` enable_deletion_protection = true` to `  enable_deletion_protection = false` or delete it to disable this feature. Terraform will not be able to delete the resource if this feature is not enabled.
+- Ensure that traffic on port `5000` is allowed in the ALB security group. This example uses an image that is configured to listen on port `5000`. If you are using your own image, make sure to allow traffic for the port that your application is configured to.
+
+## Testing the deployment
+To test the deployment, follow these steps:
+- Copy the load balancer DNS name.
+- Paste the DNS name into the URL bar of your browser.
+- Append `/healthz` at the end of the endpoint.
+- If the deployment is successful, you should see a `Healthy` message displayed.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -68,8 +76,8 @@
 | <a name="input_force_destroy"></a> [force\_destroy](#input\_force\_destroy) | Whether to force bucket deletion | `bool` | `true` | no |
 | <a name="input_force_new_deployment"></a> [force\_new\_deployment](#input\_force\_new\_deployment) | Enable to force a new task deployment of the service. This can be used to update tasks to use a newer Docker image with same image/tag combination (e.g., myimage:latest), roll Fargate tasks onto a newer platform version, or immediately deploy ordered\_placement\_strategy and placement\_constraints updates. | `bool` | `true` | no |
 | <a name="input_hostport"></a> [hostport](#input\_hostport) | Specify host port | `number` | `5000` | no |
-| <a name="input_image"></a> [image](#input\_image) | Name of image to pull from dockerhub | `string` | `"boldlink/flaskapp"` | no |
-| <a name="input_lb_ingress_rules"></a> [lb\_ingress\_rules](#input\_lb\_ingress\_rules) | Incoming traffic configuration for the load balancer security group | `list(any)` | <pre>[<br>  {<br>    "cidr_ipv4": "0.0.0.0/0",<br>    "description": "Allow traffic on port 443",<br>    "from_port": 443,<br>    "ip_protocol": "tcp",<br>    "to_port": 443<br>  },<br>  {<br>    "cidr_ipv4": "0.0.0.0/0",<br>    "description": "Allow traffic on port 80",<br>    "from_port": 80,<br>    "ip_protocol": "tcp",<br>    "to_port": 80<br>  }<br>]</pre> | no |
+| <a name="input_image"></a> [image](#input\_image) | Name of image to pull from dockerhub | `string` | `"boldlink/flaskapp:latest"` | no |
+| <a name="input_lb_ingress_rules"></a> [lb\_ingress\_rules](#input\_lb\_ingress\_rules) | Incoming traffic configuration for the load balancer security group | `list(any)` | <pre>[<br>  {<br>    "cidr_ipv4": "0.0.0.0/0",<br>    "description": "Allow traffic on port 443",<br>    "from_port": 443,<br>    "ip_protocol": "tcp",<br>    "to_port": 443<br>  },<br>  {<br>    "cidr_ipv4": "0.0.0.0/0",<br>    "description": "Allow traffic on port 80",<br>    "from_port": 80,<br>    "ip_protocol": "tcp",<br>    "to_port": 80<br>  },<br>  {<br>    "cidr_ipv4": "0.0.0.0/0",<br>    "description": "Allow traffic on port 5000. The app is configured to use this port",<br>    "from_port": 5000,<br>    "ip_protocol": "tcp",<br>    "to_port": 5000<br>  }<br>]</pre> | no |
 | <a name="input_memory"></a> [memory](#input\_memory) | The size of memory to allocate in MiBs | `number` | `512` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name of the stack | `string` | `"complete-ecs-example"` | no |
 | <a name="input_network_mode"></a> [network\_mode](#input\_network\_mode) | Docker networking mode to use for the containers in the task. Valid values are none, bridge, awsvpc, and host. | `string` | `"awsvpc"` | no |

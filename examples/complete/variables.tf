@@ -13,7 +13,7 @@ variable "supporting_resources_name" {
 variable "image" {
   type        = string
   description = "Name of image to pull from dockerhub"
-  default     = "boldlink/flaskapp"
+  default     = "boldlink/flaskapp:latest"
 }
 
 variable "tags" {
@@ -161,6 +161,13 @@ variable "lb_ingress_rules" {
       to_port     = 80
       ip_protocol = "tcp"
       description = "Allow traffic on port 80"
+      cidr_ipv4   = "0.0.0.0/0"
+    },
+    {
+      from_port   = 5000
+      to_port     = 5000
+      ip_protocol = "tcp"
+      description = "Allow traffic on port 5000. The app is configured to use this port"
       cidr_ipv4   = "0.0.0.0/0"
     }
   ]
