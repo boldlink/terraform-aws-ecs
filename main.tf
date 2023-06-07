@@ -254,7 +254,7 @@ resource "aws_vpc_security_group_egress_rule" "lb" {
 
 # Service Security group
 resource "aws_security_group" "service" {
-  count = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 1 : 0
+  count                  = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 1 : 0
   name                   = "${var.name}-security-group"
   vpc_id                 = var.vpc_id
   description            = "Service security group"
@@ -279,7 +279,7 @@ resource "aws_vpc_security_group_ingress_rule" "service" {
 }
 
 resource "aws_vpc_security_group_egress_rule" "service" {
-  count = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 1 : 0
+  count             = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 1 : 0
   security_group_id = join("", aws_security_group.service.*.id)
   cidr_ipv4         = "0.0.0.0/0"
   description       = "service all protocol SG egress rule"
