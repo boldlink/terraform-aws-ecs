@@ -22,7 +22,7 @@ resource "aws_ecs_service" "service" {
     content {
       subnets          = network_configuration.value.subnets
       assign_public_ip = try(network_configuration.value.assign_public_ip, null)
-      security_groups  = [aws_security_group.service.id]
+      security_groups  = [join("", aws_security_group.service.*.id)]
     }
   }
 
@@ -254,6 +254,7 @@ resource "aws_vpc_security_group_egress_rule" "lb" {
 
 # Service Security group
 resource "aws_security_group" "service" {
+  count = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 1 : 0
   name                   = "${var.name}-security-group"
   vpc_id                 = var.vpc_id
   description            = "Service security group"
@@ -268,7 +269,7 @@ resource "aws_security_group" "service" {
 
 resource "aws_vpc_security_group_ingress_rule" "service" {
   count                        = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? length(var.lb_ingress_rules) : 0
-  security_group_id            = aws_security_group.service.id
+  security_group_id            = join("", aws_security_group.service.*.id)
   description                  = try(var.lb_ingress_rules[count.index]["description"], null)
   referenced_security_group_id = join("", aws_security_group.lb.*.id)
   from_port                    = try(var.lb_ingress_rules[count.index]["from_port"], null)
@@ -277,17 +278,9 @@ resource "aws_vpc_security_group_ingress_rule" "service" {
   tags                         = var.tags
 }
 
-resource "aws_vpc_security_group_ingress_rule" "default" {
-  count                        = length(var.lb_ingress_rules) == 0 ? 1 : 0
-  security_group_id            = aws_security_group.service.id
-  description                  = "Default rule to allow all traffic internally within this service SG"
-  referenced_security_group_id = aws_security_group.service.id
-  ip_protocol                  = "-1"
-  tags                         = var.tags
-}
-
 resource "aws_vpc_security_group_egress_rule" "service" {
-  security_group_id = aws_security_group.service.id
+  count = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 1 : 0
+  security_group_id = join("", aws_security_group.service.*.id)
   cidr_ipv4         = "0.0.0.0/0"
   description       = "service all protocol SG egress rule"
   ip_protocol       = "-1"
