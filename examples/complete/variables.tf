@@ -127,52 +127,41 @@ variable "scalable_dimension" {
   default     = "ecs:service:DesiredCount"
 }
 
+variable "enable_execute_command" {
+  description = "value to enable execute command at the ecs service, default = false"
+  type        = bool
+  default     = true
+}
+
+variable "force_new_deployment" {
+  description = "Enable to force a new task deployment of the service. This can be used to update tasks to use a newer Docker image with same image/tag combination (e.g., myimage:latest), roll Fargate tasks onto a newer platform version, or immediately deploy ordered_placement_strategy and placement_constraints updates."
+  type        = bool
+  default     = true
+}
+
 variable "service_namespace" {
   type        = string
   description = "The AWS service namespace of the scalable target."
   default     = "ecs"
 }
 
-variable "lb_security_group_ingress_config" {
-  type        = any
+variable "lb_ingress_rules" {
+  type        = list(any)
   description = "Incoming traffic configuration for the load balancer security group"
   default = [
     {
       from_port   = 443
       to_port     = 443
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
+      ip_protocol = "tcp"
+      description = "Allow traffic on port 443"
+      cidr_ipv4   = "0.0.0.0/0"
     },
     {
       from_port   = 80
       to_port     = 80
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-  ]
-}
-
-variable "lb_security_group_egress_config" {
-  type        = any
-  description = "Outgoing traffic configuration for the load balancer security group"
-  default = [
-    {
-      from_port = 0
-      to_port   = 0
-      protocol  = "-1"
-    }
-  ]
-}
-
-variable "service_sg_egress_config" {
-  type        = any
-  description = "Outgoing traffic configuration for the service security group"
-  default = [
-    {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
+      ip_protocol = "tcp"
+      description = "Allow traffic on port 80"
+      cidr_ipv4   = "0.0.0.0/0"
     }
   ]
 }

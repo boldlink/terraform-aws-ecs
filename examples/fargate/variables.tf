@@ -96,29 +96,3 @@ variable "service_namespace" {
   description = "The AWS service namespace of the scalable target."
   default     = "ecs"
 }
-
-variable "service_security_group_ingress_config" {
-  type        = any
-  description = "Incoming traffic configuration for service security group"
-  default = [
-    {
-      from_port   = 80
-      to_port     = 80
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-  ]
-}
-
-variable "service_security_group_egress_config" {
-  type        = any
-  description = "Outgoing traffic configuration service security group"
-  default = [
-    {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-  ]
-}

@@ -24,7 +24,7 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.67.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.1.0 |
 
 ## Modules
 
@@ -61,8 +61,6 @@
 | <a name="input_retention_in_days"></a> [retention\_in\_days](#input\_retention\_in\_days) | Number of days you want to retain log events in the specified log group. | `number` | `1` | no |
 | <a name="input_scalable_dimension"></a> [scalable\_dimension](#input\_scalable\_dimension) | The scalable dimension of the scalable target. | `string` | `"ecs:service:DesiredCount"` | no |
 | <a name="input_service_namespace"></a> [service\_namespace](#input\_service\_namespace) | The AWS service namespace of the scalable target. | `string` | `"ecs"` | no |
-| <a name="input_service_security_group_egress_config"></a> [service\_security\_group\_egress\_config](#input\_service\_security\_group\_egress\_config) | Outgoing traffic configuration service security group | `any` | <pre>[<br>  {<br>    "cidr_blocks": [<br>      "0.0.0.0/0"<br>    ],<br>    "from_port": 0,<br>    "protocol": "-1",<br>    "to_port": 0<br>  }<br>]</pre> | no |
-| <a name="input_service_security_group_ingress_config"></a> [service\_security\_group\_ingress\_config](#input\_service\_security\_group\_ingress\_config) | Incoming traffic configuration for service security group | `any` | <pre>[<br>  {<br>    "cidr_blocks": [<br>      "0.0.0.0/0"<br>    ],<br>    "from_port": 80,<br>    "protocol": "tcp",<br>    "to_port": 80<br>  }<br>]</pre> | no |
 | <a name="input_supporting_resources_name"></a> [supporting\_resources\_name](#input\_supporting\_resources\_name) | Name of the supporting resources stack | `string` | `"terraform-aws-ecs-service"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to the resources | `map(string)` | <pre>{<br>  "Department": "DevOps",<br>  "Environment": "example",<br>  "InstanceScheduler": true,<br>  "LayerId": "cExample",<br>  "LayerName": "cExample",<br>  "Owner": "Boldlink",<br>  "Project": "Examples",<br>  "user::CostCenter": "terraform"<br>}</pre> | no |
 

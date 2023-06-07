@@ -22,6 +22,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CKV2_AWS_5 Ensure that Security Groups are attached to another
 - CKV_AWS_150 Ensure that Load Balancer has deletion protection enabled
 
+## [1.5.1] - 2023-06-06
+### Changes
+- fix: Only allow LB SG to connect to the service LB
+- fix: made access_logs block optional. Previously, it was mandatory
+- feat: Allow egress rules to all protocols by default in all the SGs
+- feat: Separated SG resource from SG rules resources
+
 ## [1.5.0] - 2023-05-25
 ### Changes
 - `interval` attribute added to ecs service target group health check with default value `30`
@@ -102,8 +109,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: feature update.
 - feat: initial code commit
 
-[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.4.0...HEAD
+[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.5.1...HEAD
 
+[1.5.1]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.1
+[1.5.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.0
 [1.4.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.4.0
 [1.3.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.3.0
 [1.2.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.2.0
