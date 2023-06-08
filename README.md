@@ -11,7 +11,7 @@
 [<img src="https://avatars.githubusercontent.com/u/25388280?s=200&v=4" width="96"/>](https://boldlink.io)
 
 ## Description
-This Terraform module creates an ECS service using  `FARGATE` compatibilities.
+This Terraform module creates an ECS service using `FARGATE` compatibilities.
 
 ### Why choose this module
 - The module follows aws security best practices and uses checkov to ensure compliance.
@@ -19,6 +19,20 @@ This Terraform module creates an ECS service using  `FARGATE` compatibilities.
 - Deploy related multiple resources for your application at once
 
 Examples available [here](./examples)
+
+### Troubleshooting ALB Target Group Health Check Failure
+If you encounter any health check failures while using this module, please consider the following steps to troubleshoot the issue:
+
+1. Verify Docker Container Port Mapping: Ensure that the port mapping between the Docker container and the host port is accurately configured. Incorrect port mapping can lead to health check failures.
+
+2. Adjust ALB Health Check Interval: Some applications require a longer time to become fully operational. Make sure the health check interval of your Application Load Balancer (ALB) is appropriately set to allow enough time for the application to start and respond to health checks.
+
+3. Validate Target Group Health Check Endpoint: Verify that the endpoint used for the target group health checks is correct and returns a 200 status code. This ensures that the health checks are performed against the intended endpoint.
+
+4. Verify ALB Security Group Inbound Traffic: When using an Application Load Balancer, ensure that the port configured in your application is allowed in the ALB security group's inbound traffic rules. By default, the service security group in this module only permits traffic from the ALB security group for the specified ports. Adjust the security group rules accordingly to allow traffic from the desired ports.
+
+For more detailed information on troubleshooting ALB health check failures, you can refer to this [Stack Overflow post](https://stackoverflow.com/questions/54503360/aws-ecs-error-task-failed-elb-health-checks-in-target-group). It provides additional insights and solutions to common issues related to ALB health checks.
+
 
 ## Usage
 **NOTE**: These examples use the latest version of this module
