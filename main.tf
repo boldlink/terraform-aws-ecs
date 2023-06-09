@@ -34,6 +34,11 @@ resource "aws_ecs_service" "service" {
       target_group_arn = lookup(load_balancer.value, "target_group_arn", try(aws_lb_target_group.main_tg[0].arn, null))
     }
   }
+
+  triggers = {
+    redeployment = timestamp()
+  }
+
 }
 
 ############################

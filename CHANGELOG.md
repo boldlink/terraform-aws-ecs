@@ -22,12 +22,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CKV2_AWS_5 Ensure that Security Groups are attached to another
 - CKV_AWS_150 Ensure that Load Balancer has deletion protection enabled
 
-## [1.5.1] - 2023-06-06
+## [1.5.1] - 2023-06-09
 ### Changes
 - fix: Only allow LB SG to connect to the service LB
 - fix: made access_logs block optional. Previously, it was mandatory
 - feat: Allow egress rules to all protocols by default in all the SGs
 - feat: Separated SG resource from SG rules resources
+- fix: exempted checkov alert CKV_AWS_150: "Ensure that Load Balancer has deletion protection enabled" in the examples
+- fix: exempted checkov alert CKV_AWS_290: "Ensure IAM policies does not allow write access without constraints" in the examples
 
 ## [1.5.0] - 2023-05-25
 ### Changes

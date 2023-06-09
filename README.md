@@ -33,6 +33,14 @@ If you encounter any health check failures while using this module, please consi
 
 For more detailed information on troubleshooting ALB health check failures, you can refer to this [Stack Overflow post](https://stackoverflow.com/questions/54503360/aws-ecs-error-task-failed-elb-health-checks-in-target-group). It provides additional insights and solutions to common issues related to ALB health checks.
 
+### AWS ECS Service Deployment Control
+This module supports AWS ECS Service Deployment Control where it provides the capability to trigger a new deployment for the ECS service, even without changes in the Terraform codebase. This feature ensures that the service is updated with the latest changes, even when using the same image tag instead of semantic versioning.
+
+### Use Case Scenarios:
+**Force Deployment:** When deploying an ECS service using the same image tag, triggering a new deployment forces the service to update with the latest changes. This is particularly useful when you want to ensure that the service is always running the latest version of the containerized application, regardless of the image tag. It eliminates the need for manually updating the tag or using semantic versioning for each deployment.
+
+- To take advantage of this feature, ensure the `var.force_new_deployment` variable is set to `true` in your Terraform configuration. For this example, this feature is enabled. Disable it by ensuring the `var.force_new_deployment` to `false`.
+
 
 ## Usage
 **NOTE**: These examples use the latest version of this module
