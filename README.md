@@ -11,7 +11,7 @@
 [<img src="https://avatars.githubusercontent.com/u/25388280?s=200&v=4" width="96"/>](https://boldlink.io)
 
 ## Description
-This Terraform module creates an ECS service using  `FARGATE` compatibilities.
+This Terraform module creates an ECS service using `FARGATE` compatibilities.
 
 ### Why choose this module
 - The module follows aws security best practices and uses checkov to ensure compliance.
@@ -19,6 +19,28 @@ This Terraform module creates an ECS service using  `FARGATE` compatibilities.
 - Deploy related multiple resources for your application at once
 
 Examples available [here](./examples)
+
+### Troubleshooting ALB Target Group Health Check Failure
+If you encounter any health check failures while using this module, please consider the following steps to troubleshoot the issue:
+
+1. Verify Docker Container Port Mapping: Ensure that the port mapping between the Docker container and the host port is accurately configured. Incorrect port mapping can lead to health check failures.
+
+2. Adjust ALB Health Check Interval: Some applications require a longer time to become fully operational. Make sure the health check interval of your Application Load Balancer (ALB) is appropriately set to allow enough time for the application to start and respond to health checks.
+
+3. Validate Target Group Health Check Endpoint: Verify that the endpoint used for the target group health checks is correct and returns a 200 status code. This ensures that the health checks are performed against the intended endpoint.
+
+4. Verify ALB Security Group Inbound Traffic: When using an Application Load Balancer, ensure that the port configured in your application is allowed in the ALB security group's inbound traffic rules. By default, the service security group in this module only permits traffic from the ALB security group for the specified ports. Adjust the security group rules accordingly to allow traffic from the desired ports.
+
+For more detailed information on troubleshooting ALB health check failures, you can refer to this [Stack Overflow post](https://stackoverflow.com/questions/54503360/aws-ecs-error-task-failed-elb-health-checks-in-target-group). It provides additional insights and solutions to common issues related to ALB health checks.
+
+### AWS ECS Service Deployment Control
+This module supports AWS ECS Service Deployment Control where it provides the capability to trigger a new deployment for the ECS service, even without changes in the Terraform codebase. This feature ensures that the service is updated with the latest changes, even when using the same image tag instead of semantic versioning.
+
+### Use Case Scenarios:
+**Force Deployment:** When deploying an ECS service using the same image tag, triggering a new deployment forces the service to update with the latest changes. This is particularly useful when you want to ensure that the service is always running the latest version of the containerized application, regardless of the image tag. It eliminates the need for manually updating the tag or using semantic versioning for each deployment.
+
+- To take advantage of this feature, ensure the `var.force_new_deployment` variable is set to `true` in your Terraform configuration. For this example, this feature is enabled. Disable it by ensuring the `var.force_new_deployment` to `false`.
+
 
 ## Usage
 **NOTE**: These examples use the latest version of this module
@@ -80,7 +102,7 @@ locals {
     [
       {
         name      = local.name
-        image     = "boldlink/flaskapp"
+        image     = "boldlink/flaskapp:latest"
         cpu       = 10
         memory    = 512
         essential = true
@@ -124,10 +146,10 @@ locals {
 
 ```hcl
 module "ecs_service" {
-  source                     = "boldlink/ecs-service/aws"
-  name                       = local.name
-  family                     = "${local.name}-task-definition"
-  network_mode               = "awsvpc"
+  source                     = "../../"
+  name                       = var.name
+  family                     = "${var.name}-task-definition"
+  network_mode               = var.network_mode
   cluster                    = local.cluster
   vpc_id                     = local.vpc_id
   task_role_policy           = data.aws_iam_policy_document.ecs_assume_role_policy.json
@@ -135,31 +157,11 @@ module "ecs_service" {
   task_execution_role_policy = local.task_execution_role_policy_doc
   container_definitions      = local.default_container_definitions
   kms_key_id                 = data.aws_kms_alias.supporting_kms.target_key_arn
+  tags                       = local.tags
+  lb_ingress_rules           = var.lb_ingress_rules
+
   network_configuration = {
     subnets = local.private_subnets
-  }
-  service_security_group_ingress = [
-    {
-      from_port   = 80
-      to_port     = 80
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-  ]
-
-  service_security_group_egress = [
-    {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-  ]
-
-  tags = {
-    Name               = local.name
-    Environment        = "examples"
-    "user::CostCenter" = "terraform-registry"
   }
 }
 ```
@@ -176,14 +178,14 @@ module "ecs_service" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.14.11 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.25.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.0.0 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | >= 3.0.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.67.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.2.0 |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.4 |
 
 ## Modules
@@ -210,6 +212,10 @@ No modules.
 | [aws_lb_target_group.main_tg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group) | resource |
 | [aws_security_group.lb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group.service](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_vpc_security_group_egress_rule.lb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
+| [aws_vpc_security_group_egress_rule.service](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
+| [aws_vpc_security_group_ingress_rule.lb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
+| [aws_vpc_security_group_ingress_rule.service](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
 | [aws_wafv2_web_acl_association.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/wafv2_web_acl_association) | resource |
 | [tls_private_key.default](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [tls_self_signed_cert.default](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/self_signed_cert) | resource |
@@ -233,10 +239,9 @@ No modules.
 | <a name="input_cpu"></a> [cpu](#input\_cpu) | Number of cpu units used by the task. If the requires\_compatibilities is FARGATE this field is required. | `number` | `256` | no |
 | <a name="input_create_load_balancer"></a> [create\_load\_balancer](#input\_create\_load\_balancer) | Whether to create a load balancer for ecs. | `bool` | `false` | no |
 | <a name="input_create_task_definition"></a> [create\_task\_definition](#input\_create\_task\_definition) | Whether to create the task definition or not | `bool` | `true` | no |
-| <a name="input_default_egress_cidrs"></a> [default\_egress\_cidrs](#input\_default\_egress\_cidrs) | (Optional) The default cidr blocks for sg egress rules | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
 | <a name="input_default_type"></a> [default\_type](#input\_default\_type) | Type for default action | `string` | `"forward"` | no |
 | <a name="input_deployment_controller_type"></a> [deployment\_controller\_type](#input\_deployment\_controller\_type) | (Optional) Type of deployment controller | `string` | `"ECS"` | no |
-| <a name="input_desired_count"></a> [desired\_count](#input\_desired\_count) | The number of instances of a task definition | `number` | `2` | no |
+| <a name="input_desired_count"></a> [desired\_count](#input\_desired\_count) | The number of instances of a task definition | `number` | `1` | no |
 | <a name="input_drop_invalid_header_fields"></a> [drop\_invalid\_header\_fields](#input\_drop\_invalid\_header\_fields) | Indicates whether HTTP headers with header fields that are not valid are removed by the load balancer (true) or routed to targets (false). The default is false. Elastic Load Balancing requires that message header names contain only alphanumeric characters and hyphens. Only valid for Load Balancers of type application. | `bool` | `false` | no |
 | <a name="input_enable_autoscaling"></a> [enable\_autoscaling](#input\_enable\_autoscaling) | Whether to enable autoscaling or not for ecs | `bool` | `false` | no |
 | <a name="input_enable_deletion_protection"></a> [enable\_deletion\_protection](#input\_enable\_deletion\_protection) | If true, deletion of the load balancer will be disabled via the AWS API. This will prevent Terraform from deleting the load balancer. Defaults to false. | `bool` | `false` | no |
@@ -250,8 +255,7 @@ No modules.
 | <a name="input_key_deletion_window_in_days"></a> [key\_deletion\_window\_in\_days](#input\_key\_deletion\_window\_in\_days) | The number of days before the key is deleted | `number` | `7` | no |
 | <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | The KMS ARN for cloudwatch log group | `string` | `null` | no |
 | <a name="input_launch_type"></a> [launch\_type](#input\_launch\_type) | Launch type on which to run your service. The valid values are EC2, FARGATE, and EXTERNAL. Defaults to EC2. | `string` | `"FARGATE"` | no |
-| <a name="input_lb_security_group_egress"></a> [lb\_security\_group\_egress](#input\_lb\_security\_group\_egress) | (Optional) Egress rules to add to the lb security group | `any` | `[]` | no |
-| <a name="input_lb_security_group_ingress"></a> [lb\_security\_group\_ingress](#input\_lb\_security\_group\_ingress) | (Optional) Ingress rules to add to the lb security group | `any` | `[]` | no |
+| <a name="input_lb_ingress_rules"></a> [lb\_ingress\_rules](#input\_lb\_ingress\_rules) | Ingress rules to add to the load balancer security group. The rules defined here will be used by service security group | `list(any)` | `[]` | no |
 | <a name="input_listener_port"></a> [listener\_port](#input\_listener\_port) | (Required) The port to listen on for the load balancer | `number` | `80` | no |
 | <a name="input_listener_protocol"></a> [listener\_protocol](#input\_listener\_protocol) | (Required) The protocol to listen on. Valid values are HTTP, HTTPS, TCP, or SSL | `string` | `"HTTP"` | no |
 | <a name="input_load_balancer"></a> [load\_balancer](#input\_load\_balancer) | (Optional) Configuration block for load balancers | `any` | `[]` | no |
@@ -274,8 +278,6 @@ No modules.
 | <a name="input_self_signed_cert_common_name"></a> [self\_signed\_cert\_common\_name](#input\_self\_signed\_cert\_common\_name) | Distinguished name | `string` | `"devboldlink.wpengine.com"` | no |
 | <a name="input_self_signed_cert_organization"></a> [self\_signed\_cert\_organization](#input\_self\_signed\_cert\_organization) | The organization owning this self signed certificate | `string` | `"Boldlink-SIG"` | no |
 | <a name="input_service_namespace"></a> [service\_namespace](#input\_service\_namespace) | (Required) The AWS service namespace of the scalable target. | `string` | `""` | no |
-| <a name="input_service_security_group_egress"></a> [service\_security\_group\_egress](#input\_service\_security\_group\_egress) | (Optional) Egress rules to add to the service security group | `any` | `[]` | no |
-| <a name="input_service_security_group_ingress"></a> [service\_security\_group\_ingress](#input\_service\_security\_group\_ingress) | (Optional) Ingress rules to add to the service security group | `any` | `[]` | no |
 | <a name="input_ssl_policy"></a> [ssl\_policy](#input\_ssl\_policy) | (Optional) Name of the SSL Policy for the listener. Required if protocol is `HTTPS` or `TLS` | `string` | `"ELBSecurityPolicy-TLS-1-2-2017-01"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Key Value tags to apply to the resources | `map(string)` | `{}` | no |
 | <a name="input_target_type"></a> [target\_type](#input\_target\_type) | Type of target that you must specify when registering targets with this target group. See doc for supported values. The default is instance. | `string` | `"ip"` | no |
@@ -286,6 +288,7 @@ No modules.
 | <a name="input_tasks_minimum_healthy_percent"></a> [tasks\_minimum\_healthy\_percent](#input\_tasks\_minimum\_healthy\_percent) | Lower limit on the number of running tasks. | `number` | `100` | no |
 | <a name="input_tg_port"></a> [tg\_port](#input\_tg\_port) | Port on which targets receive traffic, unless overridden when registering a specific target. Required when target\_type is instance or ip. Does not apply when target\_type is lambda. | `number` | `80` | no |
 | <a name="input_tg_protocol"></a> [tg\_protocol](#input\_tg\_protocol) | Protocol to use for routing traffic to the targets. Should be one of GENEVE, HTTP, HTTPS, TCP, TCP\_UDP, TLS, or UDP. Required when target\_type is instance or ip. Does not apply when target\_type is lambda. | `string` | `"HTTP"` | no |
+| <a name="input_triggers"></a> [triggers](#input\_triggers) | Map of arbitrary keys and values that, when changed, will trigger an in-place update (redeployment). Useful with `timestamp()` | `map(string)` | `{}` | no |
 | <a name="input_volume_name"></a> [volume\_name](#input\_volume\_name) | Name of the volume. This name is referenced in the sourceVolume parameter of container definition in the mountPoints section. | `string` | `"service-storage"` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID to be used by ECS. | `string` | `null` | no |
 | <a name="input_web_acl_arn"></a> [web\_acl\_arn](#input\_web\_acl\_arn) | The ARN of WAF web acl to associate load balancer with | `string` | `null` | no |

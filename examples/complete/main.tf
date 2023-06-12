@@ -9,14 +9,20 @@ module "access_logs_bucket" {
 
 module "ecs_service_lb" {
   #checkov:skip=CKV_AWS_150: "Ensure that Load Balancer has deletion protection enabled"
+  #checkov:skip=CKV_AWS_290: "Ensure IAM policies does not allow write access without constraints"
+  #checkov:skip=CKV_AWS_355: "Ensure no IAM policies documents allow "*" as a statement's resource for restrictable actions"
   source                   = "../../"
   requires_compatibilities = var.requires_compatibilities
   network_mode             = var.network_mode
   name                     = "${var.name}-service"
   family                   = "${var.name}-task-definition"
-  enable_execute_command   = true
+  enable_execute_command   = var.enable_execute_command
   network_configuration = {
     subnets = local.private_subnets
+  }
+
+  triggers = {
+    redeployment = timestamp()
   }
 
   alb_subnets                = local.public_subnets
@@ -27,6 +33,7 @@ module "ecs_service_lb" {
   task_execution_role_policy = local.task_execution_role_policy_doc
   container_definitions      = local.default_container_definitions
   kms_key_id                 = data.aws_kms_alias.supporting_kms.target_key_arn
+  force_new_deployment       = var.force_new_deployment
   path                       = var.path
   tags                       = local.tags
   load_balancer = {
@@ -48,17 +55,5 @@ module "ecs_service_lb" {
   service_namespace          = var.service_namespace
 
   # Load balancer sg
-  lb_security_group_ingress = var.lb_security_group_ingress_config
-  lb_security_group_egress  = var.lb_security_group_egress_config
-
-  # Service load balancer sg
-  service_security_group_egress = var.service_sg_egress_config
-  service_security_group_ingress = [
-    {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = [local.vpc_cidr]
-    }
-  ]
+  lb_ingress_rules = var.lb_ingress_rules
 }

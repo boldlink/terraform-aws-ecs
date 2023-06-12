@@ -10,10 +10,9 @@ locals {
   public_subnets  = local.public_subnet_id
   private_subnets = local.private_subnet_id
   vpc_id          = data.aws_vpc.supporting.id
-  vpc_cidr        = data.aws_vpc.supporting.cidr_block
   cluster         = data.aws_ecs_cluster.ecs.arn
   partition       = data.aws_partition.current.partition
-  bucket          = "${var.name}-access-logs-bucket"
+  bucket          = "${var.name}-access-logs-bucket-boldlink"
   service_account = data.aws_elb_service_account.main.arn
   tags            = merge({ "Name" = var.name }, var.tags)
 

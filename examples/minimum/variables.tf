@@ -13,7 +13,7 @@ variable "supporting_resources_name" {
 variable "image" {
   type        = string
   description = "Name of image to pull from dockerhub"
-  default     = "boldlink/flaskapp"
+  default     = "boldlink/flaskapp:latest"
 }
 
 variable "tags" {
@@ -67,28 +67,30 @@ variable "network_mode" {
   default     = "awsvpc"
 }
 
-variable "service_security_group_ingress_config" {
-  type        = any
-  description = "Incoming traffic configuration for service security group"
+variable "lb_ingress_rules" {
+  type        = list(any)
+  description = "Incoming traffic configuration for the load balancer security group"
   default = [
+    {
+      from_port   = 443
+      to_port     = 443
+      ip_protocol = "tcp"
+      description = "Allow traffic on port 443"
+      cidr_ipv4   = "0.0.0.0/0"
+    },
     {
       from_port   = 80
       to_port     = 80
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-  ]
-}
-
-variable "service_security_group_egress_config" {
-  type        = any
-  description = "Outgoing traffic configuration service security group"
-  default = [
+      ip_protocol = "tcp"
+      description = "Allow traffic on port 80"
+      cidr_ipv4   = "0.0.0.0/0"
+    },
     {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
+      from_port   = 5000
+      to_port     = 5000
+      ip_protocol = "tcp"
+      description = "Allow traffic on port 5000"
+      cidr_ipv4   = "0.0.0.0/0"
     }
   ]
 }
