@@ -11,6 +11,7 @@ resource "aws_ecs_service" "service" {
   launch_type                        = var.launch_type
   enable_execute_command             = var.enable_execute_command
   force_new_deployment               = var.force_new_deployment
+  triggers                           = var.triggers
   tags                               = var.tags
 
   deployment_controller {
@@ -34,11 +35,6 @@ resource "aws_ecs_service" "service" {
       target_group_arn = lookup(load_balancer.value, "target_group_arn", try(aws_lb_target_group.main_tg[0].arn, null))
     }
   }
-
-  triggers = {
-    redeployment = timestamp()
-  }
-
 }
 
 ############################

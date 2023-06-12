@@ -371,6 +371,12 @@ variable "web_acl_arn" {
   default     = null
 }
 
+variable "triggers" {
+  type        = map(string)
+  description = "Map of arbitrary keys and values that, when changed, will trigger an in-place update (redeployment). Useful with `timestamp()`"
+  default     = {}
+}
+
 variable "enable_execute_command" {
   description = "value to enable execute command at the ecs service, default = false"
   type        = bool

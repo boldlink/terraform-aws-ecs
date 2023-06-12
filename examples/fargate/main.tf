@@ -23,6 +23,4 @@ module "ecs_service" {
   service_namespace          = var.service_namespace
   kms_key_id                 = data.aws_kms_alias.supporting_kms.target_key_arn
   tags                       = local.tags
-  # Load balancer sg
-  lb_ingress_rules = var.lb_ingress_rules
 }

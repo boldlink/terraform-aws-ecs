@@ -21,6 +21,10 @@ module "ecs_service_lb" {
     subnets = local.private_subnets
   }
 
+  triggers = {
+    redeployment = timestamp()
+  }
+
   alb_subnets                = local.public_subnets
   cluster                    = local.cluster
   vpc_id                     = local.vpc_id
