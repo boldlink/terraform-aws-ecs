@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CKV_AWS_338 Ensure CloudWatch log groups retains logs for at least 1 year
 - CKV2_AWS_5 Ensure that Security Groups are attached to another
 - CKV_AWS_150 Ensure that Load Balancer has deletion protection enabled
+- CKV_TF_1:Ensure Terraform module sources use a commit hash
 
 ## [1.5.1] - 2023-06-12
 ### Changes
