@@ -43,6 +43,7 @@
 | [aws_partition.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/partition) | data source |
 | [aws_subnet.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet) | data source |
 | [aws_subnets.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
+| [aws_subnets.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
 | [aws_vpc.supporting](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
 
 ## Inputs
@@ -51,13 +52,16 @@
 |------|-------------|------|---------|:--------:|
 | <a name="input_containerport"></a> [containerport](#input\_containerport) | Specify container port | `number` | `5000` | no |
 | <a name="input_cpu"></a> [cpu](#input\_cpu) | The number of cpu units to allocate | `number` | `10` | no |
+| <a name="input_create_load_balancer"></a> [create\_load\_balancer](#input\_create\_load\_balancer) | Whether to create a load balancer for ecs. | `bool` | `true` | no |
 | <a name="input_enable_autoscaling"></a> [enable\_autoscaling](#input\_enable\_autoscaling) | Whether to enable autoscaling or not for ecs | `bool` | `true` | no |
 | <a name="input_essential"></a> [essential](#input\_essential) | Whether this container is essential | `bool` | `true` | no |
 | <a name="input_hostport"></a> [hostport](#input\_hostport) | Specify host port | `number` | `5000` | no |
 | <a name="input_image"></a> [image](#input\_image) | Name of image to pull from dockerhub | `string` | `"boldlink/flaskapp:latest"` | no |
+| <a name="input_lb_ingress_rules"></a> [lb\_ingress\_rules](#input\_lb\_ingress\_rules) | Incoming traffic configuration for the load balancer security group | `list(any)` | <pre>[<br>  {<br>    "cidr_ipv4": "0.0.0.0/0",<br>    "description": "Allow traffic on port 443",<br>    "from_port": 443,<br>    "ip_protocol": "tcp",<br>    "to_port": 443<br>  },<br>  {<br>    "cidr_ipv4": "0.0.0.0/0",<br>    "description": "Allow traffic on port 80",<br>    "from_port": 80,<br>    "ip_protocol": "tcp",<br>    "to_port": 80<br>  },<br>  {<br>    "cidr_ipv4": "0.0.0.0/0",<br>    "description": "Allow traffic on port 5000. The app is configured to use this port",<br>    "from_port": 5000,<br>    "ip_protocol": "tcp",<br>    "to_port": 5000<br>  }<br>]</pre> | no |
 | <a name="input_memory"></a> [memory](#input\_memory) | The size of memory to allocate in MiBs | `number` | `512` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name of the stack | `string` | `"fargate-ecs-example"` | no |
 | <a name="input_network_mode"></a> [network\_mode](#input\_network\_mode) | Docker networking mode to use for the containers in the task. Valid values are none, bridge, awsvpc, and host. | `string` | `"awsvpc"` | no |
+| <a name="input_path"></a> [path](#input\_path) | Destination for the health check request. Required for HTTP/HTTPS ALB and HTTP NLB. Only applies to HTTP/HTTPS. | `string` | `"/healthz"` | no |
 | <a name="input_requires_compatibilities"></a> [requires\_compatibilities](#input\_requires\_compatibilities) | Set of launch types required by the task. The valid values are EC2 and FARGATE. | `list(string)` | <pre>[<br>  "FARGATE"<br>]</pre> | no |
 | <a name="input_retention_in_days"></a> [retention\_in\_days](#input\_retention\_in\_days) | Number of days you want to retain log events in the specified log group. | `number` | `1` | no |
 | <a name="input_scalable_dimension"></a> [scalable\_dimension](#input\_scalable\_dimension) | The scalable dimension of the scalable target. | `string` | `"ecs:service:DesiredCount"` | no |
