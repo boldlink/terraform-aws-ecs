@@ -186,7 +186,7 @@ module "ecs_service" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.12.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.13.0 |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.4 |
 
 ## Modules
@@ -217,6 +217,7 @@ No modules.
 | [aws_vpc_security_group_egress_rule.service](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
 | [aws_vpc_security_group_ingress_rule.lb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
 | [aws_vpc_security_group_ingress_rule.service](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
+| [aws_wafregional_web_acl_association.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/wafregional_web_acl_association) | resource |
 | [aws_wafv2_web_acl_association.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/wafv2_web_acl_association) | resource |
 | [tls_private_key.default](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [tls_self_signed_cert.default](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/self_signed_cert) | resource |
@@ -233,6 +234,7 @@ No modules.
 | <a name="input_adjustment_type"></a> [adjustment\_type](#input\_adjustment\_type) | Required) Specifies whether the adjustment is an absolute number or a percentage of the current capacity. Valid values are ChangeInCapacity, ExactCapacity, and PercentChangeInCapacity. | `string` | `"ChangeInCapacity"` | no |
 | <a name="input_alb_subnets"></a> [alb\_subnets](#input\_alb\_subnets) | Subnet IDs for the application load balancer. | `list(string)` | `[]` | no |
 | <a name="input_associate_with_waf"></a> [associate\_with\_waf](#input\_associate\_with\_waf) | Whether to associate created ALB with AWS WAFv2 ACL | `bool` | `false` | no |
+| <a name="input_associate_with_wafregional"></a> [associate\_with\_wafregional](#input\_associate\_with\_wafregional) | Whether to associate created ALB with WAF Regional Web ACL | `bool` | `false` | no |
 | <a name="input_autoscale_role_arn"></a> [autoscale\_role\_arn](#input\_autoscale\_role\_arn) | (Optional) The ARN of the IAM role that allows Application AutoScaling to modify your scalable target on your behalf. | `string` | `null` | no |
 | <a name="input_cluster"></a> [cluster](#input\_cluster) | Amazon Resource Name (ARN) of cluster which the service runs on | `string` | `null` | no |
 | <a name="input_container_definitions"></a> [container\_definitions](#input\_container\_definitions) | Container definitions provided as valid JSON document. Default uses golang:alpine running a simple hello world. | `string` | `null` | no |
@@ -292,6 +294,7 @@ No modules.
 | <a name="input_triggers"></a> [triggers](#input\_triggers) | Map of arbitrary keys and values that, when changed, will trigger an in-place update (redeployment). Useful with `timestamp()` | `map(string)` | `{}` | no |
 | <a name="input_volume_name"></a> [volume\_name](#input\_volume\_name) | Name of the volume. This name is referenced in the sourceVolume parameter of container definition in the mountPoints section. | `string` | `"service-storage"` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID to be used by ECS. | `string` | `null` | no |
+| <a name="input_wafregional_acl_id"></a> [wafregional\_acl\_id](#input\_wafregional\_acl\_id) | The ID of WAF Regional Web ACL to associate load balancer with | `string` | `null` | no |
 | <a name="input_web_acl_arn"></a> [web\_acl\_arn](#input\_web\_acl\_arn) | The ARN of WAF web acl to associate load balancer with | `string` | `null` | no |
 
 ## Outputs

@@ -23,6 +23,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CKV_AWS_150 Ensure that Load Balancer has deletion protection enabled
 - CKV_TF_1:Ensure Terraform module sources use a commit hash
 
+## [1.5.2] - 2023-08-18
+### Changes
+- fix: Added checkov exception for `CKV2_AWS_28: Ensure public facing ALB are protected by WAF` since currently checkov is not recognizing associated resource for this
+- feat: Added resource for associating created load balancer with WAF Regional ACL
+
 ## [1.5.1] - 2023-06-12
 ### Changes
 - fix: Only allow LB SG to connect to the service LB
@@ -113,8 +118,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: feature update.
 - feat: initial code commit
 
-[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.5.1...HEAD
+[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.5.2...HEAD
 
+[1.5.2]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.2
 [1.5.1]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.1
 [1.5.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.0
 [1.4.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.4.0

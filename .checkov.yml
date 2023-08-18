@@ -11,3 +11,4 @@ skip-check:
 - CKV2_AWS_5 #Ensure that Security Groups are attached to another
 - CKV_AWS_150 #Ensure that Load Balancer has deletion protection enabled
 - CKV_TF_1 #Ensure Terraform module sources use a commit hash
+- CKV2_AWS_28 #Ensure public facing ALB are protected by WAF
