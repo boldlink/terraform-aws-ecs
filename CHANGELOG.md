@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- fix: Deploy service without necessarily requiring load balancer. Currently, the task fails to pull image from dockerhub
+- fix: CKV_AWS_260 Ensure no security groups allow ingress from 0.0.0.0:0 to port 80
+- fix: CKV_AWS_336 Ensure ECS containers are limited to read-only access to root filesystems
+- fix: CKV_AWS_338 Ensure CloudWatch log groups retains logs for at least 1 year
+- fix: CKV2_AWS_5 Ensure that Security Groups are attached to another
+- fix: CKV_AWS_150 Ensure that Load Balancer has deletion protection enabled
+- fix: CKV_TF_1:Ensure Terraform module sources use a commit hash
 - feat: showcase load balancer protection using WAF
 - feat: more than one security group for ecs service
 - feat: Add EC2 usage example
@@ -16,12 +23,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: use updated vpc source in examples
 - feat: use updated ecs cluster source for ecs cluster
 - feat: consolidate ecs cluster module and ecs service module into one
-- CKV_AWS_260 Ensure no security groups allow ingress from 0.0.0.0:0 to port 80
-- CKV_AWS_336 Ensure ECS containers are limited to read-only access to root filesystems
-- CKV_AWS_338 Ensure CloudWatch log groups retains logs for at least 1 year
-- CKV2_AWS_5 Ensure that Security Groups are attached to another
-- CKV_AWS_150 Ensure that Load Balancer has deletion protection enabled
-- CKV_TF_1:Ensure Terraform module sources use a commit hash
+
+## [1.5.2] - 2023-08-18
+### Changes
+- fix: Added checkov exception for `CKV2_AWS_28: Ensure public facing ALB are protected by WAF` since currently checkov is not recognizing associated resource for this
+- feat: Added resource for associating created load balancer with WAF Regional ACL
 
 ## [1.5.1] - 2023-06-12
 ### Changes
@@ -113,8 +119,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: feature update.
 - feat: initial code commit
 
-[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.5.1...HEAD
+[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.5.2...HEAD
 
+[1.5.2]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.2
 [1.5.1]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.1
 [1.5.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.0
 [1.4.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.4.0

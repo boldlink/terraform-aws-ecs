@@ -127,6 +127,12 @@ resource "aws_wafv2_web_acl_association" "main" {
   web_acl_arn  = var.web_acl_arn
 }
 
+resource "aws_wafregional_web_acl_association" "main" {
+  count        = var.associate_with_wafregional && var.create_load_balancer && var.load_balancer_type == "application" ? 1 : 0
+  resource_arn = aws_lb.main[0].arn
+  web_acl_id   = var.wafregional_acl_id
+}
+
 ############################
 # lb target group
 ############################

@@ -365,6 +365,18 @@ variable "associate_with_waf" {
   default     = false
 }
 
+variable "associate_with_wafregional" {
+  type        = bool
+  description = "Whether to associate created ALB with WAF Regional Web ACL"
+  default     = false
+}
+
+variable "wafregional_acl_id" {
+  type        = string
+  description = "The ID of WAF Regional Web ACL to associate load balancer with"
+  default     = null
+}
+
 variable "web_acl_arn" {
   type        = string
   description = "The ARN of WAF web acl to associate load balancer with"
