@@ -91,48 +91,8 @@ variable "scalable_dimension" {
   default     = "ecs:service:DesiredCount"
 }
 
-variable "path" {
-  type        = string
-  description = "Destination for the health check request. Required for HTTP/HTTPS ALB and HTTP NLB. Only applies to HTTP/HTTPS."
-  default     = "/healthz"
-}
-
 variable "service_namespace" {
   type        = string
   description = "The AWS service namespace of the scalable target."
   default     = "ecs"
-}
-
-variable "create_load_balancer" {
-  type        = bool
-  description = "Whether to create a load balancer for ecs."
-  default     = true
-}
-
-variable "lb_ingress_rules" {
-  type        = list(any)
-  description = "Incoming traffic configuration for the load balancer security group"
-  default = [
-    {
-      from_port   = 443
-      to_port     = 443
-      ip_protocol = "tcp"
-      description = "Allow traffic on port 443"
-      cidr_ipv4   = "0.0.0.0/0"
-    },
-    {
-      from_port   = 80
-      to_port     = 80
-      ip_protocol = "tcp"
-      description = "Allow traffic on port 80"
-      cidr_ipv4   = "0.0.0.0/0"
-    },
-    {
-      from_port   = 5000
-      to_port     = 5000
-      ip_protocol = "tcp"
-      description = "Allow traffic on port 5000. The app is configured to use this port"
-      cidr_ipv4   = "0.0.0.0/0"
-    }
-  ]
 }

@@ -21,18 +21,7 @@ module "ecs_service" {
   retention_in_days          = var.retention_in_days
   enable_autoscaling         = var.enable_autoscaling
   scalable_dimension         = var.scalable_dimension
-  create_load_balancer       = var.create_load_balancer
   service_namespace          = var.service_namespace
   kms_key_id                 = data.aws_kms_alias.supporting_kms.target_key_arn
-  alb_subnets                = flatten(data.aws_subnets.public.ids)
-  path                       = var.path
   tags                       = local.tags
-
-  load_balancer = {
-    container_name = var.name
-    container_port = var.containerport
-  }
-
-  # Load balancer sg
-  lb_ingress_rules = var.lb_ingress_rules
 }
