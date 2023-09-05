@@ -7,6 +7,7 @@ locals {
   vpc_id          = data.aws_vpc.supporting.id
   cluster         = data.aws_ecs_cluster.ecs.arn
   partition       = data.aws_partition.current.partition
+  region          = data.aws_region.current.name
   tags            = merge({ "Name" = var.name }, var.tags)
 
   default_container_definitions = jsonencode(
@@ -23,6 +24,14 @@ locals {
             hostPort      = var.hostport
           }
         ]
+        logConfiguration = {
+          logDriver = "awslogs",
+          options = {
+            awslogs-group         = "/aws/ecs-service/${var.name}-service",
+            awslogs-region        = local.region,
+            awslogs-stream-prefix = "task"
+          }
+        }
       }
     ]
   )
@@ -36,7 +45,7 @@ locals {
           "logs:CreateLogStream",
           "logs:PutLogEvents",
         ]
-        Resource = ["arn:${local.partition}:logs:::log-group:${var.name}"]
+        Resource = ["arn:${local.partition}:logs:::log-group:${var.name}-service"]
         },
         {
           Effect = "Allow"

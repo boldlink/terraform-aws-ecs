@@ -96,3 +96,17 @@ variable "service_namespace" {
   description = "The AWS service namespace of the scalable target."
   default     = "ecs"
 }
+
+variable "service_ingress_rules" {
+  description = "Ingress rules to add to the service security group."
+  type        = list(any)
+  default = [
+    {
+      from_port   = 5000
+      to_port     = 5000
+      protocol    = "tcp"
+      description = "Allow traffic on port 5000. The app is configured to use this port"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  ]
+}

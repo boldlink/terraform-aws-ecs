@@ -23,5 +23,6 @@ module "ecs_service" {
   scalable_dimension         = var.scalable_dimension
   service_namespace          = var.service_namespace
   kms_key_id                 = data.aws_kms_alias.supporting_kms.target_key_arn
+  service_ingress_rules      = var.service_ingress_rules
   tags                       = local.tags
 }
