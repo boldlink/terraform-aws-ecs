@@ -37,7 +37,7 @@ To test the deployment, follow these steps:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.13.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.13.0 |
 
 ## Modules
 
@@ -56,6 +56,7 @@ To test the deployment, follow these steps:
 | [aws_iam_policy_document.ecs_assume_role_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_kms_alias.supporting_kms](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/kms_alias) | data source |
 | [aws_partition.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/partition) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_subnet.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet) | data source |
 | [aws_subnet.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet) | data source |
 | [aws_subnets.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
@@ -78,7 +79,7 @@ To test the deployment, follow these steps:
 | <a name="input_force_new_deployment"></a> [force\_new\_deployment](#input\_force\_new\_deployment) | Enable to force a new task deployment of the service. This can be used to update tasks to use a newer Docker image with same image/tag combination (e.g., myimage:latest), roll Fargate tasks onto a newer platform version, or immediately deploy ordered\_placement\_strategy and placement\_constraints updates. | `bool` | `true` | no |
 | <a name="input_hostport"></a> [hostport](#input\_hostport) | Specify host port | `number` | `5000` | no |
 | <a name="input_image"></a> [image](#input\_image) | Name of image to pull from dockerhub | `string` | `"boldlink/flaskapp:latest"` | no |
-| <a name="input_lb_ingress_rules"></a> [lb\_ingress\_rules](#input\_lb\_ingress\_rules) | Incoming traffic configuration for the load balancer security group | `list(any)` | <pre>[<br>  {<br>    "cidr_ipv4": "0.0.0.0/0",<br>    "description": "Allow traffic on port 443",<br>    "from_port": 443,<br>    "ip_protocol": "tcp",<br>    "to_port": 443<br>  },<br>  {<br>    "cidr_ipv4": "0.0.0.0/0",<br>    "description": "Allow traffic on port 80",<br>    "from_port": 80,<br>    "ip_protocol": "tcp",<br>    "to_port": 80<br>  },<br>  {<br>    "cidr_ipv4": "0.0.0.0/0",<br>    "description": "Allow traffic on port 5000. The app is configured to use this port",<br>    "from_port": 5000,<br>    "ip_protocol": "tcp",<br>    "to_port": 5000<br>  }<br>]</pre> | no |
+| <a name="input_lb_ingress_rules"></a> [lb\_ingress\_rules](#input\_lb\_ingress\_rules) | Incoming traffic configuration for the load balancer security group | `list(any)` | <pre>[<br>  {<br>    "cidr_blocks": [<br>      "0.0.0.0/0"<br>    ],<br>    "description": "Allow traffic to load balancer on port 443",<br>    "from_port": 443,<br>    "protocol": "tcp",<br>    "to_port": 443<br>  },<br>  {<br>    "cidr_blocks": [<br>      "0.0.0.0/0"<br>    ],<br>    "description": "Allow traffic to load balancer on port 80",<br>    "from_port": 80,<br>    "protocol": "tcp",<br>    "to_port": 80<br>  }<br>]</pre> | no |
 | <a name="input_memory"></a> [memory](#input\_memory) | The size of memory to allocate in MiBs | `number` | `512` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name of the stack | `string` | `"complete-ecs-example"` | no |
 | <a name="input_network_mode"></a> [network\_mode](#input\_network\_mode) | Docker networking mode to use for the containers in the task. Valid values are none, bridge, awsvpc, and host. | `string` | `"awsvpc"` | no |

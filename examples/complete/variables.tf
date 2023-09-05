@@ -152,23 +152,16 @@ variable "lb_ingress_rules" {
     {
       from_port   = 443
       to_port     = 443
-      ip_protocol = "tcp"
-      description = "Allow traffic on port 443"
-      cidr_ipv4   = "0.0.0.0/0"
+      protocol    = "tcp"
+      description = "Allow traffic to load balancer on port 443"
+      cidr_blocks = ["0.0.0.0/0"]
     },
     {
       from_port   = 80
       to_port     = 80
-      ip_protocol = "tcp"
-      description = "Allow traffic on port 80"
-      cidr_ipv4   = "0.0.0.0/0"
+      protocol    = "tcp"
+      description = "Allow traffic to load balancer on port 80"
+      cidr_blocks = ["0.0.0.0/0"]
     },
-    {
-      from_port   = 5000
-      to_port     = 5000
-      ip_protocol = "tcp"
-      description = "Allow traffic on port 5000. The app is configured to use this port"
-      cidr_ipv4   = "0.0.0.0/0"
-    }
   ]
 }
