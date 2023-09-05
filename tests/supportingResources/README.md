@@ -37,7 +37,7 @@ This stack builds:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cluster"></a> [cluster](#module\_cluster) | boldlink/ecs-cluster/aws | 1.0.1 |
+| <a name="module_cluster"></a> [cluster](#module\_cluster) | boldlink/ecs-cluster/aws | 1.1.1 |
 | <a name="module_ecs_vpc"></a> [ecs\_vpc](#module\_ecs\_vpc) | boldlink/vpc/aws | 3.0.4 |
 | <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | boldlink/kms/aws | 1.1.0 |
 
