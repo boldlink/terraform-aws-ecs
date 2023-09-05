@@ -5,7 +5,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- fix: Deploy service without necessarily requiring load balancer. Currently, the task fails to pull image from dockerhub
 - fix: CKV_AWS_260 Ensure no security groups allow ingress from 0.0.0.0:0 to port 80
 - fix: CKV_AWS_336 Ensure ECS containers are limited to read-only access to root filesystems
 - fix: CKV_AWS_338 Ensure CloudWatch log groups retains logs for at least 1 year
@@ -20,9 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: Use load-balancer module in example
 - feat: Add more options for module cloudwatch log group
 - feat: Exclusively use acm certificate (not self_signed_cert) for complete example
-- feat: use updated vpc source in examples
-- feat: use updated ecs cluster source for ecs cluster
 - feat: consolidate ecs cluster module and ecs service module into one
+
+## [1.5.3] - 2023-09-05
+### Changes
+- fix: Deploy service without necessarily requiring load balancer. Currently, the task fails to pull image from dockerhub
+- used updated ecs cluster (v1.1.1)
+- Added container log configuration for complete and fargate examples.
 
 ## [1.5.2] - 2023-08-18
 ### Changes
@@ -119,8 +122,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: feature update.
 - feat: initial code commit
 
-[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.5.2...HEAD
+[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.5.3...HEAD
 
+[1.5.3]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.3
 [1.5.2]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.2
 [1.5.1]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.1
 [1.5.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.0
