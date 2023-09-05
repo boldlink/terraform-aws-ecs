@@ -46,9 +46,9 @@ resource "aws_cloudwatch_log_group" "cluster" {
 
 module "cluster" {
   source     = "boldlink/ecs-cluster/aws"
-  version    = "1.0.1"
+  version    = "1.1.1"
   name       = var.name
-  other_tags = var.tags
+  tags = local.tags
   configuration = {
     execute_command_configuration = {
       kms_key_id = module.kms_key.key_id
