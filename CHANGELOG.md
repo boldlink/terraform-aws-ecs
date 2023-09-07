@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.5.3] - 2023-09-05
 ### Changes
-- fix: Deploy service without necessarily requiring load balancer. Currently, the task fails to pull image from dockerhub
+- fix: fix: Deploy service without necessarily requiring load balancer. Previously, the task failed to pull images from dockerhub
 - used updated ecs cluster (v1.1.1)
 - Added container log configuration for complete and fargate examples.
 
