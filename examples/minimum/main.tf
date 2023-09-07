@@ -13,7 +13,7 @@ module "ecs_service" {
   container_definitions      = local.default_container_definitions
   kms_key_id                 = data.aws_kms_alias.supporting_kms.target_key_arn
   tags                       = local.tags
-  lb_ingress_rules           = var.lb_ingress_rules
+  service_ingress_rules      = var.service_ingress_rules
 
   network_configuration = {
     subnets = local.private_subnets

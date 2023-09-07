@@ -406,3 +406,9 @@ variable "interval" {
   type        = number
   default     = 30
 }
+
+variable "service_ingress_rules" {
+  description = "Ingress rules to add to the service security group."
+  type        = list(any)
+  default     = []
+}

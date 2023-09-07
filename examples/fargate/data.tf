@@ -1,5 +1,7 @@
 data "aws_partition" "current" {}
 
+data "aws_region" "current" {}
+
 data "aws_iam_policy_document" "ecs_assume_role_policy" {
   statement {
     actions = ["sts:AssumeRole"]

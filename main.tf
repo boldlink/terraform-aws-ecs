@@ -23,7 +23,7 @@ resource "aws_ecs_service" "service" {
     content {
       subnets          = network_configuration.value.subnets
       assign_public_ip = try(network_configuration.value.assign_public_ip, null)
-      security_groups  = [join("", aws_security_group.service.*.id)]
+      security_groups  = [aws_security_group.service.id]
     }
   }
 
@@ -105,7 +105,7 @@ resource "aws_lb" "main" {
   internal                   = var.internal
   load_balancer_type         = var.load_balancer_type
   subnets                    = var.alb_subnets
-  security_groups            = [join("", aws_security_group.lb.*.id)]
+  security_groups            = [aws_security_group.lb[0].id]
   drop_invalid_header_fields = var.drop_invalid_header_fields
   enable_deletion_protection = var.enable_deletion_protection
   tags                       = var.tags
@@ -229,7 +229,7 @@ resource "aws_security_group" "lb" {
   count                  = var.create_load_balancer ? 1 : 0
   name                   = "${var.name}-lb-security-group"
   vpc_id                 = var.vpc_id
-  description            = "Load balancer security group"
+  description            = "${var.name} Load balancer security group"
   revoke_rules_on_delete = true
   tags                   = var.tags
 
@@ -239,32 +239,35 @@ resource "aws_security_group" "lb" {
   }
 }
 
-resource "aws_vpc_security_group_ingress_rule" "lb" {
-  count                        = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? length(var.lb_ingress_rules) : 0
-  security_group_id            = join("", aws_security_group.lb.*.id)
-  description                  = try(var.lb_ingress_rules[count.index]["description"], null)
-  from_port                    = try(var.lb_ingress_rules[count.index]["from_port"], null)
-  ip_protocol                  = try(var.lb_ingress_rules[count.index]["ip_protocol"], null)
-  to_port                      = try(var.lb_ingress_rules[count.index]["to_port"], null)
-  tags                         = var.tags
-  cidr_ipv4                    = try(var.lb_ingress_rules[count.index]["cidr_ipv4"], null)
-  referenced_security_group_id = try(var.lb_ingress_rules[count.index]["cidr_ipv4"], null) == null ? try(var.lb_ingress_rules[count.index]["referenced_security_group_id"], null) : null
+resource "aws_security_group_rule" "lb_ingress" {
+  count                    = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? length(var.lb_ingress_rules) : 0
+  security_group_id        = aws_security_group.lb[0].id
+  type                     = "ingress"
+  description              = try(var.lb_ingress_rules[count.index]["description"], null)
+  from_port                = try(var.lb_ingress_rules[count.index]["from_port"], null)
+  protocol                 = try(var.lb_ingress_rules[count.index]["protocol"], null)
+  to_port                  = try(var.lb_ingress_rules[count.index]["to_port"], null)
+  cidr_blocks              = try(var.lb_ingress_rules[count.index]["cidr_blocks"], [])
+  source_security_group_id = try(var.lb_ingress_rules[count.index]["cidr_blocks"], null) == null ? try(var.lb_ingress_rules[count.index]["source_security_group_id"], null) : null
 }
 
-resource "aws_vpc_security_group_egress_rule" "lb" {
+resource "aws_security_group_rule" "lb_egress" {
   count             = var.create_load_balancer ? 1 : 0
-  security_group_id = join("", aws_security_group.lb.*.id)
-  cidr_ipv4         = "0.0.0.0/0"
-  description       = "LB all protocol SG egress rule"
-  ip_protocol       = "-1"
+  security_group_id = aws_security_group.lb[0].id
+  cidr_blocks       = ["0.0.0.0/0"]
+  from_port         = "0"
+  to_port           = "0"
+  description       = "${var.name} Load Balancer security group egress rule"
+  protocol          = "-1"
+  type              = "egress"
 }
 
 # Service Security group
 resource "aws_security_group" "service" {
-  count                  = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 1 : 0
+  #count                  = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 0 : 1
   name                   = "${var.name}-security-group"
   vpc_id                 = var.vpc_id
-  description            = "Service security group"
+  description            = "${var.name} Service security group"
   revoke_rules_on_delete = true
   tags                   = var.tags
 
@@ -274,23 +277,38 @@ resource "aws_security_group" "service" {
   }
 }
 
-resource "aws_vpc_security_group_ingress_rule" "service" {
-  count                        = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? length(var.lb_ingress_rules) : 0
-  security_group_id            = join("", aws_security_group.service.*.id)
-  description                  = try(var.lb_ingress_rules[count.index]["description"], null)
-  referenced_security_group_id = join("", aws_security_group.lb.*.id)
-  from_port                    = try(var.lb_ingress_rules[count.index]["from_port"], null)
-  ip_protocol                  = try(var.lb_ingress_rules[count.index]["ip_protocol"], null)
-  to_port                      = try(var.lb_ingress_rules[count.index]["to_port"], null)
-  tags                         = var.tags
+resource "aws_security_group_rule" "service_with_lb_ingress" {
+  count                    = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 1 : 0
+  security_group_id        = aws_security_group.service.id
+  type                     = "ingress"
+  description              = "Security group for ${var.name} ecs service accessible through a load-balancer"
+  source_security_group_id = aws_security_group.lb[0].id
+  from_port                = lookup(var.load_balancer, "container_port")
+  to_port                  = lookup(var.load_balancer, "container_port")
+  protocol                 = "-1"
 }
 
-resource "aws_vpc_security_group_egress_rule" "service" {
-  count             = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 1 : 0
-  security_group_id = join("", aws_security_group.service.*.id)
-  cidr_ipv4         = "0.0.0.0/0"
-  description       = "service all protocol SG egress rule"
-  ip_protocol       = "-1"
+resource "aws_security_group_rule" "service_ingress" {
+  count                    = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 0 : length(var.service_ingress_rules)
+  security_group_id        = aws_security_group.service.id
+  type                     = "ingress"
+  description              = try(var.service_ingress_rules[count.index]["description"], null)
+  from_port                = try(var.service_ingress_rules[count.index]["from_port"], null)
+  protocol                 = try(var.service_ingress_rules[count.index]["protocol"], null)
+  to_port                  = try(var.service_ingress_rules[count.index]["to_port"], null)
+  cidr_blocks              = try(var.service_ingress_rules[count.index]["cidr_blocks"], [])
+  source_security_group_id = try(var.service_ingress_rules[count.index]["source_security_group_id"], null)
+  self                     = try(var.service_ingress_rules[count.index]["self"], null)
+}
+
+resource "aws_security_group_rule" "service_egress" {
+  security_group_id = aws_security_group.service.id
+  type              = "egress"
+  from_port         = "0"
+  to_port           = "0"
+  cidr_blocks       = ["0.0.0.0/0"]
+  description       = "${var.name} service security group egress rule"
+  protocol          = "-1"
 }
 
 # Application AutoScaling Resources
