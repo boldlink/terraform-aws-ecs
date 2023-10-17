@@ -72,7 +72,7 @@ variable "name" {
 }
 
 variable "desired_count" {
-  default     = 1
+  default     = 2
   description = "The number of instances of a task definition"
   type        = number
 }
@@ -154,6 +154,12 @@ variable "internal" {
   default     = false
   type        = bool
   description = "(Optional) If true, the LB will be internal."
+}
+
+variable "idle_timeout" {
+  default     = 60
+  type        = number
+  description = "(Optional) Idle timeout (in seconds) for load balancer. The default value is 60"
 }
 
 variable "load_balancer_type" {
@@ -353,9 +359,33 @@ variable "scaling_adjustment" {
   default     = 2
 }
 
-variable "lb_ingress_rules" {
-  description = "Ingress rules to add to the load balancer security group. The rules defined here will be used by service security group"
-  type        = list(any)
+variable "lb_security_group_ingress" {
+  description = "(Optional) Ingress rules to add to the lb security group"
+  type        = any
+  default     = []
+}
+
+variable "lb_security_group_egress" {
+  description = "(Optional) Egress rules to add to the lb security group"
+  type        = any
+  default     = []
+}
+
+variable "default_egress_cidrs" {
+  type        = list(string)
+  description = "(Optional) The default cidr blocks for sg egress rules"
+  default     = ["0.0.0.0/0"]
+}
+
+variable "service_security_group_ingress" {
+  description = "(Optional) Ingress rules to add to the service security group"
+  type        = any
+  default     = []
+}
+
+variable "service_security_group_egress" {
+  type        = any
+  description = "(Optional) Egress rules to add to the service security group"
   default     = []
 }
 
@@ -365,28 +395,10 @@ variable "associate_with_waf" {
   default     = false
 }
 
-variable "associate_with_wafregional" {
-  type        = bool
-  description = "Whether to associate created ALB with WAF Regional Web ACL"
-  default     = false
-}
-
-variable "wafregional_acl_id" {
-  type        = string
-  description = "The ID of WAF Regional Web ACL to associate load balancer with"
-  default     = null
-}
-
 variable "web_acl_arn" {
   type        = string
   description = "The ARN of WAF web acl to associate load balancer with"
   default     = null
-}
-
-variable "triggers" {
-  type        = map(string)
-  description = "Map of arbitrary keys and values that, when changed, will trigger an in-place update (redeployment). Useful with `timestamp()`"
-  default     = {}
 }
 
 variable "enable_execute_command" {
@@ -399,16 +411,4 @@ variable "force_new_deployment" {
   description = "Enable to force a new task deployment of the service. This can be used to update tasks to use a newer Docker image with same image/tag combination (e.g., myimage:latest), roll Fargate tasks onto a newer platform version, or immediately deploy ordered_placement_strategy and placement_constraints updates."
   type        = bool
   default     = false
-}
-
-variable "interval" {
-  description = "(Optional) Approximate amount of time, in seconds, between health checks of an individual target. The range is 5-300. For lambda target groups, it needs to be greater than the timeout of the underlying lambda. Defaults to 30."
-  type        = number
-  default     = 30
-}
-
-variable "service_ingress_rules" {
-  description = "Ingress rules to add to the service security group."
-  type        = list(any)
-  default     = []
 }
