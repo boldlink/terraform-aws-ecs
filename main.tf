@@ -11,8 +11,6 @@ resource "aws_ecs_service" "service" {
   launch_type                        = var.launch_type
   enable_execute_command             = var.enable_execute_command
   force_new_deployment               = var.force_new_deployment
-  triggers                           = var.triggers
-  tags                               = var.tags
 
   deployment_controller {
     type = var.deployment_controller_type
@@ -23,7 +21,7 @@ resource "aws_ecs_service" "service" {
     content {
       subnets          = network_configuration.value.subnets
       assign_public_ip = try(network_configuration.value.assign_public_ip, null)
-      security_groups  = [aws_security_group.service.id]
+      security_groups  = [aws_security_group.service[0].id]
     }
   }
 
@@ -35,6 +33,8 @@ resource "aws_ecs_service" "service" {
       target_group_arn = lookup(load_balancer.value, "target_group_arn", try(aws_lb_target_group.main_tg[0].arn, null))
     }
   }
+
+  tags = var.tags
 }
 
 ############################
@@ -102,22 +102,25 @@ resource "aws_cloudwatch_log_group" "main" {
 resource "aws_lb" "main" {
   count                      = var.create_load_balancer ? 1 : 0
   name                       = var.name
+  idle_timeout               = var.idle_timeout
   internal                   = var.internal
   load_balancer_type         = var.load_balancer_type
   subnets                    = var.alb_subnets
   security_groups            = [aws_security_group.lb[0].id]
   drop_invalid_header_fields = var.drop_invalid_header_fields
   enable_deletion_protection = var.enable_deletion_protection
-  tags                       = var.tags
 
   dynamic "access_logs" {
-    for_each = length(keys(var.access_logs)) > 0 ? [var.access_logs] : []
+    for_each = [var.access_logs]
+
     content {
       bucket  = access_logs.value.bucket
-      enabled = lookup(access_logs.value, "enabled", null)
-      prefix  = lookup(access_logs.value, "prefix", null)
+      enabled = access_logs.value.enabled
+      prefix  = try(access_logs.value.prefix, null)
     }
   }
+
+  tags = var.tags
 }
 
 ## WAF Association
@@ -125,12 +128,6 @@ resource "aws_wafv2_web_acl_association" "main" {
   count        = var.associate_with_waf && var.create_load_balancer ? 1 : 0
   resource_arn = aws_lb.main[0].arn
   web_acl_arn  = var.web_acl_arn
-}
-
-resource "aws_wafregional_web_acl_association" "main" {
-  count        = var.associate_with_wafregional && var.create_load_balancer && var.load_balancer_type == "application" ? 1 : 0
-  resource_arn = aws_lb.main[0].arn
-  web_acl_id   = var.wafregional_acl_id
 }
 
 ############################
@@ -148,7 +145,6 @@ resource "aws_lb_target_group" "main_tg" {
     path              = var.path
     protocol          = var.tg_protocol
     healthy_threshold = var.healthy_threshold
-    interval          = var.interval
   }
 
   depends_on = [aws_lb.main]
@@ -226,89 +222,81 @@ resource "aws_acm_certificate" "main" {
 
 # Alb Security group
 resource "aws_security_group" "lb" {
-  count                  = var.create_load_balancer ? 1 : 0
-  name                   = "${var.name}-lb-security-group"
-  vpc_id                 = var.vpc_id
-  description            = "${var.name} Load balancer security group"
-  revoke_rules_on_delete = true
-  tags                   = var.tags
+  count       = local.create_lb_sg ? 1 : 0
+  name        = "${var.name}-lb-security-group"
+  vpc_id      = var.vpc_id
+  description = "Load balancer security group"
+
+  dynamic "ingress" {
+    for_each = var.lb_security_group_ingress
+    content {
+      description      = "Rule to allow port ${try(ingress.value.from_port, "")} inbound traffic"
+      from_port        = try(ingress.value.from_port, null)
+      to_port          = try(ingress.value.to_port, null)
+      protocol         = try(ingress.value.protocol, null)
+      cidr_blocks      = try(ingress.value.cidr_blocks, [])
+      ipv6_cidr_blocks = try(ingress.value.ipv6_cidr_blocks, [])
+    }
+  }
+
+  dynamic "egress" {
+    for_each = var.lb_security_group_egress
+    content {
+      description      = "Rule to allow outbound traffic"
+      from_port        = try(egress.value.from_port, null)
+      to_port          = try(egress.value.to_port, null)
+      protocol         = try(egress.value.protocol, null)
+      cidr_blocks      = try(egress.value.cidr_blocks, var.default_egress_cidrs)
+      ipv6_cidr_blocks = try(egress.value.ipv6_cidr_blocks, [])
+    }
+  }
+
+  tags = var.tags
 
   lifecycle {
     # Necessary if changing 'name' or 'name_prefix' properties.
     create_before_destroy = true
   }
-}
-
-resource "aws_security_group_rule" "lb_ingress" {
-  count                    = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? length(var.lb_ingress_rules) : 0
-  security_group_id        = aws_security_group.lb[0].id
-  type                     = "ingress"
-  description              = try(var.lb_ingress_rules[count.index]["description"], null)
-  from_port                = try(var.lb_ingress_rules[count.index]["from_port"], null)
-  protocol                 = try(var.lb_ingress_rules[count.index]["protocol"], null)
-  to_port                  = try(var.lb_ingress_rules[count.index]["to_port"], null)
-  cidr_blocks              = try(var.lb_ingress_rules[count.index]["cidr_blocks"], [])
-  source_security_group_id = try(var.lb_ingress_rules[count.index]["cidr_blocks"], null) == null ? try(var.lb_ingress_rules[count.index]["source_security_group_id"], null) : null
-}
-
-resource "aws_security_group_rule" "lb_egress" {
-  count             = var.create_load_balancer ? 1 : 0
-  security_group_id = aws_security_group.lb[0].id
-  cidr_blocks       = ["0.0.0.0/0"]
-  from_port         = "0"
-  to_port           = "0"
-  description       = "${var.name} Load Balancer security group egress rule"
-  protocol          = "-1"
-  type              = "egress"
 }
 
 # Service Security group
 resource "aws_security_group" "service" {
-  #count                  = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 0 : 1
-  name                   = "${var.name}-security-group"
-  vpc_id                 = var.vpc_id
-  description            = "${var.name} Service security group"
-  revoke_rules_on_delete = true
-  tags                   = var.tags
+  count       = local.create_svc_sg ? 1 : 0
+  name        = "${var.name}-security-group"
+  vpc_id      = var.vpc_id
+  description = "Service security group"
+
+  dynamic "ingress" {
+    for_each = var.service_security_group_ingress
+    content {
+      description      = "Rule to allow port ${try(ingress.value.from_port, "")} inbound traffic"
+      from_port        = try(ingress.value.from_port, null)
+      to_port          = try(ingress.value.to_port, null)
+      protocol         = try(ingress.value.protocol, null)
+      security_groups  = try(ingress.value.security_groups, [])
+      cidr_blocks      = try(ingress.value.cidr_blocks, [])
+      ipv6_cidr_blocks = try(ingress.value.ipv6_cidr_blocks, [])
+    }
+  }
+
+  dynamic "egress" {
+    for_each = var.service_security_group_egress
+    content {
+      description      = "Rule to allow outbound traffic"
+      from_port        = try(egress.value.from_port, null)
+      to_port          = try(egress.value.to_port, null)
+      protocol         = try(egress.value.protocol, null)
+      cidr_blocks      = try(egress.value.cidr_blocks, var.default_egress_cidrs)
+      ipv6_cidr_blocks = try(egress.value.ipv6_cidr_blocks, [])
+    }
+  }
+
+  tags = var.tags
 
   lifecycle {
     # Necessary if changing 'name' or 'name_prefix' properties.
     create_before_destroy = true
   }
-}
-
-resource "aws_security_group_rule" "service_with_lb_ingress" {
-  count                    = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 1 : 0
-  security_group_id        = aws_security_group.service.id
-  type                     = "ingress"
-  description              = "Security group for ${var.name} ecs service accessible through a load-balancer"
-  source_security_group_id = aws_security_group.lb[0].id
-  from_port                = lookup(var.load_balancer, "container_port")
-  to_port                  = lookup(var.load_balancer, "container_port")
-  protocol                 = "-1"
-}
-
-resource "aws_security_group_rule" "service_ingress" {
-  count                    = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 0 : length(var.service_ingress_rules)
-  security_group_id        = aws_security_group.service.id
-  type                     = "ingress"
-  description              = try(var.service_ingress_rules[count.index]["description"], null)
-  from_port                = try(var.service_ingress_rules[count.index]["from_port"], null)
-  protocol                 = try(var.service_ingress_rules[count.index]["protocol"], null)
-  to_port                  = try(var.service_ingress_rules[count.index]["to_port"], null)
-  cidr_blocks              = try(var.service_ingress_rules[count.index]["cidr_blocks"], [])
-  source_security_group_id = try(var.service_ingress_rules[count.index]["source_security_group_id"], null)
-  self                     = try(var.service_ingress_rules[count.index]["self"], null)
-}
-
-resource "aws_security_group_rule" "service_egress" {
-  security_group_id = aws_security_group.service.id
-  type              = "egress"
-  from_port         = "0"
-  to_port           = "0"
-  cidr_blocks       = ["0.0.0.0/0"]
-  description       = "${var.name} service security group egress rule"
-  protocol          = "-1"
 }
 
 # Application AutoScaling Resources
