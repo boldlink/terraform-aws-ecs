@@ -102,6 +102,7 @@ resource "aws_cloudwatch_log_group" "main" {
 resource "aws_lb" "main" {
   count                      = var.create_load_balancer ? 1 : 0
   name                       = var.name
+  idle_timeout               = var.idle_timeout
   internal                   = var.internal
   load_balancer_type         = var.load_balancer_type
   subnets                    = var.alb_subnets

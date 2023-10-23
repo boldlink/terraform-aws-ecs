@@ -299,6 +299,12 @@ variable "min_capacity" {
   default     = 1
 }
 
+variable "idle_timeout" {
+  default     = 60
+  type        = number
+  description = "(Optional) Idle timeout (in seconds) for load balancer. The default value is 60"
+}
+
 variable "autoscale_role_arn" {
   description = " (Optional) The ARN of the IAM role that allows Application AutoScaling to modify your scalable target on your behalf. "
   type        = string
