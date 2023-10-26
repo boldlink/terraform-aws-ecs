@@ -1,14 +1,20 @@
 #Policies
-variable "task_role_policy" {
+variable "task_assume_role_policy" {
   default     = ""
   type        = string
-  description = "The IAM for task role in task definition"
+  description = "The assume role policy for the task role"
 }
 
-variable "task_execution_role" {
+variable "task_role_policy" {
+  default     = ""
+  description = "Specify the IAM policy for task role"
+  type        = string
+}
+
+variable "task_execution_assume_role_policy" {
   default     = null
   type        = string
-  description = "Specify the IAM role for task definition task execution"
+  description = "The assume role policy for the task execution role"
 }
 
 variable "task_execution_role_policy" {
@@ -91,7 +97,7 @@ variable "requires_compatibilities" {
 
 variable "launch_type" {
   default     = "FARGATE"
-  description = "Launch type on which to run your service. The valid values are EC2, FARGATE, and EXTERNAL. Defaults to EC2."
+  description = "Launch type on which to run your service. The valid values are EC2, FARGATE, and EXTERNAL."
   type        = string
 }
 
