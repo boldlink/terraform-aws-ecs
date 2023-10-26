@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: Add missing aws_ecs_task_definition arguments and showcase them in examples
 - feat: expand volume block of the task definition as it has more configuration
 
-## [1.5.4] - 2023-10-26
+## [1.6.0] - 2023-10-26
 ### Changes
 - fix: confusing names for assume role policies for both the task role and task execution role
 - feat: Added task role policy resource which initially was not there
@@ -132,6 +132,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.5.3...HEAD
 
+[1.6.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.6.0
 [1.5.3]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.3
 [1.5.2]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.2
 [1.5.1]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.1
