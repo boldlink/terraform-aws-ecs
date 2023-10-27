@@ -95,3 +95,25 @@ data "aws_ecs_cluster" "ecs" {
 data "aws_kms_alias" "supporting_kms" {
   name = "alias/${var.supporting_resources_name}"
 }
+
+data "aws_iam_policy_document" "task_role_policy_doc" {
+  #checkov:skip=CKV_AWS_356:"Ensure no IAM policies documents allow "*" as a statement's resource for restrictable actions"
+  statement {
+    actions = [
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage",
+      "ecr:BatchCheckLayerAvailability"
+    ]
+    effect    = "Allow"
+    resources = ["*"]
+  }
+
+  statement {
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    effect    = "Allow"
+    resources = ["arn:${local.partition}:logs:*:*:*"]
+  }
+}

@@ -20,10 +20,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: Add more options for module cloudwatch log group
 - feat: Exclusively use acm certificate (not self_signed_cert) for complete example
 - feat: consolidate ecs cluster module and ecs service module into one
+- feat: Add missing aws_ecs_task_definition arguments and showcase them in examples
+- feat: expand volume block of the task definition as it has more configuration
+
+## [1.6.0] - 2023-10-26
+### Changes
+- fix: confusing names for assume role policies for both the task role and task execution role
+- feat: Added task role policy resource which initially was not there
+- feat: Added output for task definition, security groups, load balancer
 
 ## [1.5.3] - 2023-09-05
 ### Changes
-- fix: fix: Deploy service without necessarily requiring load balancer. Previously, the task failed to pull images from dockerhub
+- fix: Deploy service without necessarily requiring load balancer. Previously, the task failed to pull images from dockerhub
 - used updated ecs cluster (v1.1.1)
 - Added container log configuration for complete and fargate examples.
 
@@ -124,6 +132,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.5.3...HEAD
 
+[1.6.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.6.0
 [1.5.3]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.3
 [1.5.2]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.2
 [1.5.1]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.1

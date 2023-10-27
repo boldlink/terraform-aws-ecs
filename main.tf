@@ -1,6 +1,4 @@
-############################
-### ECS Service
-############################
+# ECS Service
 resource "aws_ecs_service" "service" {
   name                               = var.name
   cluster                            = var.cluster
@@ -37,9 +35,7 @@ resource "aws_ecs_service" "service" {
   }
 }
 
-############################
 # ECS Task Definition
-############################
 resource "aws_ecs_task_definition" "this" {
   count                    = local.create_task_definition ? 1 : 0
   family                   = var.family
@@ -55,20 +51,25 @@ resource "aws_ecs_task_definition" "this" {
   container_definitions = var.container_definitions
 }
 
-############################
 # IAM Roles
-############################
 resource "aws_iam_role" "task_role" {
-  count              = local.create_task_definition && var.task_role_policy != "" ? 1 : 0
+  count              = local.create_task_definition && var.task_assume_role_policy != "" ? 1 : 0
   name               = "${var.name}-ecs-task-role"
-  assume_role_policy = var.task_role_policy
+  assume_role_policy = var.task_assume_role_policy
+}
+
+resource "aws_iam_role_policy" "task_role_policy" {
+  count  = var.task_role_policy != "" ? 1 : 0
+  name   = "${aws_iam_role.task_role[0].name}-policy"
+  role   = aws_iam_role.task_role[0].name
+  policy = var.task_role_policy
 }
 
 resource "aws_iam_role" "task_execution_role" {
   count              = local.create_task_definition && var.task_execution_role_policy != "" ? 1 : 0
   description        = "${var.name} task execution role"
   name               = "${var.name}-task-execution-role"
-  assume_role_policy = var.task_execution_role
+  assume_role_policy = var.task_execution_assume_role_policy
 }
 
 resource "aws_iam_role_policy" "task_execution_role_policy" {
@@ -78,9 +79,7 @@ resource "aws_iam_role_policy" "task_execution_role_policy" {
   policy = var.task_execution_role_policy
 }
 
-############################
-### Cloudwatch Log Group
-############################
+# Cloudwatch Log Group
 resource "aws_kms_key" "cloudwatch_log_group" {
   count                   = var.kms_key_id == null ? 1 : 0
   description             = "KMS key for encrypting/decrypting ecs service cloudwatch log group"
@@ -96,9 +95,7 @@ resource "aws_cloudwatch_log_group" "main" {
   tags              = var.tags
 }
 
-############################
-## Load Balancer
-############################
+# Load Balancer
 resource "aws_lb" "main" {
   count                      = var.create_load_balancer ? 1 : 0
   name                       = var.name
@@ -133,9 +130,7 @@ resource "aws_wafregional_web_acl_association" "main" {
   web_acl_id   = var.wafregional_acl_id
 }
 
-############################
 # lb target group
-############################
 resource "aws_lb_target_group" "main_tg" {
   count       = var.create_load_balancer ? 1 : 0
   name        = var.name
@@ -187,10 +182,9 @@ resource "aws_lb_listener" "https" {
   }
 }
 
-###############################################################################################################################################
-### NOTE: Self-signed certificates are usually used only in development environments or applications deployed internally to an organization.
-### Please use ACM generated certificate in production. Specify the value of `acm_certificate_arn` to provide this
-###############################################################################################################################################
+
+# NOTE: Self-signed certificates are usually used only in development environments or applications deployed internally to an organization.
+# Please use ACM generated certificate in production. Specify the value of `acm_certificate_arn` to provide this
 resource "tls_private_key" "default" {
   count     = var.create_load_balancer && var.acm_certificate_arn == null ? 1 : 0
   algorithm = "RSA"
@@ -264,7 +258,6 @@ resource "aws_security_group_rule" "lb_egress" {
 
 # Service Security group
 resource "aws_security_group" "service" {
-  #count                  = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 0 : 1
   name                   = "${var.name}-security-group"
   vpc_id                 = var.vpc_id
   description            = "${var.name} Service security group"

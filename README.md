@@ -186,7 +186,7 @@ module "ecs_service" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.15.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.23.1 |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.4 |
 
 ## Modules
@@ -206,6 +206,7 @@ No modules.
 | [aws_iam_role.task_execution_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.task_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy.task_execution_role_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_role_policy.task_role_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_kms_key.cloudwatch_log_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
 | [aws_lb.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb) | resource |
 | [aws_lb_listener.http_redirect](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
@@ -258,7 +259,7 @@ No modules.
 | <a name="input_interval"></a> [interval](#input\_interval) | (Optional) Approximate amount of time, in seconds, between health checks of an individual target. The range is 5-300. For lambda target groups, it needs to be greater than the timeout of the underlying lambda. Defaults to 30. | `number` | `30` | no |
 | <a name="input_key_deletion_window_in_days"></a> [key\_deletion\_window\_in\_days](#input\_key\_deletion\_window\_in\_days) | The number of days before the key is deleted | `number` | `7` | no |
 | <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | The KMS ARN for cloudwatch log group | `string` | `null` | no |
-| <a name="input_launch_type"></a> [launch\_type](#input\_launch\_type) | Launch type on which to run your service. The valid values are EC2, FARGATE, and EXTERNAL. Defaults to EC2. | `string` | `"FARGATE"` | no |
+| <a name="input_launch_type"></a> [launch\_type](#input\_launch\_type) | Launch type on which to run your service. The valid values are EC2, FARGATE, and EXTERNAL. | `string` | `"FARGATE"` | no |
 | <a name="input_lb_ingress_rules"></a> [lb\_ingress\_rules](#input\_lb\_ingress\_rules) | Ingress rules to add to the load balancer security group. The rules defined here will be used by service security group | `list(any)` | `[]` | no |
 | <a name="input_listener_port"></a> [listener\_port](#input\_listener\_port) | (Required) The port to listen on for the load balancer | `number` | `80` | no |
 | <a name="input_listener_protocol"></a> [listener\_protocol](#input\_listener\_protocol) | (Required) The protocol to listen on. Valid values are HTTP, HTTPS, TCP, or SSL | `string` | `"HTTP"` | no |
@@ -286,9 +287,10 @@ No modules.
 | <a name="input_ssl_policy"></a> [ssl\_policy](#input\_ssl\_policy) | (Optional) Name of the SSL Policy for the listener. Required if protocol is `HTTPS` or `TLS` | `string` | `"ELBSecurityPolicy-TLS-1-2-2017-01"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Key Value tags to apply to the resources | `map(string)` | `{}` | no |
 | <a name="input_target_type"></a> [target\_type](#input\_target\_type) | Type of target that you must specify when registering targets with this target group. See doc for supported values. The default is instance. | `string` | `"ip"` | no |
-| <a name="input_task_execution_role"></a> [task\_execution\_role](#input\_task\_execution\_role) | Specify the IAM role for task definition task execution | `string` | `null` | no |
+| <a name="input_task_assume_role_policy"></a> [task\_assume\_role\_policy](#input\_task\_assume\_role\_policy) | The assume role policy for the task role | `string` | `""` | no |
+| <a name="input_task_execution_assume_role_policy"></a> [task\_execution\_assume\_role\_policy](#input\_task\_execution\_assume\_role\_policy) | The assume role policy for the task execution role | `string` | `null` | no |
 | <a name="input_task_execution_role_policy"></a> [task\_execution\_role\_policy](#input\_task\_execution\_role\_policy) | Specify the IAM policy for task definition task execution | `string` | `""` | no |
-| <a name="input_task_role_policy"></a> [task\_role\_policy](#input\_task\_role\_policy) | The IAM for task role in task definition | `string` | `""` | no |
+| <a name="input_task_role_policy"></a> [task\_role\_policy](#input\_task\_role\_policy) | Specify the IAM policy for task role | `string` | `""` | no |
 | <a name="input_tasks_maximum_percent"></a> [tasks\_maximum\_percent](#input\_tasks\_maximum\_percent) | Upper limit on the number of running tasks. | `number` | `200` | no |
 | <a name="input_tasks_minimum_healthy_percent"></a> [tasks\_minimum\_healthy\_percent](#input\_tasks\_minimum\_healthy\_percent) | Lower limit on the number of running tasks. | `number` | `100` | no |
 | <a name="input_tg_port"></a> [tg\_port](#input\_tg\_port) | Port on which targets receive traffic, unless overridden when registering a specific target. Required when target\_type is instance or ip. Does not apply when target\_type is lambda. | `number` | `80` | no |
@@ -309,8 +311,16 @@ No modules.
 | <a name="output_iam_role_id_role"></a> [iam\_role\_id\_role](#output\_iam\_role\_id\_role) | ID of IAM task role |
 | <a name="output_iam_role_name_role"></a> [iam\_role\_name\_role](#output\_iam\_role\_name\_role) | Name of IAM task role |
 | <a name="output_iam_role_unique_id_role"></a> [iam\_role\_unique\_id\_role](#output\_iam\_role\_unique\_id\_role) | Unique ID of IAM task role |
+| <a name="output_lb_arn"></a> [lb\_arn](#output\_lb\_arn) | The ARN of the load balancer (matches `id`) |
 | <a name="output_lb_dns_name"></a> [lb\_dns\_name](#output\_lb\_dns\_name) | DNS name of load balancer |
 | <a name="output_lb_dns_zone_id"></a> [lb\_dns\_zone\_id](#output\_lb\_dns\_zone\_id) | DNS zone id of load balancer |
+| <a name="output_lb_sg_arn"></a> [lb\_sg\_arn](#output\_lb\_sg\_arn) | ID of the load balancer security group. |
+| <a name="output_lb_sg_id"></a> [lb\_sg\_id](#output\_lb\_sg\_id) | ARN of the load balancer security group. |
+| <a name="output_service_sg_arn"></a> [service\_sg\_arn](#output\_service\_sg\_arn) | ID of the service security group. |
+| <a name="output_service_sg_id"></a> [service\_sg\_id](#output\_service\_sg\_id) | ARN of the service security group. |
+| <a name="output_task_definition_arn"></a> [task\_definition\_arn](#output\_task\_definition\_arn) | Full ARN of the Task Definition (including both family and revision) |
+| <a name="output_task_definition_arn_without_revision"></a> [task\_definition\_arn\_without\_revision](#output\_task\_definition\_arn\_without\_revision) | ARN of the Task Definition with the trailing `revision` removed. This may be useful for situations where the latest task definition is always desired. If a revision isn't specified, the latest ACTIVE revision is used. |
+| <a name="output_task_definition_revision"></a> [task\_definition\_revision](#output\_task\_definition\_revision) | Revision of the task in a particular family. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Third party software
