@@ -30,6 +30,7 @@ module "ecs_service_lb" {
   cluster                           = local.cluster
   vpc_id                            = local.vpc_id
   task_assume_role_policy           = data.aws_iam_policy_document.ecs_assume_role_policy.json
+  task_role_policy                  = data.aws_iam_policy_document.task_role_policy_doc.json
   task_execution_assume_role_policy = data.aws_iam_policy_document.ecs_assume_role_policy.json
   task_execution_role_policy        = local.task_execution_role_policy_doc
   container_definitions             = local.default_container_definitions
