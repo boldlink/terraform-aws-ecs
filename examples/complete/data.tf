@@ -97,7 +97,7 @@ data "aws_kms_alias" "supporting_kms" {
 }
 
 data "aws_iam_policy_document" "task_role_policy_doc" {
-#checkov:skip=CKV_AWS_356:"Ensure no IAM policies documents allow "*" as a statement's resource for restrictable actions"
+  #checkov:skip=CKV_AWS_356:"Ensure no IAM policies documents allow "*" as a statement's resource for restrictable actions"
   statement {
     actions = [
       "ecr:GetDownloadUrlForLayer",
