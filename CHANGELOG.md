@@ -6,7 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - major: Remove the WAF KMS and ALB/NLB resources from the module and use external modules to provide these configurations.
-- feat: add complete example for alb and nlb service
 - fix: CKV_AWS_260 Ensure no security groups allow ingress from 0.0.0.0:0 to port 80
 - fix: CKV_AWS_336 Ensure ECS containers are limited to read-only access to root filesystems
 - fix: CKV_AWS_338 Ensure CloudWatch log groups retains logs for at least 1 year
@@ -29,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.7.0] - 2023-12-03
 ### Changes
+- feat: add complete example for alb and nlb service
 - feat: Enable ALB idle timeout configuration - this feature only works with ALB and not NLB.
 - fix: Separate listeners and target groups according to the `load_balancer_type = "application/network"`.
 - fix: Change the complete example s3 bucket policy and acl to support alb+nlb log delivery
