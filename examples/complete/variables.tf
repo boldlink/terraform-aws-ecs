@@ -145,7 +145,7 @@ variable "service_namespace" {
   default     = "ecs"
 }
 
-variable "lb_ingress_rules" {
+variable "alb_ingress_rules" {
   type        = list(any)
   description = "Incoming traffic configuration for the load balancer security group"
   default = [
@@ -160,8 +160,22 @@ variable "lb_ingress_rules" {
       from_port   = 80
       to_port     = 80
       protocol    = "tcp"
-      description = "Allow traffic to load balancer on port 80"
+      description = "Allow traffic to alb load balancer on port 80"
       cidr_blocks = ["0.0.0.0/0"]
     },
+  ]
+}
+
+variable "nlb_ingress_rules" {
+  type        = list(any)
+  description = "Incoming traffic configuration for the NLB load balancer security group"
+  default = [
+    {
+      from_port   = 5000
+      to_port     = 5000
+      protocol    = "tcp"
+      description = "Allow traffic to nlb load balancer on port 5000"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
   ]
 }

@@ -17,6 +17,7 @@
 - Add HTTPS inbound rule to load balancer security group for HTTPS to work
 - For this example `deletion_protection` is enabled for the load balancer. Change the argument ` enable_deletion_protection = true` to `  enable_deletion_protection = false` or delete it to disable this feature. Terraform will not be able to delete the resource if this feature is not enabled.
 - Ensure that traffic on port `5000` is allowed in the ALB security group. This example uses an image that is configured to listen on port `5000`. If you are using your own image, make sure to allow traffic for the port that your application is configured to.
+- This example also contains now a NLB configuration, no SSL/TLS is specified for the NLB, so it will be created as a TCP NLB. If you want to use a HTTP NLB, you need to specify a certificate for the NLB. See the [NLB documentation](https://docs.aws.amazon.com/elasticloadbalancing/latest/network/create-tls-listener.html) for more information.
 
 ## Testing the deployment
 To test the deployment, follow these steps:

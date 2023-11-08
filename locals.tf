@@ -6,6 +6,7 @@ locals {
   dns_suffix             = data.aws_partition.current.dns_suffix
   lb_dns_name            = var.create_load_balancer == false ? "empty" : aws_lb.main[0].dns_name
   lb_dns_zone_id         = var.create_load_balancer == false ? "empty" : aws_lb.main[0].zone_id
+  matcher                = var.load_balancer_type == "application" ? var.matcher : null
   kms_policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [

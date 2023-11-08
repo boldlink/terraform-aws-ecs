@@ -1,19 +1,10 @@
-output "task_definition_arn" {
-  value       = [module.ecs_service_lb.task_definition_arn]
+output "alb_dns_name" {
+  value       = [module.ecs_service_alb.alb_dns_name]
   description = "The task definition arn"
 }
 
-output "lb_arn" {
-  value       = [module.ecs_service_lb.lb_arn]
+output "alb_arn" {
+  value       = [module.ecs_service_alb.lb_arn]
   description = "The load balancer arn/id"
 }
 
-output "lb_sg_id" {
-  value       = [module.ecs_service_lb.lb_sg_id]
-  description = "The ID of the load balancer security group"
-}
-
-output "service_sg_id" {
-  value       = [module.ecs_service_lb.service_sg_id]
-  description = "The ID of the service security group"
-}

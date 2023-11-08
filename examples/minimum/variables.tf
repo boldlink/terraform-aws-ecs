@@ -1,7 +1,7 @@
 variable "name" {
   type        = string
   description = "Name of the stack"
-  default     = "minimum-example"
+  default     = "minimum-ecs-example"
 }
 
 variable "supporting_resources_name" {
