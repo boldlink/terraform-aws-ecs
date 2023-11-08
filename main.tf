@@ -211,7 +211,7 @@ resource "aws_lb_listener" "nlb" {
   port              = var.tg_port
   protocol          = "TLS"
   ssl_policy        = var.ssl_policy
-  certificate_arn   = var.acm_certificate_arn != null ? var.acm_certificate_arn : aws_acm_certificate.main[0].arn  
+  certificate_arn   = var.acm_certificate_arn != null ? var.acm_certificate_arn : aws_acm_certificate.main[0].arn
   default_action {
     type             = var.default_type
     target_group_arn = aws_lb_target_group.main_nlb[0].arn

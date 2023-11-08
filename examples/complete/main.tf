@@ -1,10 +1,10 @@
 module "access_logs_bucket" {
-  source        = "boldlink/s3/aws"
-  version       = "2.3.1"
-  bucket        = local.bucket
-  force_destroy = var.force_destroy
+  source            = "boldlink/s3/aws"
+  version           = "2.3.1"
+  bucket            = local.bucket
+  force_destroy     = var.force_destroy
   sse_sse_algorithm = "AES256" # For production use aws:kms with your CMK and the proper key policy allowing ebs account to use the cmk
-  bucket_acl    = {
+  bucket_acl = {
     acl = "log-delivery-write"
   }
   bucket_policy = data.aws_iam_policy_document.access_logs_bucket.json

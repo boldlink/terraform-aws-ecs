@@ -90,9 +90,9 @@ variable "network_mode" {
 }
 
 variable "idle_timeout" {
-  default = 60
+  default     = 60
   description = "(Optional) The time in seconds that the connection is allowed to be idle. Only valid for Load Balancers of type application. Default: 60"
-  type = number  
+  type        = number
 }
 
 variable "requires_compatibilities" {
@@ -269,7 +269,7 @@ variable "target_type" {
 
 variable "matcher" {
   # default     = "200,202"
-  default = null
+  default     = null
   description = "(May be required) Response codes to use when checking for a healthy responses from a target. You can specify multiple values (for example, 200,202 for HTTP(s))"
   type        = string
 }
