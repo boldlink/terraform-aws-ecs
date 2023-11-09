@@ -2,6 +2,8 @@ data "aws_partition" "current" {}
 
 data "aws_region" "current" {}
 
+data "aws_caller_identity" "current" {}
+
 data "aws_iam_policy_document" "ecs_assume_role_policy" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -16,41 +18,98 @@ data "aws_iam_policy_document" "ecs_assume_role_policy" {
 ### Access Logs Bucket Policy
 data "aws_iam_policy_document" "access_logs_bucket" {
   policy_id = "s3_bucket_lb_logs"
-
   statement {
-    actions = [
-      "s3:PutObject",
+    sid     = "denyOutdatedTLS"
+    effect  = "Deny"
+    actions = ["*"]
+    resources = [
+      "arn:aws:s3:::${local.bucket}",
+      "arn:aws:s3:::${local.bucket}/*"
     ]
-    effect    = "Allow"
-    resources = ["arn:${local.partition}:s3:::${local.bucket}/*"]
-
     principals {
-      identifiers = [local.service_account]
+      type        = "*"
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "NumericLessThan"
+      variable = "s3:TlsVersion"
+      values   = ["1.2"]
+    }
+  }
+  statement {
+    sid     = "denyInsecureTransport"
+    effect  = "Deny"
+    actions = ["*"]
+    resources = [
+      "arn:aws:s3:::${local.bucket}",
+      "arn:aws:s3:::${local.bucket}/*"
+    ]
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["false"]
+    }
+  }
+  statement {
+    sid       = "ELBRegionAllow"
+    actions   = ["s3:PutObject"]
+    resources = ["arn:aws:s3:::${local.bucket}/*"]
+    principals {
       type        = "AWS"
+      identifiers = ["arn:aws:iam::${local.elb_service_account_id}:root"]
     }
   }
-
   statement {
+    sid = "LogDeliveryAllowWrite"
     actions = [
-      "s3:PutObject"
-    ]
-    effect    = "Allow"
-    resources = ["arn:${local.partition}:s3:::${local.bucket}/*"]
-    principals {
-      identifiers = ["delivery.logs.amazonaws.com"]
-      type        = "Service"
-    }
-  }
-
-  statement {
-    actions = [
+      "s3:ListBucket",
       "s3:GetBucketAcl"
     ]
-    effect    = "Allow"
-    resources = ["arn:${local.partition}:s3:::${local.bucket}"]
+    resources = ["arn:aws:s3:::${local.bucket}"]
     principals {
-      identifiers = ["delivery.logs.amazonaws.com"]
       type        = "Service"
+      identifiers = ["delivery.logs.${local.dns_suffix}"]
+    }
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${local.account_id}:root"]
+    }
+  }
+  statement {
+    sid       = "ReadLogsroot"
+    actions   = ["s3:GetObject"]
+    resources = ["arn:aws:s3:::${local.bucket}/*"]
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${local.account_id}:root"]
+    }
+  }
+
+  statement {
+    sid       = "LogDeliveryAllowWriteS3"
+    actions   = ["s3:PutObject"]
+    resources = ["arn:aws:s3:::${local.bucket}/*"]
+    principals {
+      type        = "Service"
+      identifiers = ["delivery.logs.${local.dns_suffix}"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "s3:x-amz-acl"
+      values   = ["bucket-owner-full-control"]
+    }
+  }
+  statement {
+    sid       = "LogDeliveryAllow"
+    actions   = ["s3:PutObject"]
+    resources = ["arn:aws:s3:::${local.bucket}/*"]
+    principals {
+      type        = "Service"
+      identifiers = ["logdelivery.elasticloadbalancing.${local.dns_suffix}"]
     }
   }
 }

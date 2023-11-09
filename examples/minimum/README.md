@@ -25,7 +25,7 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.23.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.24.0 |
 
 ## Modules
 
@@ -55,7 +55,7 @@
 | <a name="input_hostport"></a> [hostport](#input\_hostport) | Specify host port | `number` | `5000` | no |
 | <a name="input_image"></a> [image](#input\_image) | Name of image to pull from dockerhub | `string` | `"boldlink/flaskapp:latest"` | no |
 | <a name="input_memory"></a> [memory](#input\_memory) | The size of memory to allocate in MiBs | `number` | `512` | no |
-| <a name="input_name"></a> [name](#input\_name) | Name of the stack | `string` | `"minimum-example"` | no |
+| <a name="input_name"></a> [name](#input\_name) | Name of the stack | `string` | `"minimum-ecs-example"` | no |
 | <a name="input_network_mode"></a> [network\_mode](#input\_network\_mode) | Docker networking mode to use for the containers in the task. Valid values are none, bridge, awsvpc, and host. | `string` | `"awsvpc"` | no |
 | <a name="input_service_ingress_rules"></a> [service\_ingress\_rules](#input\_service\_ingress\_rules) | Ingress rules to add to the service security group. | `list(any)` | <pre>[<br>  {<br>    "cidr_blocks": [<br>      "0.0.0.0/0"<br>    ],<br>    "description": "Allow traffic on port 5000. The app is configured to use this port",<br>    "from_port": 5000,<br>    "protocol": "tcp",<br>    "to_port": 5000<br>  }<br>]</pre> | no |
 | <a name="input_supporting_resources_name"></a> [supporting\_resources\_name](#input\_supporting\_resources\_name) | Name of the supporting resources stack | `string` | `"terraform-aws-ecs-service"` | no |

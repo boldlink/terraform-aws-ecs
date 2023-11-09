@@ -5,12 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- major: Remove the WAF KMS and ALB/NLB resources from the module and use external modules to provide these configurations.
 - fix: CKV_AWS_260 Ensure no security groups allow ingress from 0.0.0.0:0 to port 80
 - fix: CKV_AWS_336 Ensure ECS containers are limited to read-only access to root filesystems
 - fix: CKV_AWS_338 Ensure CloudWatch log groups retains logs for at least 1 year
 - fix: CKV2_AWS_5 Ensure that Security Groups are attached to another
 - fix: CKV_AWS_150 Ensure that Load Balancer has deletion protection enabled
-- fix: CKV_TF_1:Ensure Terraform module sources use a commit hash
+- fix: CKV_AWS_152 Ensure that Load Balancer (Network/Gateway) has cross-zone load balancing enabled
+- fix: CKV2_AWS_20 Ensure that ALB redirects HTTP requests into HTTPS ones
+- fix: CKV_AWS_261 Ensure HTTP HTTPS Target group defines Healthcheck
 - feat: showcase load balancer protection using WAF
 - feat: more than one security group for ecs service
 - feat: Add EC2 usage example
@@ -22,6 +25,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: consolidate ecs cluster module and ecs service module into one
 - feat: Add missing aws_ecs_task_definition arguments and showcase them in examples
 - feat: expand volume block of the task definition as it has more configuration
+
+## [1.7.0] - 2023-12-03
+### Changes
+- feat: add complete example for alb and nlb service
+- feat: Enable ALB idle timeout configuration - this feature only works with ALB and not NLB.
+- fix: Separate listeners and target groups according to the `load_balancer_type = "application/network"`.
+- fix: Change the complete example s3 bucket policy and acl to support alb+nlb log delivery
+- fix: Force the s3 bucket encryption to be `AES256` since nlb only support AES256 or CMK kms encryption.
+- feat: Configure the nlb listerner to use TLS by default, note the current complete example doesnt implement end-to-end encyrption.
 
 ## [1.6.0] - 2023-10-26
 ### Changes
@@ -130,8 +142,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: feature update.
 - feat: initial code commit
 
-[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.5.3...HEAD
+[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.7.0...HEAD
 
+[1.7.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.7.0
 [1.6.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.6.0
 [1.5.3]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.3
 [1.5.2]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.5.2

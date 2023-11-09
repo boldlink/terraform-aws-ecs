@@ -30,7 +30,7 @@ resource "aws_ecs_service" "service" {
     content {
       container_name   = lookup(load_balancer.value, "container_name")
       container_port   = lookup(load_balancer.value, "container_port")
-      target_group_arn = lookup(load_balancer.value, "target_group_arn", try(aws_lb_target_group.main_tg[0].arn, null))
+      target_group_arn = var.load_balancer_type == "application" ? aws_lb_target_group.main_alb[0].arn : aws_lb_target_group.main_nlb[0].arn
     }
   }
 }
@@ -100,6 +100,7 @@ resource "aws_lb" "main" {
   count                      = var.create_load_balancer ? 1 : 0
   name                       = var.name
   internal                   = var.internal
+  idle_timeout               = var.load_balancer_type == "application" ? var.idle_timeout : null
   load_balancer_type         = var.load_balancer_type
   subnets                    = var.alb_subnets
   security_groups            = [aws_security_group.lb[0].id]
@@ -131,8 +132,8 @@ resource "aws_wafregional_web_acl_association" "main" {
 }
 
 # lb target group
-resource "aws_lb_target_group" "main_tg" {
-  count       = var.create_load_balancer ? 1 : 0
+resource "aws_lb_target_group" "main_alb" {
+  count       = var.load_balancer_type == "application" && var.create_load_balancer ? 1 : 0
   name        = var.name
   port        = var.tg_port
   protocol    = var.tg_protocol
@@ -149,9 +150,25 @@ resource "aws_lb_target_group" "main_tg" {
   depends_on = [aws_lb.main]
 }
 
+resource "aws_lb_target_group" "main_nlb" {
+  count       = var.load_balancer_type == "network" && var.create_load_balancer ? 1 : 0
+  name        = var.name
+  port        = var.tg_port
+  protocol    = var.tg_protocol
+  target_type = var.target_type
+  vpc_id      = var.vpc_id
+  health_check {
+    protocol          = var.tg_protocol
+    healthy_threshold = var.healthy_threshold
+    interval          = var.interval
+  }
+
+  depends_on = [aws_lb.main]
+}
+
 #http redirect listener
 resource "aws_lb_listener" "http_redirect" {
-  count             = var.create_load_balancer ? 1 : 0
+  count             = var.load_balancer_type == "application" && var.create_load_balancer ? 1 : 0
   load_balancer_arn = aws_lb.main[0].id
   port              = var.listener_port
   protocol          = var.listener_protocol
@@ -165,11 +182,14 @@ resource "aws_lb_listener" "http_redirect" {
       status_code = "HTTP_301"
     }
   }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 ## Forward redirected traffic to target group
 resource "aws_lb_listener" "https" {
-  count             = var.create_load_balancer ? 1 : 0
+  count             = var.load_balancer_type == "application" && var.create_load_balancer ? 1 : 0
   load_balancer_arn = aws_lb.main[0].id
   port              = "443"
   protocol          = "HTTPS"
@@ -178,7 +198,26 @@ resource "aws_lb_listener" "https" {
 
   default_action {
     type             = var.default_type
-    target_group_arn = aws_lb_target_group.main_tg[0].arn
+    target_group_arn = aws_lb_target_group.main_alb[0].arn
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_lb_listener" "nlb" {
+  count             = var.load_balancer_type == "network" && var.create_load_balancer ? 1 : 0
+  load_balancer_arn = aws_lb.main[0].id
+  port              = var.tg_port
+  protocol          = "TLS"
+  ssl_policy        = var.ssl_policy
+  certificate_arn   = var.acm_certificate_arn != null ? var.acm_certificate_arn : aws_acm_certificate.main[0].arn
+  default_action {
+    type             = var.default_type
+    target_group_arn = aws_lb_target_group.main_nlb[0].arn
+  }
+  lifecycle {
+    create_before_destroy = true
   }
 }
 

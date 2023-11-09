@@ -89,6 +89,12 @@ variable "network_mode" {
   type        = string
 }
 
+variable "idle_timeout" {
+  default     = 60
+  description = "(Optional) The time in seconds that the connection is allowed to be idle. Only valid for Load Balancers of type application. Default: 60"
+  type        = number
+}
+
 variable "requires_compatibilities" {
   description = "Set of launch types required by the task. The valid values are EC2 and FARGATE."
   type        = list(string)
@@ -262,7 +268,8 @@ variable "target_type" {
 }
 
 variable "matcher" {
-  default     = "200,202"
+  # default     = "200,202"
+  default     = null
   description = "(May be required) Response codes to use when checking for a healthy responses from a target. You can specify multiple values (for example, 200,202 for HTTP(s))"
   type        = string
 }
