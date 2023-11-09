@@ -14,6 +14,7 @@ locals {
   dns_suffix             = data.aws_partition.current.dns_suffix
   bucket                 = "${var.name}-access-logs-bucket-boldlink"
   tags                   = merge({ "Name" = var.name }, var.tags)
+  account_id             = data.aws_caller_identity.current.account_id
   elb_service_account_id = data.aws_elb_service_account.main.id
   alb_container_definitions = jsonencode(
     [

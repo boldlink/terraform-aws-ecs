@@ -2,6 +2,8 @@ data "aws_partition" "current" {}
 
 data "aws_region" "current" {}
 
+data "aws_caller_identity" "current" {}
+
 data "aws_iam_policy_document" "ecs_assume_role_policy" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -72,7 +74,21 @@ data "aws_iam_policy_document" "access_logs_bucket" {
       type        = "Service"
       identifiers = ["delivery.logs.${local.dns_suffix}"]
     }
+    principals {
+      type = "AWS"
+      identifiers = ["arn:aws:iam::${local.account_id}:root"]
+    }
   }
+  statement {
+    sid = "ReadLogsroot"
+    actions = ["s3:GetObject"]
+    resources = ["arn:aws:s3:::${local.bucket}/*"]
+    principals {
+      type = "AWS"
+      identifiers = ["arn:aws:iam::${local.account_id}:root"]
+    }
+  }
+
   statement {
     sid       = "LogDeliveryAllowWriteS3"
     actions   = ["s3:PutObject"]
