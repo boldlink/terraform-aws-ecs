@@ -75,16 +75,16 @@ data "aws_iam_policy_document" "access_logs_bucket" {
       identifiers = ["delivery.logs.${local.dns_suffix}"]
     }
     principals {
-      type = "AWS"
+      type        = "AWS"
       identifiers = ["arn:aws:iam::${local.account_id}:root"]
     }
   }
   statement {
-    sid = "ReadLogsroot"
-    actions = ["s3:GetObject"]
+    sid       = "ReadLogsroot"
+    actions   = ["s3:GetObject"]
     resources = ["arn:aws:s3:::${local.bucket}/*"]
     principals {
-      type = "AWS"
+      type        = "AWS"
       identifiers = ["arn:aws:iam::${local.account_id}:root"]
     }
   }
