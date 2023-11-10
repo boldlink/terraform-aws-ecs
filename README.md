@@ -186,7 +186,7 @@ module "ecs_service" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.24.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.25.0 |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.4 |
 
 ## Modules
@@ -235,7 +235,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_access_logs"></a> [access\_logs](#input\_access\_logs) | (Optional) Define an Access Logs block | `map(string)` | `{}` | no |
 | <a name="input_acm_certificate_arn"></a> [acm\_certificate\_arn](#input\_acm\_certificate\_arn) | ARN of ACM generated/third party certificate | `string` | `null` | no |
-| <a name="input_adjustment_type"></a> [adjustment\_type](#input\_adjustment\_type) | Required) Specifies whether the adjustment is an absolute number or a percentage of the current capacity. Valid values are ChangeInCapacity, ExactCapacity, and PercentChangeInCapacity. | `string` | `"ChangeInCapacity"` | no |
+| <a name="input_adjustment_type"></a> [adjustment\_type](#input\_adjustment\_type) | (Required) Specifies whether the adjustment is an absolute number or a percentage of the current capacity. Valid values are ChangeInCapacity, ExactCapacity, and PercentChangeInCapacity. | `string` | `"ChangeInCapacity"` | no |
 | <a name="input_alb_subnets"></a> [alb\_subnets](#input\_alb\_subnets) | Subnet IDs for the application load balancer. | `list(string)` | `[]` | no |
 | <a name="input_associate_with_waf"></a> [associate\_with\_waf](#input\_associate\_with\_waf) | Whether to associate created ALB with AWS WAFv2 ACL | `bool` | `false` | no |
 | <a name="input_associate_with_wafregional"></a> [associate\_with\_wafregional](#input\_associate\_with\_wafregional) | Whether to associate created ALB with WAF Regional Web ACL | `bool` | `false` | no |
