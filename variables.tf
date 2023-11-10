@@ -337,7 +337,7 @@ variable "policy_type" {
 }
 
 variable "adjustment_type" {
-  description = "Required) Specifies whether the adjustment is an absolute number or a percentage of the current capacity. Valid values are ChangeInCapacity, ExactCapacity, and PercentChangeInCapacity."
+  description = "(Required) Specifies whether the adjustment is an absolute number or a percentage of the current capacity. Valid values are ChangeInCapacity, ExactCapacity, and PercentChangeInCapacity."
   type        = string
   default     = "ChangeInCapacity"
 }
