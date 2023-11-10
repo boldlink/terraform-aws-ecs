@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: Add missing aws_ecs_task_definition arguments and showcase them in examples
 - feat: expand volume block of the task definition as it has more configuration
 
-## [1.7.1] - 2023-11-10
+## [1.8.0] - 2023-11-10
 ### Changes
 - feat: Showcased WAF association for the loadbalancer
 
