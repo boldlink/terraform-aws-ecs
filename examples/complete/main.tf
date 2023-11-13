@@ -64,10 +64,18 @@ module "ecs_service_alb" {
   enable_autoscaling         = var.enable_autoscaling
   scalable_dimension         = var.scalable_dimension
   service_namespace          = var.service_namespace
+  metric_aggregation_type    = "Average"
+
+  # WAF association
+  associate_with_waf = true
+  web_acl_arn        = module.waf_acl.arn
 
   # Load balancer sg
   lb_ingress_rules = var.alb_ingress_rules
-  depends_on       = [module.access_logs_bucket]
+  depends_on = [
+    module.access_logs_bucket,
+    module.waf_acl
+  ]
 }
 
 module "ecs_service_nlb" {

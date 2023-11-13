@@ -4,6 +4,30 @@ variable "name" {
   default     = "complete-ecs-example"
 }
 
+variable "cloudwatch_metrics_enabled" {
+  type        = bool
+  description = "Whether to enable cloudwatch metrics"
+  default     = false
+}
+
+variable "sampled_requests_enabled" {
+  type        = bool
+  description = "Whether to enable simple requests"
+  default     = false
+}
+
+variable "custom_header_name" {
+  type        = string
+  description = "The name of the custom header to insert"
+  default     = "X-My-Company-Tracking-ID"
+}
+
+variable "custom_header_value" {
+  type        = string
+  description = "The value of the custom header to insert"
+  default     = "1234567890"
+}
+
 variable "supporting_resources_name" {
   type        = string
   description = "Name of the supporting resources stack"
