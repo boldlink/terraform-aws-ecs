@@ -150,8 +150,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: feature update.
 - feat: initial code commit
 
-[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.7.1...HEAD
+[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.9.0...HEAD
 
+[1.9.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.9.0
+[1.8.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.8.0
 [1.7.1]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.7.1
 [1.7.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.7.0
 [1.6.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.6.0

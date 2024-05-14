@@ -45,12 +45,6 @@ variable "enable_deletion_protection" {
   default     = false
 }
 
-variable "default_type" {
-  description = "Type for default action "
-  type        = string
-  default     = "forward"
-}
-
 variable "listener_protocol" {
   description = "(Required) The protocol to listen on. Valid values are HTTP, HTTPS, TCP, or SSL"
   type        = string
