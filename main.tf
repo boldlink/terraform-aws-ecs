@@ -30,7 +30,7 @@ resource "aws_ecs_service" "service" {
     content {
       container_name   = lookup(load_balancer.value, "container_name")
       container_port   = lookup(load_balancer.value, "container_port")
-      target_group_arn = var.load_balancer_type == "application" ? aws_lb_target_group.main_alb[0].arn : aws_lb_target_group.main_nlb[0].arn
+      target_group_arn = try(load_balancer.value.target_group_arn, (var.load_balancer_type == "application" ? aws_lb_target_group.main_alb[0].arn : aws_lb_target_group.main_nlb[0].arn))
     }
   }
 }
