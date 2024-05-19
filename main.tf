@@ -321,15 +321,15 @@ resource "aws_security_group_rule" "service_with_lb_ingress" {
 }
 
 resource "aws_security_group_rule" "service_ingress" {
-  count                    = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 0 : length(var.service_ingress_rules)
-  security_group_id        = aws_security_group.service.id
-  type                     = "ingress"
-  description              = try(var.service_ingress_rules[count.index]["description"], null)
-  from_port                = try(var.service_ingress_rules[count.index]["from_port"], null)
-  protocol                 = try(var.service_ingress_rules[count.index]["protocol"], null)
-  to_port                  = try(var.service_ingress_rules[count.index]["to_port"], null)
-  cidr_blocks              = try(var.service_ingress_rules[count.index]["cidr_blocks"], [])
-  self                     = try(var.service_ingress_rules[count.index]["self"], null)
+  count             = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 0 : length(var.service_ingress_rules)
+  security_group_id = aws_security_group.service.id
+  type              = "ingress"
+  description       = try(var.service_ingress_rules[count.index]["description"], null)
+  from_port         = try(var.service_ingress_rules[count.index]["from_port"], null)
+  protocol          = try(var.service_ingress_rules[count.index]["protocol"], null)
+  to_port           = try(var.service_ingress_rules[count.index]["to_port"], null)
+  cidr_blocks       = try(var.service_ingress_rules[count.index]["cidr_blocks"], [])
+  self              = try(var.service_ingress_rules[count.index]["self"], null)
 }
 
 resource "aws_security_group_rule" "service_ingress_sg" {
