@@ -26,6 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: Add missing aws_ecs_task_definition arguments and showcase them in examples
 - feat: expand volume block of the task definition as it has more configuration
 
+## [1.10.0] - 2024-05-19
+### Changes
+- feat: resolve conflict when using service ingress rules with a sg as a source and add support for cidr_blocks and source_security_group_id security group rules groups
+
 ## [1.9.0] - 2024-05-14
 ### Changes
 - feat: associate ecs service with an external load balancer & target group
@@ -150,8 +154,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: feature update.
 - feat: initial code commit
 
-[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.9.0...HEAD
+[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.10.0...HEAD
 
+[1.10.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.10.0
 [1.9.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.9.0
 [1.8.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.8.0
 [1.7.1]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.7.1

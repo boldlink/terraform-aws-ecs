@@ -425,3 +425,9 @@ variable "service_ingress_rules" {
   type        = list(any)
   default     = []
 }
+
+variable "service_ingress_rules_sg" {
+  description = "Ingress rules to add to the service security group."
+  type        = list(any)
+  default     = []
+}
