@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: CKV_AWS_152 Ensure that Load Balancer (Network/Gateway) has cross-zone load balancing enabled
 - fix: CKV2_AWS_20 Ensure that ALB redirects HTTP requests into HTTPS ones
 - fix: CKV_AWS_261 Ensure HTTP HTTPS Target group defines Healthcheck
+- fix: CKV_TF_2 Ensure Terraform module sources use a tag with a version number
 - feat: showcase load balancer protection using WAF
 - feat: more than one security group for ecs service
 - feat: Add EC2 usage example
@@ -25,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: consolidate ecs cluster module and ecs service module into one
 - feat: Add missing aws_ecs_task_definition arguments and showcase them in examples
 - feat: expand volume block of the task definition as it has more configuration
+
+## [1.10.0] - 2024-05-19
+### Changes
+- feat: resolve conflict when using service ingress rules with a sg as a source and add support for cidr_blocks and source_security_group_id security group rules groups
+- chore: add checkov exception CKV_TF_2 Ensure Terraform module sources use a tag with a version number
 
 ## [1.9.0] - 2024-05-14
 ### Changes
@@ -150,8 +156,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: feature update.
 - feat: initial code commit
 
-[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.9.0...HEAD
+[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.10.0...HEAD
 
+[1.10.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.10.0
 [1.9.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.9.0
 [1.8.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.8.0
 [1.7.1]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.7.1

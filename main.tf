@@ -321,16 +321,27 @@ resource "aws_security_group_rule" "service_with_lb_ingress" {
 }
 
 resource "aws_security_group_rule" "service_ingress" {
-  count                    = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 0 : length(var.service_ingress_rules)
+  count             = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 0 : length(var.service_ingress_rules)
+  security_group_id = aws_security_group.service.id
+  type              = "ingress"
+  description       = try(var.service_ingress_rules[count.index]["description"], null)
+  from_port         = try(var.service_ingress_rules[count.index]["from_port"], null)
+  protocol          = try(var.service_ingress_rules[count.index]["protocol"], null)
+  to_port           = try(var.service_ingress_rules[count.index]["to_port"], null)
+  cidr_blocks       = try(var.service_ingress_rules[count.index]["cidr_blocks"], [])
+  self              = try(var.service_ingress_rules[count.index]["self"], null)
+}
+
+resource "aws_security_group_rule" "service_ingress_sg" {
+  count                    = var.create_load_balancer && length(var.lb_ingress_rules) > 0 ? 0 : length(var.service_ingress_rules_sg)
   security_group_id        = aws_security_group.service.id
   type                     = "ingress"
-  description              = try(var.service_ingress_rules[count.index]["description"], null)
-  from_port                = try(var.service_ingress_rules[count.index]["from_port"], null)
-  protocol                 = try(var.service_ingress_rules[count.index]["protocol"], null)
-  to_port                  = try(var.service_ingress_rules[count.index]["to_port"], null)
-  cidr_blocks              = try(var.service_ingress_rules[count.index]["cidr_blocks"], [])
-  source_security_group_id = try(var.service_ingress_rules[count.index]["source_security_group_id"], null)
-  self                     = try(var.service_ingress_rules[count.index]["self"], null)
+  description              = try(var.service_ingress_rules_sg[count.index]["description"], null)
+  from_port                = try(var.service_ingress_rules_sg[count.index]["from_port"], null)
+  protocol                 = try(var.service_ingress_rules_sg[count.index]["protocol"], null)
+  to_port                  = try(var.service_ingress_rules_sg[count.index]["to_port"], null)
+  source_security_group_id = try(var.service_ingress_rules_sg[count.index]["source_security_group_id"], null)
+  self                     = try(var.service_ingress_rules_sg[count.index]["self"], null)
 }
 
 resource "aws_security_group_rule" "service_egress" {
