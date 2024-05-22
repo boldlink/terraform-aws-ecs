@@ -304,18 +304,18 @@ variable "enable_autoscaling" {
 variable "step_scaling_policies" {
   description = "Scaling policies to apply to the scalable target. Supported policy types are StepScaling and TargetTrackingScaling."
   type = list(object({
-    name                             = string
-    policy_type                      = string
-    step_scaling_policy_configuration = object({
-      adjustment_type         = string
-      cooldown                = number
-      metric_aggregation_type = string
-      step_adjustments        = list(object({
-        metric_interval_lower_bound = optional(number)
-        metric_interval_upper_bound = optional(number)
-        scaling_adjustment          = number
-      }))
-    })
+    # name                             = string
+    # policy_type                      = string
+    # step_scaling_policy_configuration = object({
+    #   adjustment_type         = string
+    #   cooldown                = number
+    #   metric_aggregation_type = string
+    #   step_adjustments        = list(object({
+    #     metric_interval_lower_bound = optional(number)
+    #     metric_interval_upper_bound = optional(number)
+    #     scaling_adjustment          = number
+    #   }))
+    # })
   }))
   default = []
 }
@@ -324,16 +324,16 @@ variable "step_scaling_policies" {
 variable "target_scaling_policies" {
   description = "Scaling policies to apply to the scalable target. Supported policy types are StepScaling and SepScalint."
   type = list(object({
-    name                            = string
-    policy_type                     = string
-    target_tracking_scaling_policy_configuration = object({
-      target_value       = number
-      scale_in_cooldown  = number
-      scale_out_cooldown = number
-      predefined_metric_specification = object({
-        predefined_metric_type = string
-      })
-    })
+  #   name                            = string
+  #   policy_type                     = string
+  #   target_tracking_scaling_policy_configuration = object({
+  #     target_value       = number
+  #     scale_in_cooldown  = number
+  #     scale_out_cooldown = number
+  #     predefined_metric_specification = object({
+  #       predefined_metric_type = string
+  #     })
+  #   })
   }))
   default = []
 }
