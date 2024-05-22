@@ -1,6 +1,6 @@
 terraform {
   required_version = ">= 0.14.11"
-
+  experiments = [object_attr_opt_fields]
   required_providers {
     aws = {
       source  = "hashicorp/aws"
