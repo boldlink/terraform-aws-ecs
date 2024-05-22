@@ -300,6 +300,7 @@ variable "enable_autoscaling" {
   default     = false
 }
 
+# tflint-ignore: terraform_unused_declarations
 variable "step_scaling_policies" {
   description = "Scaling policies to apply to the scalable target. Supported policy types are StepScaling and TargetTrackingScaling."
   type = list(object({
@@ -319,7 +320,9 @@ variable "step_scaling_policies" {
   default = []
 }
 
+# tflint-ignore: terraform_unused_declarations
 variable "target_scaling_policies" {
+  description = "Scaling policies to apply to the scalable target. Supported policy types are StepScaling and SepScalint."
   type = list(object({
     name                            = string
     policy_type                     = string
