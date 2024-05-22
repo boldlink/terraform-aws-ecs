@@ -61,7 +61,46 @@ module "ecs_service_alb" {
   drop_invalid_header_fields = var.drop_invalid_header_fields
   tg_port                    = var.tg_port
   create_load_balancer       = var.create_load_balancer
-  enable_autoscaling         = var.enable_autoscaling
+  enable_autoscaling         = true
+  step_scaling_policies = [
+    {
+      name                            = "cpu-policy"
+      policy_type                     = "StepScaling"
+      step_scaling_policy_configuration = {
+        adjustment_type         = "ChangeInCapacity"
+        cooldown                = 300
+        metric_aggregation_type = "Average"
+        step_adjustments        = [
+          {
+            metric_interval_lower_bound = 0
+            metric_interval_upper_bound = 10
+            scaling_adjustment = 1
+          },
+          {
+            metric_interval_lower_bound = 10
+            metric_interval_upper_bound = null
+            scaling_adjustment = 2
+          }
+        ]
+      }
+    }
+  ]
+  scheduled_actions = [
+    {
+      name               = "ecs-scheduled-scale-out"
+      schedule           = "cron(0 8 ? * MON-FRI *)"
+      min_capacity       = 5
+      max_capacity       = 10
+      timezone           = "UTC"
+    },
+    {
+      name               = "ecs-scheduled-scale-in"
+      schedule           = "cron(0 20 ? * MON-FRI *)"
+      min_capacity       = 2
+      max_capacity       = 4
+      timezone           = "UTC"
+    }
+  ]
   scalable_dimension         = var.scalable_dimension
   service_namespace          = var.service_namespace
   metric_aggregation_type    = "Average"
@@ -123,7 +162,34 @@ module "ecs_service_nlb" {
   tg_port                    = var.tg_port
   tg_protocol                = "TCP"
   create_load_balancer       = var.create_load_balancer
-  enable_autoscaling         = var.enable_autoscaling
+  enable_autoscaling         = true
+  target_scaling_policies = [
+    {
+      name                            = "cpu-target-tracking"
+      policy_type                     = "TargetTrackingScaling"
+      target_tracking_scaling_policy_configuration = {
+        target_value       = 75
+        scale_in_cooldown  = 300
+        scale_out_cooldown = 300
+        predefined_metric_specification = {
+          predefined_metric_type = "ECSServiceAverageCPUUtilization"
+        }
+      }
+    },
+    {
+      name                            = "memory-target-tracking"
+      policy_type                     = "TargetTrackingScaling"
+      target_tracking_scaling_policy_configuration = {
+        target_value       = 80
+        scale_in_cooldown  = 300
+        scale_out_cooldown = 300
+        predefined_metric_specification = {
+          predefined_metric_type = "ECSServiceAverageMemoryUtilization"
+        }
+      }
+    }
+  ]
+
   scalable_dimension         = var.scalable_dimension
   service_namespace          = var.service_namespace
 
