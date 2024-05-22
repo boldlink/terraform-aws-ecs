@@ -139,12 +139,6 @@ variable "create_load_balancer" {
   default     = true
 }
 
-variable "enable_autoscaling" {
-  type        = bool
-  description = "Whether to enable autoscaling or not for ecs"
-  default     = true
-}
-
 variable "scalable_dimension" {
   type        = string
   description = "The scalable dimension of the scalable target."

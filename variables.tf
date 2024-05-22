@@ -300,24 +300,6 @@ variable "enable_autoscaling" {
   default     = false
 }
 
-# variable "step_scaling_policies" {
-#   description = "Scaling policies to apply to the scalable target. Supported policy types are StepScaling and TargetTrackingScaling."
-#   type = list(object({
-#     name                            = string
-#     policy_type                     = string
-#     step_scaling_policy_configuration = object({
-#       adjustment_type         = string
-#       cooldown                = number
-#       metric_aggregation_type = string
-#       step_adjustments        = list(object({
-#         metric_interval_lower_bound = number
-#         scaling_adjustment          = number
-#       }))
-#     })
-#   }))
-#   default = []
-# }
-
 variable "step_scaling_policies" {
   description = "Scaling policies to apply to the scalable target. Supported policy types are StepScaling and TargetTrackingScaling."
   type = list(object({
