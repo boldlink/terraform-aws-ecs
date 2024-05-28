@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: consolidate ecs cluster module and ecs service module into one
 - feat: Add missing aws_ecs_task_definition arguments and showcase them in examples
 - feat: expand volume block of the task definition as it has more configuration
+- feat: Add example for service security group using a security group id for `service_ingress_sg`
 
 ## [1.11.0] - 2024-05-28
 ### Changes
