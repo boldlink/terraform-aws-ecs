@@ -6,7 +6,7 @@ module "ecs_service" {
   requires_compatibilities = var.requires_compatibilities
   network_mode             = var.network_mode
   name                     = "${var.name}-service"
-  family                   = "${var.name}"
+  family                   = var.name
 
   network_configuration = {
     subnets = local.private_subnets

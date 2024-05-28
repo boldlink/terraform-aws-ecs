@@ -138,7 +138,16 @@ variable "volume_name" {
 }
 
 variable "load_balancer" {
-  description = "(Optional) Configuration block for load balancers"
+  description = <<-EOT
+  (Optional) Configuration block for load balancers, accepts the following arguments:
+
+  load_balancer = [{
+    container_name   = string # Name of the container to associate with the load balancer
+    container_port   = number # Port number the container listens on
+    target_group_arn = string   # ARN of the target group to associate with the load balancer when using an external Alb/NLB
+  }]
+
+  EOT
   type        = any
   default     = []
 }
@@ -182,7 +191,16 @@ variable "enable_deletion_protection" {
 
 variable "access_logs" {
   type        = map(string)
-  description = "(Optional) Define an Access Logs block"
+  description = <<-EOT
+  (Optional) Define an Access Logs block, requires a bucket name and an optional prefix. The S3 bucket must already exist. The default value is false.
+    
+    access_logs = {
+      bucket  = string
+      enabled = bollean
+      prefix  = string
+    }
+
+  EOT
   default     = {}
 }
 
@@ -268,7 +286,6 @@ variable "target_type" {
 }
 
 variable "matcher" {
-  # default     = "200,202"
   default     = null
   description = "(May be required) Response codes to use when checking for a healthy responses from a target. You can specify multiple values (for example, 200,202 for HTTP(s))"
   type        = string
@@ -304,18 +321,18 @@ variable "enable_autoscaling" {
 variable "step_scaling_policies" {
   description = "Scaling policies to apply to the scalable target. Supported policy types are StepScaling and TargetTrackingScaling."
   type = list(object({
-    # name                             = string
-    # policy_type                      = string
-    # step_scaling_policy_configuration = object({
-    #   adjustment_type         = string
-    #   cooldown                = number
-    #   metric_aggregation_type = string
-    #   step_adjustments        = list(object({
-    #     metric_interval_lower_bound = optional(number)
-    #     metric_interval_upper_bound = optional(number)
-    #     scaling_adjustment          = number
-    #   }))
-    # })
+    name        = string
+    policy_type = string
+    step_scaling_policy_configuration = object({
+      adjustment_type         = string
+      cooldown                = number
+      metric_aggregation_type = string
+      step_adjustments = list(object({
+        metric_interval_lower_bound = optional(number)
+        metric_interval_upper_bound = optional(number)
+        scaling_adjustment          = number
+      }))
+    })
   }))
   default = []
 }
@@ -324,16 +341,16 @@ variable "step_scaling_policies" {
 variable "target_scaling_policies" {
   description = "Scaling policies to apply to the scalable target. Supported policy types are StepScaling and SepScalint."
   type = list(object({
-  #   name                            = string
-  #   policy_type                     = string
-  #   target_tracking_scaling_policy_configuration = object({
-  #     target_value       = number
-  #     scale_in_cooldown  = number
-  #     scale_out_cooldown = number
-  #     predefined_metric_specification = object({
-  #       predefined_metric_type = string
-  #     })
-  #   })
+    name        = string
+    policy_type = string
+    target_tracking_scaling_policy_configuration = object({
+      target_value       = number
+      scale_in_cooldown  = number
+      scale_out_cooldown = number
+      predefined_metric_specification = object({
+        predefined_metric_type = string
+      })
+    })
   }))
   default = []
 }
@@ -341,11 +358,11 @@ variable "target_scaling_policies" {
 variable "scheduled_actions" {
   description = "Scheduled actions to apply to the ecs scalable target."
   type = list(object({
-    name               = string
-    schedule           = string
-    min_capacity       = number
-    max_capacity       = number
-    timezone           = string
+    name         = string
+    schedule     = string
+    min_capacity = number
+    max_capacity = number
+    timezone     = string
   }))
   default = []
 }
@@ -380,44 +397,19 @@ variable "service_namespace" {
   default     = "ecs"
 }
 
-variable "policy_type" {
-  description = " (Optional) The policy type. Valid values are StepScaling and TargetTrackingScaling. Defaults to StepScaling."
-  type        = string
-  default     = "StepScaling"
-}
-
-variable "adjustment_type" {
-  description = "(Required) Specifies whether the adjustment is an absolute number or a percentage of the current capacity. Valid values are ChangeInCapacity, ExactCapacity, and PercentChangeInCapacity."
-  type        = string
-  default     = "ChangeInCapacity"
-}
-
-variable "cooldown" {
-  description = "(Required) The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start."
-  type        = number
-  default     = 60
-}
-
-variable "metric_aggregation_type" {
-  description = "(Optional) The aggregation type for the policy's metrics. Valid values are `Minimum`, `Maximum`, and `Average`. Without a value, AWS will treat the aggregation type as `Average`."
-  type        = string
-  default     = "Maximum"
-}
-
-variable "metric_interval_lower_bound" {
-  description = "(Optional) The lower bound for the difference between the alarm threshold and the CloudWatch metric. Without a value, AWS will treat this bound as negative infinity."
-  type        = number
-  default     = 0
-}
-
-variable "scaling_adjustment" {
-  description = "(Required) The number of members by which to scale, when the adjustment bounds are breached. A positive value scales up. A negative value scales down."
-  type        = number
-  default     = 2
-}
-
 variable "lb_ingress_rules" {
-  description = "Ingress rules to add to the load balancer security group. The rules defined here will be used by service security group"
+  description = <<-EOT
+  Ingress rules to add to the load balancer security group. The rules defined here will be used by service security group
+  
+  lb_ingress_rules = [{
+      from_port   = number
+      to_port     = number
+      protocol    = string
+      description = string
+      cidr_blocks = list(string)
+    }]
+
+  EOT
   type        = list(any)
   default     = []
 }
@@ -448,7 +440,14 @@ variable "web_acl_arn" {
 
 variable "triggers" {
   type        = map(string)
-  description = "Map of arbitrary keys and values that, when changed, will trigger an in-place update (redeployment). Useful with `timestamp()`"
+  description = <<-EOT
+  Map of arbitrary keys and values that, when changed, will trigger an in-place update (redeployment). Useful with plaintimestamp()
+
+  triggers = {
+    redeployment = plantimestamp()
+  }
+
+  EOT
   default     = {}
 }
 
@@ -471,13 +470,35 @@ variable "interval" {
 }
 
 variable "service_ingress_rules" {
-  description = "Ingress rules to add to the service security group."
+  description = <<-EOT
+  Ingress rules to add to the service security group.
+
+    service_ingress_rules = [{
+        from_port                = number
+        to_port                  = number
+        protocol                 = string
+        description              = string
+        cidr_blocks              = list(string)
+    }]
+
+  EOT
   type        = list(any)
   default     = []
 }
 
 variable "service_ingress_rules_sg" {
-  description = "Ingress rules to add to the service security group."
+  description = <<-EOT
+  Ingress rules to add to the service security group.
+
+    service_ingress_rules = [{
+      from_port                = number
+      to_port                  = number
+      protocol                 = string
+      description              = string
+      source_security_group_id = string
+    }]
+
+  EOT
   type        = list(any)
   default     = []
 }

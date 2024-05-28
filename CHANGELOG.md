@@ -27,12 +27,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: Add missing aws_ecs_task_definition arguments and showcase them in examples
 - feat: expand volume block of the task definition as it has more configuration
 
-## [1.11.0] - 2024-05-21
+## [1.11.0] - 2024-05-28
 ### Changes
 - feat: Add Step Scaling Policy to ECS Service
 - feat: Add Target Tracking Policy to ECS Service
 - feat: Add Scheduled Scaling Policy to ECS Service
 - feat: Add Application Auto Scaling examples
+- fix: change the trigger to plaintimestamp on examples to fix "registry.terraform.io/hashicorp/aws" produced an invalid new value for .triggers["redeployment"]
+- tflint: Change the loab balancer block to use a list of maps instead of a map of maps, **this is a breaking change.**
+- tflint: Change the reference of index for ecs task definition roles.
+- docs: Add better description to some variables.
 
 ## [1.10.0] - 2024-05-19
 ### Changes

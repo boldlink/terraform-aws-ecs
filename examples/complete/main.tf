@@ -26,11 +26,10 @@ module "ecs_service_alb" {
     subnets          = local.private_subnets
     assign_public_ip = true
   }
-
+  # Always redeploy the service when terraform apply is run
   triggers = {
-    redeployment = timestamp()
+    redeployment = plantimestamp()
   }
-
   alb_subnets                       = local.public_subnets
   cluster                           = local.cluster
   vpc_id                            = local.vpc_id
@@ -46,10 +45,10 @@ module "ecs_service_alb" {
   tasks_maximum_percent             = 150
   tags                              = local.tags
 
-  load_balancer = {
+  load_balancer = [{
     container_name = var.name
     container_port = var.containerport
-  }
+  }]
 
   access_logs = {
     bucket  = module.access_logs_bucket.id
@@ -64,22 +63,22 @@ module "ecs_service_alb" {
   enable_autoscaling         = true
   step_scaling_policies = [
     {
-      name                            = "cpu-policy"
-      policy_type                     = "StepScaling"
+      name        = "cpu-policy"
+      policy_type = "StepScaling"
       step_scaling_policy_configuration = {
         adjustment_type         = "ChangeInCapacity"
         cooldown                = 300
         metric_aggregation_type = "Average"
-        step_adjustments        = [
+        step_adjustments = [
           {
             metric_interval_lower_bound = 0
             metric_interval_upper_bound = 10
-            scaling_adjustment = 1
+            scaling_adjustment          = 1
           },
           {
             metric_interval_lower_bound = 10
             metric_interval_upper_bound = null
-            scaling_adjustment = 2
+            scaling_adjustment          = 2
           }
         ]
       }
@@ -87,23 +86,23 @@ module "ecs_service_alb" {
   ]
   scheduled_actions = [
     {
-      name               = "ecs-scheduled-scale-out"
-      schedule           = "cron(0 8 ? * MON-FRI *)"
-      min_capacity       = 5
-      max_capacity       = 10
-      timezone           = "UTC"
+      name         = "ecs-scheduled-scale-out"
+      schedule     = "cron(0 8 ? * MON-FRI *)"
+      min_capacity = 5
+      max_capacity = 10
+      timezone     = "UTC"
     },
     {
-      name               = "ecs-scheduled-scale-in"
-      schedule           = "cron(0 20 ? * MON-FRI *)"
-      min_capacity       = 2
-      max_capacity       = 4
-      timezone           = "UTC"
+      name         = "ecs-scheduled-scale-in"
+      schedule     = "cron(0 20 ? * MON-FRI *)"
+      min_capacity = 2
+      max_capacity = 4
+      timezone     = "UTC"
     }
   ]
-  scalable_dimension         = var.scalable_dimension
-  service_namespace          = var.service_namespace
-  metric_aggregation_type    = "Average"
+  scalable_dimension = var.scalable_dimension
+  service_namespace  = var.service_namespace
+  # metric_aggregation_type    = "Average"
 
   # WAF association
   associate_with_waf = true
@@ -128,6 +127,10 @@ module "ecs_service_nlb" {
   family                   = "${var.name}-nlb-task-definition"
   enable_execute_command   = var.enable_execute_command
   load_balancer_type       = "network"
+  # Always redeploy the service when terraform apply is run
+  triggers = {
+    redeployment = plantimestamp()
+  }
   network_configuration = {
     subnets          = local.private_subnets
     assign_public_ip = true
@@ -147,10 +150,10 @@ module "ecs_service_nlb" {
   tasks_maximum_percent             = 150
   tags                              = local.tags
 
-  load_balancer = {
+  load_balancer = [{
     container_name = var.name
     container_port = var.containerport
-  }
+  }]
   access_logs = {
     bucket  = module.access_logs_bucket.id
     enabled = var.access_logs_enabled
@@ -165,8 +168,8 @@ module "ecs_service_nlb" {
   enable_autoscaling         = true
   target_scaling_policies = [
     {
-      name                            = "cpu-target-tracking"
-      policy_type                     = "TargetTrackingScaling"
+      name        = "cpu-target-tracking"
+      policy_type = "TargetTrackingScaling"
       target_tracking_scaling_policy_configuration = {
         target_value       = 75
         scale_in_cooldown  = 300
@@ -177,8 +180,8 @@ module "ecs_service_nlb" {
       }
     },
     {
-      name                            = "memory-target-tracking"
-      policy_type                     = "TargetTrackingScaling"
+      name        = "memory-target-tracking"
+      policy_type = "TargetTrackingScaling"
       target_tracking_scaling_policy_configuration = {
         target_value       = 80
         scale_in_cooldown  = 300
@@ -190,8 +193,8 @@ module "ecs_service_nlb" {
     }
   ]
 
-  scalable_dimension         = var.scalable_dimension
-  service_namespace          = var.service_namespace
+  scalable_dimension = var.scalable_dimension
+  service_namespace  = var.service_namespace
 
   # Load balancer sg
   lb_ingress_rules = var.nlb_ingress_rules

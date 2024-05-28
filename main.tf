@@ -2,7 +2,7 @@
 resource "aws_ecs_service" "service" {
   name                               = var.name
   cluster                            = var.cluster
-  task_definition                    = join("", aws_ecs_task_definition.this.*.arn)
+  task_definition                    = join("", aws_ecs_task_definition.this[*].arn)
   desired_count                      = var.desired_count
   deployment_minimum_healthy_percent = var.tasks_minimum_healthy_percent
   deployment_maximum_percent         = var.tasks_maximum_percent
@@ -26,10 +26,10 @@ resource "aws_ecs_service" "service" {
   }
 
   dynamic "load_balancer" {
-    for_each = var.load_balancer == [] ? [] : [var.load_balancer]
+    for_each = length(var.load_balancer) == 0 ? [] : [for lb in var.load_balancer : lb]
     content {
-      container_name   = lookup(load_balancer.value, "container_name")
-      container_port   = lookup(load_balancer.value, "container_port")
+      container_name   = load_balancer.value.container_name
+      container_port   = load_balancer.value.container_port
       target_group_arn = try(load_balancer.value.target_group_arn, (var.load_balancer_type == "application" ? aws_lb_target_group.main_alb[0].arn : aws_lb_target_group.main_nlb[0].arn))
     }
   }
@@ -39,8 +39,8 @@ resource "aws_ecs_service" "service" {
 resource "aws_ecs_task_definition" "this" {
   count                    = local.create_task_definition ? 1 : 0
   family                   = var.family
-  task_role_arn            = join("", aws_iam_role.task_role.*.arn)
-  execution_role_arn       = join("", aws_iam_role.task_execution_role.*.arn)
+  task_role_arn            = join("", aws_iam_role.task_role[*].arn)
+  execution_role_arn       = join("", aws_iam_role.task_execution_role[*].arn)
   network_mode             = var.network_mode
   requires_compatibilities = var.requires_compatibilities
   cpu                      = var.cpu
@@ -315,8 +315,8 @@ resource "aws_security_group_rule" "service_with_lb_ingress" {
   type                     = "ingress"
   description              = "Security group for ${var.name} ecs service accessible through a load-balancer"
   source_security_group_id = aws_security_group.lb[0].id
-  from_port                = lookup(var.load_balancer, "container_port")
-  to_port                  = lookup(var.load_balancer, "container_port")
+  from_port                = try(var.load_balancer[count.index]["container_port"], null)
+  to_port                  = try(var.load_balancer[count.index]["container_port"], null)
   protocol                 = "-1"
 }
 
