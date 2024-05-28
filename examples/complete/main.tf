@@ -28,7 +28,7 @@ module "ecs_service_alb" {
   }
   # Always redeploy the service when terraform apply is run
   triggers = {
-    redeployment = plantimestamp()
+    redeployment = plaintimestamp()
   }
   alb_subnets                       = local.public_subnets
   cluster                           = local.cluster
@@ -129,7 +129,7 @@ module "ecs_service_nlb" {
   load_balancer_type       = "network"
   # Always redeploy the service when terraform apply is run
   triggers = {
-    redeployment = plantimestamp()
+    redeployment = plaintimestamp()
   }
   network_configuration = {
     subnets          = local.private_subnets
