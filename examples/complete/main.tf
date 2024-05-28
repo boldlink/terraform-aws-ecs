@@ -27,9 +27,6 @@ module "ecs_service_alb" {
     assign_public_ip = true
   }
   # Always redeploy the service when terraform apply is run
-  triggers = {
-    redeployment = plantimestamp()
-  }
   alb_subnets                       = local.public_subnets
   cluster                           = local.cluster
   vpc_id                            = local.vpc_id
@@ -128,9 +125,6 @@ module "ecs_service_nlb" {
   enable_execute_command   = var.enable_execute_command
   load_balancer_type       = "network"
   # Always redeploy the service when terraform apply is run
-  triggers = {
-    redeployment = plantimestamp()
-  }
   network_configuration = {
     subnets          = local.private_subnets
     assign_public_ip = true
