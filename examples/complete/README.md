@@ -39,7 +39,7 @@ To test the deployment, follow these steps:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.50.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.51.1 |
 
 ## Modules
 
@@ -82,7 +82,6 @@ To test the deployment, follow these steps:
 | <a name="input_custom_header_name"></a> [custom\_header\_name](#input\_custom\_header\_name) | The name of the custom header to insert | `string` | `"X-My-Company-Tracking-ID"` | no |
 | <a name="input_custom_header_value"></a> [custom\_header\_value](#input\_custom\_header\_value) | The value of the custom header to insert | `string` | `"1234567890"` | no |
 | <a name="input_drop_invalid_header_fields"></a> [drop\_invalid\_header\_fields](#input\_drop\_invalid\_header\_fields) | Indicates whether HTTP headers with header fields that are not valid are removed by the load balancer (true) or routed to targets (false). | `bool` | `true` | no |
-| <a name="input_enable_autoscaling"></a> [enable\_autoscaling](#input\_enable\_autoscaling) | Whether to enable autoscaling or not for ecs | `bool` | `true` | no |
 | <a name="input_enable_execute_command"></a> [enable\_execute\_command](#input\_enable\_execute\_command) | value to enable execute command at the ecs service, default = false | `bool` | `true` | no |
 | <a name="input_essential"></a> [essential](#input\_essential) | Whether this container is essential | `bool` | `true` | no |
 | <a name="input_force_destroy"></a> [force\_destroy](#input\_force\_destroy) | Whether to force bucket deletion | `bool` | `true` | no |

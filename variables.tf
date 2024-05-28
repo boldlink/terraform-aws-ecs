@@ -193,7 +193,7 @@ variable "access_logs" {
   type        = map(string)
   description = <<-EOT
   (Optional) Define an Access Logs block, requires a bucket name and an optional prefix. The S3 bucket must already exist. The default value is false.
-    
+
     access_logs = {
       bucket  = string
       enabled = bollean
@@ -320,7 +320,7 @@ variable "enable_autoscaling" {
 # tflint-ignore: terraform_unused_declarations
 variable "step_scaling_policies" {
   description = <<-EOT
-  
+
   Scaling policies to apply to the scalable target. Supported policy types are StepScaling and TargetTrackingScaling.
 
     list(object({
@@ -339,16 +339,16 @@ variable "step_scaling_policies" {
       }))
 
   EOT
-  type = any
-  default = []
+  type        = any
+  default     = []
 }
 
 # tflint-ignore: terraform_unused_declarations
 variable "target_scaling_policies" {
   description = <<-EOT
-  
+
   Scaling policies to apply to the scalable target. Supported policy types are StepScaling and SepScaling.
-    
+
     list(object({
       name        = string
       policy_type = string
@@ -361,10 +361,10 @@ variable "target_scaling_policies" {
         })
       })
     }))
-  
+
   EOT
-  type = any
-  default = []
+  type        = any
+  default     = []
 }
 
 variable "scheduled_actions" {
@@ -412,7 +412,7 @@ variable "service_namespace" {
 variable "lb_ingress_rules" {
   description = <<-EOT
   Ingress rules to add to the load balancer security group. The rules defined here will be used by service security group
-  
+
   lb_ingress_rules = [{
       from_port   = number
       to_port     = number
