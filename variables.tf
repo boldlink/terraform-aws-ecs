@@ -456,7 +456,7 @@ variable "triggers" {
   Map of arbitrary keys and values that, when changed, will trigger an in-place update (redeployment). Useful with plaintimestamp()
 
   triggers = {
-    redeployment = plantimestamp()
+    redeployment = plaintimestamp()
   }
 
   EOT
