@@ -28,6 +28,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: expand volume block of the task definition as it has more configuration
 - feat: Add example for service security group using a security group id for `service_ingress_sg`
 
+## [1.12.0] - 2024-05-28
+### Changes
+- feat: Add progate tags to the ecs service
+- feat: Add tags to additional resources that support it
+
 ## [1.11.0] - 2024-05-28
 ### Changes
 - feat: Add Step Scaling Policy to ECS Service

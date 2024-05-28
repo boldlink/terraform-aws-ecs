@@ -40,6 +40,7 @@ module "ecs_service_alb" {
   path                              = var.path
   tasks_minimum_healthy_percent     = 80
   tasks_maximum_percent             = 150
+  propagate_tags                    = "SERVICE"
   tags                              = local.tags
 
   load_balancer = [{

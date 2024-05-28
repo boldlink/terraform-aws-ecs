@@ -10,6 +10,7 @@ resource "aws_ecs_service" "service" {
   enable_execute_command             = var.enable_execute_command
   force_new_deployment               = var.force_new_deployment
   triggers                           = var.triggers
+  propagate_tags                     = var.propagate_tags
   tags                               = var.tags
 
   deployment_controller {
@@ -49,6 +50,7 @@ resource "aws_ecs_task_definition" "this" {
     name = var.volume_name
   }
   container_definitions = var.container_definitions
+  tags                  = var.tags
 }
 
 # IAM Roles
@@ -56,6 +58,7 @@ resource "aws_iam_role" "task_role" {
   count              = local.create_task_definition && var.task_assume_role_policy != "" ? 1 : 0
   name               = "${var.name}-ecs-task-role"
   assume_role_policy = var.task_assume_role_policy
+  tags               = var.tags
 }
 
 resource "aws_iam_role_policy" "task_role_policy" {
@@ -70,6 +73,7 @@ resource "aws_iam_role" "task_execution_role" {
   description        = "${var.name} task execution role"
   name               = "${var.name}-task-execution-role"
   assume_role_policy = var.task_execution_assume_role_policy
+  tags               = var.tags
 }
 
 resource "aws_iam_role_policy" "task_execution_role_policy" {
@@ -86,6 +90,7 @@ resource "aws_kms_key" "cloudwatch_log_group" {
   enable_key_rotation     = var.enable_key_rotation
   policy                  = local.kms_policy
   deletion_window_in_days = var.key_deletion_window_in_days
+  tags                    = var.tags
 }
 
 resource "aws_cloudwatch_log_group" "main" {
@@ -148,6 +153,7 @@ resource "aws_lb_target_group" "main_alb" {
   }
 
   depends_on = [aws_lb.main]
+  tags       = var.tags
 }
 
 resource "aws_lb_target_group" "main_nlb" {
@@ -162,7 +168,7 @@ resource "aws_lb_target_group" "main_nlb" {
     healthy_threshold = var.healthy_threshold
     interval          = var.interval
   }
-
+  tags       = var.tags
   depends_on = [aws_lb.main]
 }
 
@@ -182,6 +188,7 @@ resource "aws_lb_listener" "http_redirect" {
       status_code = "HTTP_301"
     }
   }
+  tags = var.tags
   lifecycle {
     create_before_destroy = true
   }
@@ -200,6 +207,7 @@ resource "aws_lb_listener" "https" {
     type             = var.default_type
     target_group_arn = aws_lb_target_group.main_alb[0].arn
   }
+  tags = var.tags
   lifecycle {
     create_before_destroy = true
   }
@@ -216,6 +224,7 @@ resource "aws_lb_listener" "nlb" {
     type             = var.default_type
     target_group_arn = aws_lb_target_group.main_nlb[0].arn
   }
+  tags = var.tags
   lifecycle {
     create_before_destroy = true
   }
@@ -255,6 +264,7 @@ resource "aws_acm_certificate" "main" {
   lifecycle {
     create_before_destroy = true
   }
+  tags = var.tags
 }
 
 # Alb Security group
@@ -366,6 +376,7 @@ resource "aws_appautoscaling_target" "this" {
   depends_on = [
     aws_ecs_service.service
   ]
+  tags = var.tags
 }
 
 resource "aws_appautoscaling_policy" "stepscaling" {
@@ -393,7 +404,6 @@ resource "aws_appautoscaling_policy" "stepscaling" {
       }
     }
   }
-
   depends_on = [
     aws_appautoscaling_target.this
   ]

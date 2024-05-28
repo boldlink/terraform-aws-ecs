@@ -514,3 +514,10 @@ variable "service_ingress_rules_sg" {
   type        = list(any)
   default     = []
 }
+
+variable "propagate_tags" {
+  description = "(Optional) Whether to propagate the tags from the task definition or the service to the tasks. The valid values are SERVICE and TASK_DEFINITION"
+  type        = string
+  default     = "TASK_DEFINITION"
+
+}
