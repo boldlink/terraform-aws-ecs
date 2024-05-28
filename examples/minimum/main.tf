@@ -3,7 +3,7 @@ module "ecs_service" {
   #checkov:skip=CKV_AWS_355: "Ensure no IAM policies documents allow "*" as a statement's resource for restrictable actions"
   source                            = "../../"
   name                              = var.name
-  family                            = "${var.name}-task-definition"
+  family                            = var.name
   network_mode                      = var.network_mode
   cluster                           = local.cluster
   vpc_id                            = local.vpc_id

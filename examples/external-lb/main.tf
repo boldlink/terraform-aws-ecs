@@ -110,11 +110,11 @@ module "ecs_service" {
   network_configuration = {
     subnets = local.private_subnets
   }
-  load_balancer = {
+  load_balancer = [{
     target_group_arn = aws_lb_target_group.example.arn
     container_name   = var.name
     container_port   = var.containerport
-  }
+  }]
 
   cluster                           = local.cluster
   vpc_id                            = local.vpc_id

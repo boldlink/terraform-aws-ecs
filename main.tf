@@ -2,7 +2,7 @@
 resource "aws_ecs_service" "service" {
   name                               = var.name
   cluster                            = var.cluster
-  task_definition                    = join("", aws_ecs_task_definition.this.*.arn)
+  task_definition                    = join("", aws_ecs_task_definition.this[*].arn)
   desired_count                      = var.desired_count
   deployment_minimum_healthy_percent = var.tasks_minimum_healthy_percent
   deployment_maximum_percent         = var.tasks_maximum_percent
@@ -26,10 +26,10 @@ resource "aws_ecs_service" "service" {
   }
 
   dynamic "load_balancer" {
-    for_each = var.load_balancer == [] ? [] : [var.load_balancer]
+    for_each = length(var.load_balancer) == 0 ? [] : [for lb in var.load_balancer : lb]
     content {
-      container_name   = lookup(load_balancer.value, "container_name")
-      container_port   = lookup(load_balancer.value, "container_port")
+      container_name   = load_balancer.value.container_name
+      container_port   = load_balancer.value.container_port
       target_group_arn = try(load_balancer.value.target_group_arn, (var.load_balancer_type == "application" ? aws_lb_target_group.main_alb[0].arn : aws_lb_target_group.main_nlb[0].arn))
     }
   }
@@ -39,8 +39,8 @@ resource "aws_ecs_service" "service" {
 resource "aws_ecs_task_definition" "this" {
   count                    = local.create_task_definition ? 1 : 0
   family                   = var.family
-  task_role_arn            = join("", aws_iam_role.task_role.*.arn)
-  execution_role_arn       = join("", aws_iam_role.task_execution_role.*.arn)
+  task_role_arn            = join("", aws_iam_role.task_role[*].arn)
+  execution_role_arn       = join("", aws_iam_role.task_execution_role[*].arn)
   network_mode             = var.network_mode
   requires_compatibilities = var.requires_compatibilities
   cpu                      = var.cpu
@@ -315,8 +315,8 @@ resource "aws_security_group_rule" "service_with_lb_ingress" {
   type                     = "ingress"
   description              = "Security group for ${var.name} ecs service accessible through a load-balancer"
   source_security_group_id = aws_security_group.lb[0].id
-  from_port                = lookup(var.load_balancer, "container_port")
-  to_port                  = lookup(var.load_balancer, "container_port")
+  from_port                = try(var.load_balancer[count.index]["container_port"], null)
+  to_port                  = try(var.load_balancer[count.index]["container_port"], null)
   protocol                 = "-1"
 }
 
@@ -354,7 +354,7 @@ resource "aws_security_group_rule" "service_egress" {
   protocol          = "-1"
 }
 
-# Application AutoScaling Resources
+# Autoscaling
 resource "aws_appautoscaling_target" "this" {
   count              = var.enable_autoscaling ? 1 : 0
   max_capacity       = var.max_capacity
@@ -368,26 +368,70 @@ resource "aws_appautoscaling_target" "this" {
   ]
 }
 
-resource "aws_appautoscaling_policy" "scale_up" {
-  count              = var.enable_autoscaling ? 1 : 0
-  policy_type        = var.policy_type
-  name               = "${var.name}-ScaleUp"
+resource "aws_appautoscaling_policy" "stepscaling" {
+  count              = var.enable_autoscaling ? length(var.step_scaling_policies) : 0
+  policy_type        = var.step_scaling_policies[count.index].policy_type
+  name               = "${var.name}-${var.step_scaling_policies[count.index].name}"
   service_namespace  = var.service_namespace
   resource_id        = aws_appautoscaling_target.this[0].resource_id
   scalable_dimension = aws_appautoscaling_target.this[0].scalable_dimension
 
-  step_scaling_policy_configuration {
-    adjustment_type         = var.adjustment_type
-    cooldown                = var.cooldown
-    metric_aggregation_type = var.metric_aggregation_type
+  dynamic "step_scaling_policy_configuration" {
+    for_each = var.step_scaling_policies[count.index].step_scaling_policy_configuration != null ? [var.step_scaling_policies[count.index].step_scaling_policy_configuration] : []
+    content {
+      adjustment_type         = step_scaling_policy_configuration.value.adjustment_type
+      cooldown                = step_scaling_policy_configuration.value.cooldown
+      metric_aggregation_type = step_scaling_policy_configuration.value.metric_aggregation_type
 
-    step_adjustment {
-      metric_interval_lower_bound = var.metric_interval_lower_bound
-      scaling_adjustment          = var.scaling_adjustment
+      dynamic "step_adjustment" {
+        for_each = step_scaling_policy_configuration.value.step_adjustments
+        content {
+          metric_interval_lower_bound = step_adjustment.value.metric_interval_lower_bound
+          metric_interval_upper_bound = step_adjustment.value.metric_interval_upper_bound
+          scaling_adjustment          = step_adjustment.value.scaling_adjustment
+        }
+      }
     }
   }
 
   depends_on = [
     aws_appautoscaling_target.this
   ]
+}
+
+resource "aws_appautoscaling_policy" "targetscaling" {
+  count              = var.enable_autoscaling ? length(var.target_scaling_policies) : 0
+  policy_type        = var.target_scaling_policies[count.index].policy_type
+  name               = "${var.name}-${var.target_scaling_policies[count.index].name}"
+  service_namespace  = var.service_namespace
+  resource_id        = aws_appautoscaling_target.this[0].resource_id
+  scalable_dimension = aws_appautoscaling_target.this[0].scalable_dimension
+
+  target_tracking_scaling_policy_configuration {
+    target_value       = var.target_scaling_policies[count.index].target_tracking_scaling_policy_configuration.target_value
+    scale_in_cooldown  = var.target_scaling_policies[count.index].target_tracking_scaling_policy_configuration.scale_in_cooldown
+    scale_out_cooldown = var.target_scaling_policies[count.index].target_tracking_scaling_policy_configuration.scale_out_cooldown
+    predefined_metric_specification {
+      predefined_metric_type = var.target_scaling_policies[count.index].target_tracking_scaling_policy_configuration.predefined_metric_specification.predefined_metric_type
+    }
+  }
+
+  depends_on = [
+    aws_appautoscaling_target.this
+  ]
+}
+
+resource "aws_appautoscaling_scheduled_action" "this" {
+  for_each           = { for action in var.scheduled_actions : action.name => action }
+  name               = each.value.name
+  service_namespace  = aws_appautoscaling_target.this[0].service_namespace
+  resource_id        = aws_appautoscaling_target.this[0].resource_id
+  scalable_dimension = aws_appautoscaling_target.this[0].scalable_dimension
+  schedule           = each.value.schedule
+  timezone           = each.value.timezone
+
+  scalable_target_action {
+    min_capacity = each.value.min_capacity
+    max_capacity = each.value.max_capacity
+  }
 }

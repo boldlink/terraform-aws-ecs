@@ -7,7 +7,6 @@ locals {
   private_subnets = local.private_subnet_id
   partition       = data.aws_partition.current.partition
   tags            = merge({ "Name" = var.name }, var.tags)
-
   default_container_definitions = jsonencode(
     [
       {
