@@ -106,7 +106,24 @@ module "ecs_service" {
   network_mode             = var.network_mode
   name                     = "${var.name}-service"
   family                   = "${var.name}-task-definition"
-
+  service_ingress_rules_sg = [
+    {
+      from_port                = 443
+      to_port                  = 443
+      protocol                 = "tcp"
+      description              = "Allow traffic on port 443."
+      source_security_group_id = module.alb.sg_id
+    }
+  ]
+  service_ingress_rules = [
+    {
+      from_port   = 5000
+      to_port     = 5000
+      protocol    = "tcp"
+      description = "Allow traffic on port 5000."
+      cidr_blocks = [data.aws_vpc.supporting.cidr_block]
+    }
+  ]
   network_configuration = {
     subnets = local.private_subnets
   }
@@ -124,7 +141,6 @@ module "ecs_service" {
   container_definitions             = local.default_container_definitions
   retention_in_days                 = var.retention_in_days
   kms_key_id                        = data.aws_kms_alias.supporting_kms.target_key_arn
-  service_ingress_rules             = var.service_ingress_rules
   tags                              = local.tags
   depends_on                        = [module.alb]
 }
