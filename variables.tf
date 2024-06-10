@@ -139,12 +139,12 @@ variable "volume_name" {
 
 variable "load_balancer" {
   description = <<-EOT
-  (Optional) Configuration block for load balancers, accepts the following arguments:
+  (Optional) Configuration block when you use a external load balancer, ex shared LB, accepts the following arguments:
 
   load_balancer = [{
-    container_name   = string # Name of the container to associate with the load balancer
-    container_port   = number # Port number the container listens on
-    target_group_arn = string   # ARN of the target group to associate with the load balancer when using an external Alb/NLB
+    container_name   = string
+    container_port   = number
+    target_group_arn = string
   }]
 
   EOT
@@ -244,7 +244,7 @@ variable "default_type" {
 variable "self_signed_cert_common_name" {
   type        = string
   description = "Distinguished name"
-  default     = "devboldlink.wpengine.com"
+  default     = "devboldlink.boldlink.io"
 }
 
 variable "self_signed_cert_organization" {

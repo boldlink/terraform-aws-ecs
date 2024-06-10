@@ -28,6 +28,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: expand volume block of the task definition as it has more configuration
 - feat: Add example for service security group using a security group id for `service_ingress_sg`
 
+## [1.12.2] - 2024-06-10
+### Changes
+- docs: Improve variables text and change the domain name of the private acm
+
+## [1.12.1] - 2024-06-10
+### Changes
+- docs: Add sg's to the external-lb example
+
 ## [1.12.0] - 2024-05-28
 ### Changes
 - feat: Add progate tags to the ecs service
@@ -173,8 +181,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: feature update.
 - feat: initial code commit
 
-[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.11.0...HEAD
+[Unreleased]: https://github.com/boldlink/terraform-aws-ecs-service/compare/1.12.2...HEAD
 
+[1.12.2]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.12.2
+[1.12.1]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.12.1
+[1.12.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.12.0
 [1.11.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.11.0
 [1.10.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.10.0
 [1.9.0]: https://github.com/boldlink/terraform-aws-ecs-service/releases/tag/1.9.0
