@@ -42,7 +42,6 @@ module "ecs_service_alb" {
   tasks_maximum_percent             = 150
   propagate_tags                    = "SERVICE"
   tags                              = local.tags
-
   load_balancer = [{
     container_name = var.name
     container_port = var.containerport
